@@ -3,11 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Dashboard</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/site.css">
+    <link rel="stylesheet" href="styles.css">
+    <script src="/assets/js/lib/jquery.min.js"></script>
+    <script src="/assets/js/site.js" defer></script>
+    <script src="/home.js" defer></script>
 </head>
 <body>
-    
-    home
-    
+    <!-- Navigation Bar -->
+    <header class="navbar">
+        <div class="navbar-container">
+            <a href="/" class="navbar-logo">MyApp</a>
+            <nav class="navbar-links">
+                <a href="/dashboard" class="navbar-link">Dashboard</a>
+                <a href="/profile" class="navbar-link">Profile</a>
+                <a href="/logout" class="navbar-link logout">Logout</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-container">
+        <div class="dashboard-box">
+            <h2>Welcome to Your Dashboard</h2>
+            <p class="greeting hidden">Hello, <span id="username">User</span>!</p>
+            <div class="btn-container">
+                <a href="/profile" class="btn">Go to Profile</a>
+                <a href="/logout" class="btn logout-btn">Logout</a>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
