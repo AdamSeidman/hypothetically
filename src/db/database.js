@@ -4,7 +4,6 @@ const { createClient } = require('@supabase/supabase-js')
 require('dotenv').config()
 
 let client = undefined
-let exportedFunctions = {}
 
 async function create() {
     if (client === undefined) {
@@ -20,6 +19,7 @@ async function create() {
                 }
             }
         })
+        console.log('Database information loaded!')
     }
 }
 

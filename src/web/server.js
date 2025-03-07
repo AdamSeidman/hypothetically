@@ -16,6 +16,15 @@ app.use(cors())
 let jsonParser = bodyParser.json()
 app.use(express.urlencoded({ extended: true }))
 
+class SbStore extends session.Store {
+    constructor() {
+        super()
+        Object.entries(database.sessions).forEach(([key, method]) => {
+            this[key] = method
+        })
+    }
+}
+
 // Session setup
 app.use(session({
     secret: process.env.SESSION_SECRET,
@@ -24,8 +33,9 @@ app.use(session({
     cookie: {
         httpOnly: true,
         sameSite: 'Lax',
-        maxAge: 1000 * 60 * 60 * 24
-    }
+        maxAge: 1000 * 60 * 60 * 24 * 7
+    },
+    store: new SbStore()
 }))
 
 // Passport initialization
@@ -70,7 +80,9 @@ app.use((req, res, next) => {
         }
     } else if (!req.path.includes('login') && (req.path.endsWith('.html') || !req.path.includes('.'))) {
         if (!req.session || !req.isAuthenticated()) {
-            return req.logout(() => res.redirect('/login'))
+            return req.logout(() => {
+                res.redirect('/login')
+            })
         }
     }
     next()
@@ -81,7 +93,13 @@ app.use(express.static(path.join(__dirname, '../../www')))
 
 // Logout route
 app.get('/logout', (req, res) => {
-    req.logout(() => res.redirect('/login'))
+    req.logout(() => {
+        res.clearCookie('connect.sid')
+        if (req.sessionID) {
+            database.sessions.destroy(req.sessionID)
+        }
+        res.status(200).redirect('/login')
+    })
 })
 
 // Dynamic routes (API endpoints)

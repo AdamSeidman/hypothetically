@@ -1,7 +1,7 @@
 /**
  * Table: users
  * 
- * Websites users and data
+ * Website users and data
  */
 
 let users = []

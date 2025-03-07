@@ -1,7 +1,9 @@
-const server = require('./web/server')
+const app = async () => {
+    const db = require('./db/database')
+    await db.create()
+    require('./web/server')
+}
 
-const db = require('./db/database')
-
-db.create()
+app()
 
 // TODO
