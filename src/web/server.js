@@ -11,24 +11,26 @@ require('dotenv').config()
 let app = express()
 app.use(cors())
 
-let options = {}
+// Body parser setup
 let jsonParser = bodyParser.json()
 
+// Session setup
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
         httpOnly: true,
-        secure: true, // TODO
         sameSite: 'Lax',
         maxAge: 1000 * 60 * 60 * 24
     }
 }))
 
+// Passport initialization
 app.use(passport.initialize())
 app.use(passport.session())
 
+// Passport Google OAuth setup
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -44,36 +46,42 @@ passport.use(new GoogleStrategy({
 }))
 
 passport.serializeUser((user, done) => done(null, user))
+
 passport.deserializeUser((obj, done) => done(null, obj))
 
-app.use(express.static(path.join(__dirname, '../../www')))
+// Google OAuth routes
+app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }))
+app.get('/auth/google/callback', passport.authenticate('google', {
+    successRedirect: '/',
+    failureRedirect: '/login'
+}))
 
- app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }))
- app.get('/auth/google/callback', passport.authenticate('google', {
-    successRedirect: '/dashboard', // TODO
-    failureRedirect: '/'
- }))
-
-function ensureAuthenticated(req, res, next) {
-    if (!req.isAuthenticated()) {
-        req.logout(() => res.redirect('/'))
-        return
+// Session check and login guard
+app.use((req, res, next) => {
+    if (req.path.includes('login')) {
+        if (req.isAuthenticated()) {
+            return res.redirect('/')
+        }
+    } else if (!req.path.includes('login') && (req.path.endsWith('.html') || !req.path.includes('.'))) {
+        if (!req.session || !req.isAuthenticated()) {
+            return req.logout(() => res.redirect('/login'))
+        }
     }
     next()
-}
+})
 
+// Static files setup
+app.use(express.static(path.join(__dirname, '../../www')))
+
+// Logout route
 app.get('/logout', (req, res) => {
-    req.logout(() => res.redirect('/'))
+    req.logout(() => res.redirect('/login'))
 })
 
-app.get('/dashboard', ensureAuthenticated, (req, res) => {
-    const filePath = require('path').join(__dirname, '../../www/admin/index.html')
-    res.sendFile(filePath)
-})
-
+// Dynamic routes (API endpoints)
 ;['delete', 'get', 'post', 'put'].forEach(verb => {
     fs.readdirSync(path.join(__dirname, verb)).forEach(file => {
-        if (path.extname(file) == '.js') {
+        if (path.extname(file) === '.js') {
             let ep = file.slice(0, file.indexOf('.'))
             if (verb === 'get') {
                 app.get(`/api/${ep}`, require(`./get/${ep}`))
@@ -84,10 +92,8 @@ app.get('/dashboard', ensureAuthenticated, (req, res) => {
     })
 })
 
+// Server setup
 const PORT = process.env.PORT || 80
-
 app.listen(PORT, () => {
     console.log(`Express server listening on port ${PORT}`)
 })
-
-module.exports = {}
