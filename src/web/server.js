@@ -50,7 +50,7 @@ app.use(express.static(path.join(__dirname, '../../www')))
 
  app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }))
  app.get('/auth/google/callback', passport.authenticate('google', {
-    successRedirect: '/admin', // TODO
+    successRedirect: '/dashboard', // TODO
     failureRedirect: '/'
  }))
 
@@ -62,7 +62,16 @@ function ensureAuthenticated(req, res, next) {
     next()
 }
 
-['delete', 'get', 'post', 'put'].forEach(verb => {
+app.get('/logout', (req, res) => {
+    req.logout(() => res.redirect('/'))
+})
+
+app.get('/dashboard', ensureAuthenticated, (req, res) => {
+    const filePath = require('path').join(__dirname, '../../www/admin/index.html')
+    res.sendFile(filePath)
+})
+
+;['delete', 'get', 'post', 'put'].forEach(verb => {
     fs.readdirSync(path.join(__dirname, verb)).forEach(file => {
         if (path.extname(file) == '.js') {
             let ep = file.slice(0, file.indexOf('.'))
