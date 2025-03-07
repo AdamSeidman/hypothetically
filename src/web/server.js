@@ -5,6 +5,7 @@ const express = require('express')
 const passport = require('passport')
 const bodyParser = require('body-parser')
 const session = require('express-session')
+const database = require('../db/database')
 const GoogleStrategy = require('passport-google-oauth20').Strategy
 require('dotenv').config()
 
@@ -13,6 +14,7 @@ app.use(cors())
 
 // Body parser setup
 let jsonParser = bodyParser.json()
+app.use(express.urlencoded({ extended: true }))
 
 // Session setup
 app.use(session({
@@ -35,14 +37,18 @@ passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: '/auth/google/callback'
-}, (accessToken, refreshToken, profile, done) => {
+}, async (accessToken, refreshToken, profile, done) => {
     const user = {
         id: profile.id,
         displayName: profile.displayName,
         email: profile.emails?.[0]?.value || 'No email found',
         photo: profile.photos?.[0]?.value || ''
     }
-    return done(null, user)
+    let res = await database.users.login(user)
+    if (res) {
+        return done(null, user)
+    }
+    return done(null, false, { message: 'Error logging in user' })
 }))
 
 passport.serializeUser((user, done) => done(null, user))
@@ -86,7 +92,14 @@ app.get('/logout', (req, res) => {
             if (verb === 'get') {
                 app.get(`/api/${ep}`, require(`./get/${ep}`))
             } else {
-                app[verb](`/api/${ep}`, jsonParser, require(`./${verb}/${ep}`))
+                app[verb](`/api/${ep}`, jsonParser, (req, res) => {
+                    if (!req.isAuthenticated()) {
+                        return res.status(403).json({})
+                    } else {
+                        let ret = require(`./${verb}/${ep}`)(req, res)
+                        if (ret) res.status(ret).json({})
+                    }
+                })
             }
         }
     })
