@@ -1,3 +1,134 @@
 .hidden {
     display: none !important;
 }
+
+/* Navbar Styling */
+.navbar {
+    background-color: #4285F4;
+    color: white;
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.navbar-logo {
+    font-size: 2rem;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.navbar-links {
+    display: flex;
+    gap: 30px;
+}
+
+.navbar-link {
+    font-size: 1.1rem;
+    color: white;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-weight: 600;
+    transition: color 0.3s, transform 0.3s;
+}
+
+.navbar-link:hover {
+    color: #f1f1f1;
+    transform: translateY(-3px);
+}
+
+.logout {
+    background-color: #db4437;
+    padding: 8px 16px;
+    border-radius: 5px;
+    font-weight: 600;
+    transition: background-color 0.3s;
+}
+
+.logout:hover {
+    background-color: #c1351d;
+}
+
+/* Dashboard Styling */
+.dashboard-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    margin-top: 80px; /* To avoid overlap with navbar */
+}
+
+.dashboard-box {
+    background: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+}
+
+h2 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 2rem;
+}
+
+.greeting {
+    margin-bottom: 30px;
+    color: #555;
+    font-size: 1.2rem;
+}
+
+#username {
+    font-weight: bold;
+    color: #4285F4;
+}
+
+.btn-container {
+    display: flex;
+    justify-content: space-around;
+}
+
+.btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #4285F4;
+    color: white;
+    padding: 12px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-decoration: none;
+}
+
+.btn:hover {
+    background-color: #357ae8;
+}
+
+.logout-btn {
+    background-color: #db4437;
+}
+
+.logout-btn:hover {
+    background-color: #c1351d;
+}

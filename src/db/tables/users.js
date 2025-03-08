@@ -37,9 +37,10 @@ async function login(googleData) {
     } else {
         user = {
             google_id: googleData.id,
-            email: googleData.email,
+            email: googleData.email || '',
             profile_picture: googleData.photo,
-            name: googleData.displayName
+            name: googleData.displayName || googleData.email,
+            display_name: googleData.displayName.trim().split(' ')[0] || googleData.displayName || 'name'
         }
         console.log(`Registering new user (${user.name}): ${user.email}`)
         const { data, error } = await client
@@ -57,6 +58,18 @@ async function login(googleData) {
     }
 }
 
+async function setDisplayName(id, newName) {
+    if (!id || typeof newName !== 'string' || newName.trim().length < 1) return
+    let user = users.find(x => x.google_id == id)
+    if (!user) return
+    user.display_name = newName.trim()
+    const { error } = await client
+        .from(TABLE_NAME)
+        .update({ display_name: newName.trim() })
+        .eq('google_id', id)
+    return error
+}
+
 function isAdmin(googleId) {
     if (!googleId) return
     let user = users.find(x => x.google_id == googleId)
@@ -65,10 +78,20 @@ function isAdmin(googleId) {
     }
 }
 
+function getDisplayName(googleId) {
+    if (!googleId) return
+    let user = users.find(x => x.google_id == googleId)
+    if (user) {
+        return user.display_name
+    }
+}
+
 module.exports = {
     create,
     isAdmin,
+    getDisplayName,
     queries: {
-        login
+        login,
+        setDisplayName
     }
 }

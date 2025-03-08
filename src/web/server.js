@@ -104,17 +104,17 @@ app.get('/logout', (req, res) => {
 
 // Dynamic routes (API endpoints)
 ;['delete', 'get', 'post', 'put'].forEach(verb => {
-    fs.readdirSync(path.join(__dirname, verb)).forEach(file => {
+    fs.readdirSync(path.join(__dirname, verb)).forEach((file) => {
         if (path.extname(file) === '.js') {
             let ep = file.slice(0, file.indexOf('.'))
             if (verb === 'get') {
                 app.get(`/api/${ep}`, require(`./get/${ep}`))
             } else {
-                app[verb](`/api/${ep}`, jsonParser, (req, res) => {
+                app[verb](`/api/${ep}`, jsonParser, async (req, res) => {
                     if (!req.isAuthenticated()) {
                         return res.status(403).json({})
                     } else {
-                        let ret = require(`./${verb}/${ep}`)(req, res)
+                        let ret = await require(`./${verb}/${ep}`)(req, res)
                         if (ret) res.status(ret).json({})
                     }
                 })
