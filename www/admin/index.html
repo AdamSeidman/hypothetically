@@ -6,6 +6,12 @@
     <title>Admin Submit Page</title>
     <link rel="stylesheet" href="/assets/css/site.css">
     <link rel="stylesheet" href="/admin/admin.css">
+    <script src="/assets/js/lib/jquery.min.js"></script>
+    <script>
+        function modifyDescription(text) {
+            $('.input-copy').text(text)
+        }
+    </script>
 </head>
 <body>
     <header class="navbar">
@@ -31,9 +37,15 @@
         </form>
         <hr>
         <form action="/api/whose" method="POST">
-            <h3>"Who is the Most" Question</h3>
+            <div class="question-container">
+                <h3>"Who is the Most" Question</h3>
+                <div class="description-box">
+                    Who is <span class="input-copy"></span>?<br>
+                    Is AA or BB <span class="input-copy"></span>?
+                </div>
+            </div>
             <label for="question">Question:</label>
-            <input type="text" id="question" name="question" required>
+            <input type="text" id="question" name="question" oninput="modifyDescription(this.value)" onchange="modifyDescription(this.value)" required>
             <button type="submit">Submit Question</button>
         </form>
     </div>
