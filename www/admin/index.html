@@ -5,12 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Submit Page</title>
     <link rel="stylesheet" href="/assets/css/site.css">
-    <link rel="stylesheet" href="/admin/admin.css">
+    <link rel="stylesheet" href="./admin.css">
     <script src="/assets/js/lib/jquery.min.js"></script>
     <script>
         function modifyDescription(text) {
-            $('.input-copy').text(text)
+            $('.input-copy').text(text);
         }
+        function openTab(evt, tabName) {
+            $('.input-copy').text('')
+            $('.tab-content').hide()
+            $('.tab-button').removeClass('active')
+            $('#' + tabName).show()
+            $(evt.currentTarget).addClass('active')
+
+            let params = new URLSearchParams(window.location.search)
+            params.set('tab', tabName)
+            history.replaceState(null, '', '?' + params.toString())
+        }
+        $(document).ready(() => {
+            let params = new URLSearchParams(window.location.search)
+            let tabName = params.get('tab') || 'CategoryTab'
+            openTab({ currentTarget: `#tab-${tabName}` }, tabName)
+        })
     </script>
 </head>
 <body>
@@ -20,34 +36,59 @@
             <a href="/logout">Logout</a>
         </nav>
     </header>
+    
     <div class="form-container">
         <h2>Submit New Data</h2>
-        <form action="/api/category" method="POST">
-            <h3>Item Category</h3>
-            <label for="category">Category Name:</label>
-            <input type="text" id="category" name="category" required>
-            <h4>Items in this Category:</h4>
-            <input type="text" id="item1" name="item1" required>
-            <input type="text" id="item2" name="item2" required>
-            <input type="text" id="item3" name="item3" required>
-            <input type="text" id="item4" name="item4" required>
-            <input type="text" id="item5" name="item5" required>
-            <input type="text" id="item6" name="item6" required>
-            <button type="submit">Submit Category</button>
-        </form>
-        <hr>
-        <form action="/api/whose" method="POST">
-            <div class="question-container">
-                <h3>"Who is the Most" Question</h3>
-                <div class="description-box">
-                    Who is <span class="input-copy"></span>?<br>
-                    Is AA or BB <span class="input-copy"></span>?
+        <div class="tabs">
+            <button id="tab-CategoryTab" class="tab-button active" onclick="openTab(event, 'CategoryTab')">Item Category</button>
+            <button id="tab-QuestionTab" class="tab-button" onclick="openTab(event, 'QuestionTab')">Who is the Most</button>
+            <button id="tab-ThingsTab" class="tab-button" onclick="openTab(event, 'ThingsTab')">Things Prompt</button>
+        </div>
+        
+        <div id="CategoryTab" class="tab-content">
+            <form action="/api/category" method="POST">
+                <h3>Item Category</h3>
+                <label for="category">Category Name:</label>
+                <input type="text" id="category" name="category" required>
+                <h4>Items in this Category:</h4>
+                <input type="text" id="item1" name="item1" required>
+                <input type="text" id="item2" name="item2" required>
+                <input type="text" id="item3" name="item3" required>
+                <input type="text" id="item4" name="item4" required>
+                <input type="text" id="item5" name="item5" required>
+                <input type="text" id="item6" name="item6" required>
+                <button type="submit">Submit Category</button>
+            </form>
+        </div>
+        
+        <div id="QuestionTab" class="tab-content">
+            <form action="/api/whose" method="POST">
+                <div class="question-container">
+                    <h3>"Who is the Most" Question</h3>
+                    <div class="description-box">
+                        Who is <span class="input-copy"></span>?<br>
+                        Is AA or BB <span class="input-copy"></span>?
+                    </div>
                 </div>
-            </div>
-            <label for="question">Question:</label>
-            <input type="text" id="question" name="question" oninput="modifyDescription(this.value)" onchange="modifyDescription(this.value)" required>
-            <button type="submit">Submit Question</button>
-        </form>
+                <label for="question">Question:</label>
+                <input type="text" id="question" name="question" oninput="modifyDescription(this.value)" required>
+                <button type="submit">Submit Question</button>
+            </form>
+        </div>
+
+        <div id="ThingsTab" class="tab-content">
+            <form action="/api/things" method="POST">
+                <div class="question-container">
+                    <h3>"Things" Prompts</h3>
+                    <div class="description-box">
+                        THINGS...&nbsp;<span class="input-copy"></span>
+                    </div>
+                </div>
+                <label for="thing">Prompt:</label>
+                <input type="text" id="thing" name="thing" oninput="modifyDescription(this.value)" required>
+                <button type="submit">Submit Prompt</button>
+            </form>
+        </div>
     </div>
 </body>
 </html>

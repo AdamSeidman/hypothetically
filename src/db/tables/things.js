@@ -1,14 +1,14 @@
 /**
- * Table: questions
+ * Table: things
  * 
- * Who is more likely
+ * Items and their categories for the game
  */
 
 const { randomArrayItem } = require('poop-sock')
 
 let client = undefined
 
-const TABLE_NAME = 'questions'
+const TABLE_NAME = 'things'
 
 async function create(supabase) {
     client = supabase
@@ -18,10 +18,10 @@ async function create(supabase) {
     }
 }
 
-async function add(question, user) {
-    if (typeof question !== 'string') return
+async function add(thing, user) {
+    if (typeof thing !== 'string') return
     let item = {
-        question,
+        thing,
         submitted_by: user
     }
     const { error } = await client

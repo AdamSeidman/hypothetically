@@ -8,5 +8,5 @@ const database = require('../../db/database')
 
 module.exports = function (req, res) {
     database.questions.add(req.body?.question, req.user.email)
-    res.redirect('/admin')
+    res.redirect('/admin?tab=QuestionTab')
 }

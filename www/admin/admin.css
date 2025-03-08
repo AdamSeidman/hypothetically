@@ -34,7 +34,7 @@ body {
 
 h2 {
     text-align: center;
-    margin-block: 5px;
+    margin-block: 10px;
 }
 
 h3 {
@@ -96,4 +96,26 @@ hr {
     border-radius: 4px;
     width: 300px;
     font-style: italic;
+}
+
+.tabs {
+    display: flex;
+    margin-block: 20px;
+}
+
+.tab-button {
+    padding: 10px;
+    cursor: pointer;
+    background: #ccc;
+    border: none;
+    margin-right: 5px;
+}
+
+.tab-button.active {
+    background: #666;
+    color: white;
+}
+
+.tab-content {
+    display: none;
 }
