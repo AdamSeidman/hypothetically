@@ -4,8 +4,9 @@ POST: /api/whose
 Submit new "whose" information
 */
 
+const database = require('../../db/database')
+
 module.exports = function (req, res) {
-    console.log('whose')
-    console.log(req.body)
+    database.questions.add(req.body?.question, req.user.email)
     res.redirect('/admin')
 }
