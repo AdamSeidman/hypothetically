@@ -3,6 +3,8 @@ const cors = require('cors')
 const path = require('path')
 const express = require('express')
 const passport = require('passport')
+const Sockets = require('./sockets')
+const { Server } = require('socket.io')
 const bodyParser = require('body-parser')
 const session = require('express-session')
 const database = require('../db/database')
@@ -25,8 +27,7 @@ class SbStore extends session.Store {
     }
 }
 
-// Session setup
-app.use(session({
+const sessionOptions = {
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
@@ -36,7 +37,10 @@ app.use(session({
         maxAge: 1000 * 60 * 60 * 24 * 7
     },
     store: new SbStore()
-}))
+}
+
+// Session setup
+app.use(session(sessionOptions))
 
 // Passport initialization
 app.use(passport.initialize())
@@ -123,8 +127,52 @@ app.get('/logout', (req, res) => {
     })
 })
 
+// WebSocket server setup
+const server = require('http').Server(app)
+const io = new Server(server)
+
+// Set up express-session as middleware for socket.io
+io.use((socket, next) => {
+    session(sessionOptions)(socket.request, {}, next)
+})
+
+// WebSocket connection handler
+io.on('connection', (socket) => {
+    console.log('User connected.')
+
+    // Check if user is authentication from session and attach their info to the socket
+    const user = socket.request.session.passport?.user
+
+    if (user) {
+        socket.user = user
+        Sockets.socketOpened(socket.user.id, socket)
+
+        // Handle incoming message
+        socket.on('incomingMessage', (message) => {
+            if (socket.user) {
+                let msg = {}
+                try {
+                    msg = JSON.parse(message)
+                    Sockets.handleIncomingMessage(socket.user.id, msg)
+                } catch (err) {
+                    console.error('Could not parse incomingMessage', err, '\n', message)
+                }
+            } else {
+                console.error('Receieved incomingMessage with no socket user', message)
+            }
+        })
+    }
+
+    socket.on('disconnect', () => {
+        console.log('User disconnected')
+        if (user) {
+            Sockets.socketClosed(user.id)
+        }
+    })
+})
+
 // Server setup
 const PORT = process.env.PORT || 80
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Express server listening on port ${PORT}`)
 })
