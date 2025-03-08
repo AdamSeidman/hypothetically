@@ -1,5 +1,5 @@
 /**
- * Table: things
+ * Table: categories
  * 
  * Items and their categories for the game
  */
@@ -8,7 +8,7 @@ const { randomArrayItem } = require('poop-sock')
 
 let client = undefined
 
-const TABLE_NAME = 'things'
+const TABLE_NAME = 'categories'
 
 async function create(supabase) {
     client = supabase
