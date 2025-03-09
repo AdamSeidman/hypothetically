@@ -1,12 +1,32 @@
 const socket = io() // TODO
 
-socket.emit('incomingMessage', JSON.stringify({message: 'Hi!'})) // TODO remove
-
-socket.on('response', (data) => {
-    // TODO Figure out server response
-    console.log('Server response:', data)
+socket.on('newChat', (data) => {
+    console.log('new chat', data)
 })
 
-socket.on('message', (data) => {
-    console.log('Server message', data)
+socket.on('joinRoom', (data) => {
+    console.log('join room', data)
 })
+
+socket.on('leaveRoom', (data) => {
+    console.log('leave room', data)
+})
+
+socket.on('roomJoined', (data) => {
+    console.log('room joined', data)
+})
+
+socket.on('roomJoinFailed', (data) => {
+    console.log('room join failed', data)
+})
+
+function joinRoom(code) {
+    if (!code) return
+    socket.emit('joinGame', { code })
+}
+
+function sendChat(message) {
+    if (typeof message !== 'string' || message.trim().length < 1) return
+    message = message.trim()
+    socket.emit('chat', { message })
+}

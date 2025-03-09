@@ -3,11 +3,11 @@ const cors = require('cors')
 const path = require('path')
 const express = require('express')
 const passport = require('passport')
-const Sockets = require('./sockets')
 const { Server } = require('socket.io')
 const bodyParser = require('body-parser')
 const session = require('express-session')
 const database = require('../db/database')
+const { openSocket } = require('./sockets')
 const GoogleStrategy = require('passport-google-oauth20').Strategy
 require('dotenv').config()
 
@@ -119,7 +119,11 @@ app.get('/logout', (req, res) => {
                         return res.status(403).json({})
                     } else {
                         let ret = await require(`./${verb}/${ep}`)(req, res)
-                        if (ret) res.status(ret).json({})
+                        if (typeof ret === 'number') {
+                            res.status(ret).json({})
+                        } else if (ret) {
+                            res.status(200).json(ret) // TODO THIS IS WHAT WE ARE DOING
+                        }
                     }
                 })
             }
@@ -138,37 +142,12 @@ io.use((socket, next) => {
 
 // WebSocket connection handler
 io.on('connection', (socket) => {
-    console.log('User connected.')
-
     // Check if user is authentication from session and attach their info to the socket
     const user = socket.request.session.passport?.user
-
     if (user) {
         socket.user = user
-        Sockets.socketOpened(socket.user.id, socket)
-
-        // Handle incoming message
-        socket.on('incomingMessage', (message) => {
-            if (socket.user) {
-                let msg = {}
-                try {
-                    msg = JSON.parse(message)
-                    Sockets.handleIncomingMessage(socket.user.id, msg)
-                } catch (err) {
-                    console.error('Could not parse incomingMessage', err, '\n', message)
-                }
-            } else {
-                console.error('Receieved incomingMessage with no socket user', message)
-            }
-        })
+        openSocket(socket.user.id, socket)
     }
-
-    socket.on('disconnect', () => {
-        console.log('User disconnected')
-        if (user) {
-            Sockets.socketClosed(user.id)
-        }
-    })
 })
 
 // Server setup

@@ -42,3 +42,8 @@ function getUserInfo() {
 function updateDisplayName(name) {
     return standardPUT('displayName', { name })
 }
+
+function makeRoom(isPublic) {
+    isPublic = !!isPublic
+    return standardPOST('room', { isPublic })
+}
