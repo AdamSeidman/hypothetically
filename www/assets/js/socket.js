@@ -20,6 +20,10 @@ socket.on('roomJoinFailed', (data) => {
     console.log('room join failed', data)
 })
 
+socket.on('chatSendFailure', (data) => {
+    console.log('chat send failure', data)
+})
+
 function joinRoom(code) {
     if (!code) return
     socket.emit('joinGame', { code })

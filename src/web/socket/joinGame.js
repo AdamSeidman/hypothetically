@@ -11,7 +11,12 @@ function handle(message, socket, id) {
         if (ret) {
             console.log(`User ${id} joined room ${message.code}`)
             require('../sockets').joinRoom(id, message.code)
-            socket.emit('roomJoined', { code: message.code })
+            socket.emit('roomJoined', { 
+                code: message.code,
+                chatHistory: Games.getChatHistory(message.code),
+                players: Games.getPlayersOf(message.code),
+                host: Games.getHostOf(message.code)
+            })
             return
         }
     }

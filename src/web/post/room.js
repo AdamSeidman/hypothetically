@@ -9,7 +9,10 @@ const { joinRoom } = require('../sockets')
 
 module.exports = function (req, res) {
     let code = Games.makeRoom(req.user.id, req.body.isPublic)
-    joinRoom(req.user.id, code)
-    console.log(`User ${req.user.id} created room ${code}`)
-    return { code }
+    if (code) {
+        joinRoom(req.user.id, code)
+        console.log(`User ${req.user.id} created room ${code}`)
+        return { code }
+    }
+    return 400
 }

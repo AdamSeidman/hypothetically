@@ -47,3 +47,7 @@ function makeRoom(isPublic) {
     isPublic = !!isPublic
     return standardPOST('room', { isPublic })
 }
+
+function getPublicGames() {
+    return standardGET('publicGames')
+}

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Lobbies</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/site.css">
+    <link rel="stylesheet" href="./styles.css">
+    <script src="/assets/js/lib/jquery.min.js"></script>
+    <script src="/assets/js/site.js" defer></script>
+    <script src="./lobbies.js" defer></script>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <header class="navbar">
+        <div class="navbar-container">
+            <a href="/" class="navbar-logo">Games!</a>
+            <nav class="navbar-links">
+                <a href="/lobbies" class="navbar-link active">Lobbies</a>
+                <a href="/admin" id="submit-link" class="navbar-link hidden">Submit Items</a>
+                <a href="/profile" class="navbar-link">Profile</a>
+                <a href="/logout" class="navbar-link logout">Logout</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="lobbies-page">
+        <!-- Public Lobbies Section -->
+        <div class="lobbies-container">
+            <h2>Public Game Lobbies</h2>
+            <div class="table-wrapper">
+                <table class="lobbies-table">
+                    <thead>
+                        <tr>
+                            <th>Host</th>
+                            <th>Players</th>
+                            <th>Room Code</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lobby-list"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Sidebar (Stacked Asides) -->
+        <div class="sidebar">
+            <!-- Join Private Lobby -->
+            <aside class="private-game-container">
+                <h3>Join Private Lobby</h3>
+                <input type="text" id="room-code" placeholder="Enter room code" maxlength="6">
+                <button onclick="joinPrivateLobby()">Join</button>
+            </aside>
+
+            <!-- Create Lobby -->
+            <aside class="create-lobby-container">
+                <h3>Host a Game</h3>
+                <button class="lobby-btn" onclick="createLobby(true)">Create Public Lobby</button><br>
+                <button class="lobby-btn" onclick="createLobby(false)">Create Private Lobby</button>
+            </aside>
+        </div>
+    </div>
+</body>
+</html>

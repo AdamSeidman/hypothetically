@@ -9,6 +9,8 @@ let rooms = {}
 let playerMap = {}
 
 class GameRoom {
+    #chatHistory = []
+
     constructor(hostId, isPublic) {
         if (playerMap[hostId]) {
             rooms[playerMap[hostId]].removePlayer(hostId)
@@ -21,6 +23,7 @@ class GameRoom {
         this.host = hostId
         this.players = [hostId]
         this.active = true
+        this.joinable = true
         this.isPublic = !!isPublic
         rooms[code] = this
         playerMap[hostId] = code
@@ -69,9 +72,20 @@ class GameRoom {
         delete rooms[this.code]
         return this.code
     }
+
+    addChatMessage(message) {
+        if (!message?.message) return
+        this.#chatHistory.push(message)
+        return message
+    }
+
+    get chatHistory() {
+        return JSON.parse(JSON.stringify(this.#chatHistory))
+    }
 }
 
 function makeRoom(hostId, isPublic) {
+    if (playerMap[hostId]) return
     let room = new GameRoom(hostId, isPublic)
     return room.code
 }
@@ -84,20 +98,22 @@ function deleteRoom(code) {
 
 function switchHost(code, newHostId) {
     let room = rooms[code]
-    if (!room) return
-    return room.switchHost(newHostId)
+    return room?.switchHost(newHostId)
 }
 
 function getHostOf(code) {
     let room = rooms[code]
-    if (!room) return
-    return room.host
+    return room?.host
 }
 
 function getPlayersOf(code) {
     let room = rooms[code]
-    if (!room) return
-    return JSON.parse(JSON.stringify(room.players))
+    if (!room?.players) return
+    let ret = {}
+    room.players.forEach(player => {
+        ret[player] = getDisplayName(player)
+    })
+    return ret
 }
 
 function getGameCodeOf(id) {
@@ -114,8 +130,34 @@ function getAllRooms() {
 
 function addToRoom(id, code) {
     let room = rooms[code]
-    if (!room) return
-    return room.addPlayer(id)
+    return room?.addPlayer(id)
+}
+
+function addChatMessage(message) {
+    if (!message?.message) return
+    let room = rooms[playerMap[message?.id]]
+    return room?.addChatMessage(message)
+}
+
+function getChatHistory(code) {
+    let room = rooms[code]
+    return room?.chatHistory
+}
+
+function getPublicGames() {
+    let games = []
+    Object.entries(rooms).forEach(([code, room]) => {
+        if (room.isPublic && room.active) {
+            games.push({
+                isPublic: true,
+                code,
+                joinable: room.joinable,
+                hostName: getDisplayName(room.host),
+                numPlayers: room.players.length
+            })
+        }
+    })
+    return games
 }
 
 module.exports = {
@@ -126,5 +168,8 @@ module.exports = {
     getPlayersOf,
     getGameCodeOf,
     getAllRooms,
-    addToRoom
+    addToRoom,
+    addChatMessage,
+    getChatHistory,
+    getPublicGames
 }
