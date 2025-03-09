@@ -5,6 +5,7 @@ let messages = []
 let isHost = false
 let myName = '[DisplayName]'
 let myId = -1
+let hostId = -1
 
 function sendMessage(event) {
     if (event.key === 'Enter') {
@@ -42,6 +43,15 @@ function leaveLobby() {
     }
 }
 
+function updatePlayerList(players) {
+    if (!Array.isArray(players)) return
+    $('#player-list').html(
+        players.map(player => `<li id="player-${player.id}">${player.displayName || "Unknown Player"}</li>`).join('')
+    )
+    $('#player-' + myId).append(' (you)')
+    $('#player-' + hostId).prepend('<i class="fa-solid fa-crown"></i>&nbsp;')
+}
+
 $(document).ready(() => {
     let room = {}
     getCurrentRoom()
@@ -64,9 +74,8 @@ $(document).ready(() => {
                 if (room.yourName) {
                     myName = room.yourName
                 }
-                if (room.id) {
-                    myId = room.id
-                }
+                myId = room.id
+                hostId = room.host
                 $('#room-code').text('Room Code: ' + room.code)
                 Object.entries(room.players).forEach(([id, displayName]) => {
                     if (id == room.host) {
@@ -91,9 +100,7 @@ $(document).ready(() => {
                     }
                     newChatEvent(msg)
                 })
-                $('#player-list').html(
-                    players.map(player => `<li>${player.displayName || "Unknown Player"}</li>`).join('')
-                )
+                updatePlayerList(players)
             } else {
                 window.location.href = '/lobbies'
             }
@@ -109,7 +116,7 @@ function joinRoomEvent(data) {
     if (exists || players.length >= MAX_PLAYERS) return
     players.push(data)
     $('#player-list').html(
-        players.map(player => `<li>${player.displayName || "Unknown Player"}</li>`).join('')
+        players.map(player => `<li id="player-${player.id}">${player.displayName || "Unknown Player"}</li>`).join('')
     )
     updateChatWindow(`${data.displayName || "Unknown Player"} joined the room`)
 }
@@ -118,8 +125,6 @@ function leaveRoomEvent(data) {
     let player = players.find(x => x.id === data?.id)
     if (!player) return
     players = players.filter(x => x.id === data.id)
-    $('#player-list').html(
-        players.map(player => `<li>${player.displayName || "Unknown Player"}</li>`).join('')
-    )
+    updatePlayerList(players)
     updateChatWindow(`${data.displayName || "Unknown Player"} left the room`)
 }

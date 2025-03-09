@@ -1,4 +1,5 @@
 const MAX_PLAYERS = 12
+const ROOM_CODE_LENGTH = 7
 
 function joinLobby(code) {
     joinGame(code)
@@ -13,7 +14,7 @@ function joinLobby(code) {
 
 function joinPrivateLobby() {
     const code = document.getElementById("room-code").value.toUpperCase().trim()
-    if (code.length !== 6) {
+    if (code.length !== ROOM_CODE_LENGTH) {
         alert("Invalid room code")
         return
     }

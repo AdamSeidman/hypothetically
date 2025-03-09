@@ -2,7 +2,7 @@
  * Utilities used in game code
  */
 
-const ROOM_CODE_LENGTH = 6
+const ROOM_CODE_LENGTH = 7
 const BANNED_ROOM_CODE_LETTERS = ['I', 'L', 'K']
 
 module.exports = {

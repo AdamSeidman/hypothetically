@@ -19,7 +19,8 @@ module.exports = function (req, res) {
         players: Games.getPlayersOf(code),
         host: Games.getHostOf(code),
         yourName: getDisplayName(req.user.id),
-        none: false
+        none: false,
+        id: req.user.id
     }
     ret.isHost = ret.host == req.user.id
     res.send(ret)
