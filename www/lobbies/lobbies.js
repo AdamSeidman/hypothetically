@@ -18,13 +18,15 @@ function refreshLobbies() {
         let tableContents = ''
         games.forEach(({ code, joinable, hostName, numPlayers }) => {
             tableContents += `
-                <td>${hostName}</td>
-                <td>${numPlayers}/${MAX_PLAYERS}</td>
-                <td>${code}</td>
-                <td>
-                    <button onclick="joinLobby('${code}')" ${(joinable && numPlayers < MAX_PLAYERS)? '' : 'disabled'}>
-                        Join</button>
-                </td>
+                <tr>
+                    <td>${hostName}</td>
+                    <td>${numPlayers}/${MAX_PLAYERS}</td>
+                    <td>${code}</td>
+                    <td>
+                        <button onclick="joinLobby('${code}')" ${(joinable && numPlayers < MAX_PLAYERS)? '' : 'disabled'}>
+                            Join</button>
+                    </td>
+                </tr>
             `
         })
         $('tbody').html(tableContents)
