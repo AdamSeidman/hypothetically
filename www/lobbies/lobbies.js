@@ -12,12 +12,18 @@ function joinLobby(code) {
 }
 
 function joinPrivateLobby() {
-    const code = document.getElementById("room-code").value.toUpperCase()
+    const code = document.getElementById("room-code").value.toUpperCase().trim()
     if (code.length !== 6) {
         alert("Invalid room code")
         return
     }
-    window.location.href = `/lobby?${code}`
+    joinGame(code)
+        .then(() => {
+            window.location.href = '/lobby'
+        })
+        .catch(() => {
+            alert('Could not find room!')
+        })
 }
 
 function refreshLobbies() {
@@ -49,7 +55,7 @@ function refreshLobbies() {
 
 function createLobby(isPublic) {
     makeRoom(isPublic)
-        .then((data) => {
+        .then(() => {
             window.location.href = '/lobby'
         })
         .catch((err) => {
@@ -59,3 +65,4 @@ function createLobby(isPublic) {
 }
 
 $(document).ready(refreshLobbies)
+setInterval(refreshLobbies, 2000)

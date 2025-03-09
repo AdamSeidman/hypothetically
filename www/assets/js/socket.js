@@ -52,6 +52,9 @@ function joinRoom(code) {
 
 function leaveRoom() {
     socket.emit('leaveGame', {})
+    setTimeout(() => {
+        window.location.href = '/lobby'
+    }, 100)
 }
 
 function sendChat(message) {

@@ -1,9 +1,8 @@
 /**
- * Leave a game with WebSockets
+ * Leave a game with Webrequire('../sockets')
  */
 
 const Games = require('../../game/gameManager')
-const Sockets = require('../sockets')
 
 function handle(message, socket, id) {
     let code = Games.getGameCodeOf(id)
@@ -15,9 +14,9 @@ function handle(message, socket, id) {
     socket.emit('roomLeft', { code, id })
     if (ret) {
         socket.to(code).emit('roomDisbanded', { code, id })
-        Sockets.disbandRoom(code)
+        require('../sockets').disbandRoom(code)
     } else {
-        Sockets.leaveRoom(id, code)
+        require('../sockets').leaveRoom(id, code)
     }
 }
 

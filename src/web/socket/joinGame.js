@@ -15,7 +15,8 @@ function handle(message, socket, id) {
                 code: message.code,
                 chatHistory: Games.getChatHistory(message.code),
                 players: Games.getPlayersOf(message.code),
-                host: Games.getHostOf(message.code)
+                host: Games.getHostOf(message.code),
+                id
             })
             return
         }

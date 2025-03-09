@@ -62,7 +62,10 @@ function leaveRoom(id, code) {
     let socket = sockets[id]
     if (!socket) return
     if (socket.room === code) {
-        socket.to(code).emit('leaveRoom', { id })
+        socket.to(code).emit('leaveRoom', {
+            id,
+            displayName: getDisplayName(id)
+        })
         socket.leave(socket.room)
         socket.room = null
     }

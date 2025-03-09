@@ -4,14 +4,14 @@ let players = []
 let messages = []
 let isHost = false
 let myName = '[DisplayName]'
+let myId = -1
 
 function sendMessage(event) {
     if (event.key === 'Enter') {
         const message = document.getElementById('chat-input').value;
         if (message.trim()) {
-            // Send the message to the server
-            sendChatMessage(message);
-            document.getElementById('chat-input').value = ''; // Clear input
+            sendChatMessage(message)
+            document.getElementById('chat-input').value = ''
         }
     }
 }
@@ -23,20 +23,10 @@ function sendChatMessage(message) {
 
 function updateChatWindow(message, id) {
     messages.push([message, id])
-    const chatWindow = document.getElementById('chat-window');
-    const messageElement = document.createElement('div');
-    messageElement.textContent = message;
-    chatWindow.appendChild(messageElement);
-}
-
-function updatePlayerList(players) {
-    const playerList = document.getElementById('player-list');
-    playerList.innerHTML = ''; // Clear current list
-    players.forEach(player => {
-        const listItem = document.createElement('li');
-        listItem.textContent = player;
-        playerList.appendChild(listItem);
-    });
+    const chatWindow = document.getElementById('chat-window')
+    const messageElement = document.createElement('div')
+    messageElement.textContent = message
+    chatWindow.appendChild(messageElement)
 }
 
 function startGame() {
@@ -52,7 +42,6 @@ function leaveLobby() {
     }
 }
 
-// Fetch lobby details when the page loads
 $(document).ready(() => {
     let room = {}
     getCurrentRoom()
@@ -75,6 +64,9 @@ $(document).ready(() => {
                 if (room.yourName) {
                     myName = room.yourName
                 }
+                if (room.id) {
+                    myId = room.id
+                }
                 $('#room-code').text('Room Code: ' + room.code)
                 Object.entries(room.players).forEach(([id, displayName]) => {
                     if (id == room.host) {
@@ -92,8 +84,11 @@ $(document).ready(() => {
                         })
                     }
                 })
+                updateChatWindow('(Room Created)', 0)
                 room.chatHistory.forEach(msg => {
-                    // TODO Determine if "(me)" needs to go on the message
+                    if (msg.id == myId) {
+                        msg.displayName += ' (me)'
+                    }
                     newChatEvent(msg)
                 })
                 $('#player-list').html(
@@ -116,6 +111,7 @@ function joinRoomEvent(data) {
     $('#player-list').html(
         players.map(player => `<li>${player.displayName || "Unknown Player"}</li>`).join('')
     )
+    updateChatWindow(`${data.displayName || "Unknown Player"} joined the room`)
 }
 
 function leaveRoomEvent(data) {
@@ -125,4 +121,5 @@ function leaveRoomEvent(data) {
     $('#player-list').html(
         players.map(player => `<li>${player.displayName || "Unknown Player"}</li>`).join('')
     )
+    updateChatWindow(`${data.displayName || "Unknown Player"} left the room`)
 }
