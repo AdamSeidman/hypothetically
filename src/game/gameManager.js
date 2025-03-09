@@ -133,6 +133,18 @@ function addToRoom(id, code) {
     return room?.addPlayer(id)
 }
 
+function removeFromRoom(id) {
+    let code = playerMap[id]
+    let room = rooms[code]
+    if (!room) return
+    if (room.host == id) {
+        room.conclude()
+        return code
+    } else {
+        room.removePlayer(id)
+    }
+}
+
 function addChatMessage(message) {
     if (!message?.message) return
     let room = rooms[playerMap[message?.id]]
@@ -169,6 +181,7 @@ module.exports = {
     getGameCodeOf,
     getAllRooms,
     addToRoom,
+    removeFromRoom,
     addChatMessage,
     getChatHistory,
     getPublicGames

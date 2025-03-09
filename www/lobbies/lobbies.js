@@ -1,7 +1,14 @@
 const MAX_PLAYERS = 12
 
 function joinLobby(code) {
-    window.location.href = `/lobby?${code}`
+    joinGame(code)
+        .then(() => {
+            window.location.href = '/lobby'
+        })
+        .catch((err) => {
+            alert('Could not join lobby!')
+            console.error(err)
+        })
 }
 
 function joinPrivateLobby() {
@@ -14,7 +21,14 @@ function joinPrivateLobby() {
 }
 
 function refreshLobbies() {
-    getPublicGames().then(({ games }) => {
+    let getGames = getPublicGames()
+    getCurrentRoom().then(async ({ none }) => {
+        if (!none) {
+            await getGames
+            window.location.href = '/Lobby'
+        }
+    })
+    getGames.then(({ games }) => {
         let tableContents = ''
         games.forEach(({ code, joinable, hostName, numPlayers }) => {
             tableContents += `
@@ -36,8 +50,7 @@ function refreshLobbies() {
 function createLobby(isPublic) {
     makeRoom(isPublic)
         .then((data) => {
-            alert('Room made!')
-            console.log(data) // TODO
+            window.location.href = '/lobby'
         })
         .catch((err) => {
             alert('Could not make room!')

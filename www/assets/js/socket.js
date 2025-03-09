@@ -1,15 +1,21 @@
 const socket = io() // TODO
 
 socket.on('newChat', (data) => {
-    console.log('new chat', data)
+    if (typeof newChatEvent === 'function') {
+        newChatEvent(data)
+    }
 })
 
 socket.on('joinRoom', (data) => {
-    console.log('join room', data)
+    if (typeof joinRoomEvent === 'function') {
+        joinRoomEvent(data)
+    }
 })
 
 socket.on('leaveRoom', (data) => {
-    console.log('leave room', data)
+    if (typeof leaveRoomEvent === 'function') {
+        leaveRoomEvent(data)
+    }
 })
 
 socket.on('roomJoined', (data) => {
@@ -24,9 +30,28 @@ socket.on('chatSendFailure', (data) => {
     console.log('chat send failure', data)
 })
 
+socket.on('roomLeaveFailed', (data) => {
+    console.log('room leave failed', data)
+})
+
+socket.on('roomLeft', (data) => {
+    console.log('room left', data)
+    window.location.href = "/lobbies"
+})
+
+socket.on('roomDisbanded', (data) => {
+    console.log('room disbanded', data)
+    alert('Host has left the room!')
+    window.location.href = "/lobbies"
+})
+
 function joinRoom(code) {
     if (!code) return
     socket.emit('joinGame', { code })
+}
+
+function leaveRoom() {
+    socket.emit('leaveGame', {})
 }
 
 function sendChat(message) {

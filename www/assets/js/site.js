@@ -2,8 +2,14 @@ function standardREQUEST(ep, query, options) {
     return new Promise((resolve, reject) => {
         try {
             fetch(`/api/${ep}${(typeof query !== 'undefined')? '?' : ''}${[(query || [])].flat().join('&')}`, options)
-                .then(data => data.json())
+                .then(data => {
+                    if (data.ok) {
+                        return data.json()
+                    }
+                    reject(data)
+                })
                 .then(json => resolve(json))
+                .catch(err => reject(err))
         } catch (error) {
             reject(error)
         }
@@ -50,4 +56,12 @@ function makeRoom(isPublic) {
 
 function getPublicGames() {
     return standardGET('publicGames')
+}
+
+function getCurrentRoom() {
+    return standardGET('currentRoom')
+}
+
+function joinGame(code) {
+    return standardPUT('joinGame', { code })
 }
