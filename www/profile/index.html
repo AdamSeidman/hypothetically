@@ -9,6 +9,7 @@
     <script src="/assets/js/lib/jquery.min.js"></script>
     <script src="/assets/js/site.js" defer></script>
     <script src="./profile.js" defer></script>
+    <script src="https://kit.fontawesome.com/a843fa2d6a.js" crossorigin="anonymous" defer></script>
 </head>
 <body>
     <!-- Navigation Bar -->
@@ -32,7 +33,12 @@
                 <img id="photo" class="profile-pic hidden" alt="Profile Picture">
                 <p><strong>Name:</strong> <span id="name"></span></p>
                 <p><strong>Email:</strong> <span id="email"></span></p>
-                <p><strong>Display Name:</strong> <span id="display-name"></span></p>
+                <p>
+                    <strong>Display Name:</strong> <span id="display-name"></span>&nbsp;
+                    <button class="pointable" onclick="editDisplayName()">
+                        <i class="fa-solid fa-pencil"></i>
+                    </button>
+                </p>
             </div>
         </div>
     </div>

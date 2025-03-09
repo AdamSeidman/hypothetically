@@ -1,5 +1,5 @@
 /**
- * Leave a game with Webrequire('../sockets')
+ * Leave a game with WebSockets
  */
 
 const Games = require('../../game/gameManager')

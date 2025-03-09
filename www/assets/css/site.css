@@ -2,6 +2,10 @@
     display: none !important;
 }
 
+.pointable {
+    cursor: pointer;
+}
+
 /* Navbar Styling */
 .navbar {
     background-color: #4285F4;
