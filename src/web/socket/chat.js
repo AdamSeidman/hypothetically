@@ -5,6 +5,8 @@
 const Games = require('../../game/gameManager')
 const { getDisplayName } = require('../../db/tables/users')
 
+let Sockets = undefined
+
 function handle(message, socket, id) {
     let ret = Games.addChatMessage({
         message: message.message,
@@ -12,8 +14,11 @@ function handle(message, socket, id) {
         id
     })
     if (ret) {
+        if (!Sockets) {
+            Sockets = require('../sockets')
+        }
         console.log(`Chat from ${ret.displayName} (${ret.id}): "${ret.message}"`)
-        require('../sockets').sendToRoomById(id, 'newChat', {
+        Sockets.sendToRoomById(id, 'newChat', {
             message: message.message,
             from: socket.user,
             displayName: getDisplayName(id),

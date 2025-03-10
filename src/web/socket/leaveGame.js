@@ -4,8 +4,13 @@
 
 const Games = require('../../game/gameManager')
 
+let Sockets = undefined
+
 function handle(message, socket, id) {
     let code = Games.getGameCodeOf(id)
+    if (!Sockets) {
+        Sockets = require('../sockets')
+    }
     if (!code) {
         socket.emit('roomLeaveFailed', { id })
         return
@@ -14,9 +19,9 @@ function handle(message, socket, id) {
     socket.emit('roomLeft', { code, id })
     if (ret) {
         socket.to(code).emit('roomDisbanded', { code, id })
-        require('../sockets').disbandRoom(code)
+        Sockets.disbandRoom(code)
     } else {
-        require('../sockets').leaveRoom(id, code)
+        Sockets.leaveRoom(id, code)
     }
 }
 

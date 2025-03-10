@@ -4,13 +4,18 @@
 
 const Games = require('../../game/gameManager')
 
+let Sockets = undefined
+
 function handle(message, socket, id) {
     let rooms = Games.getAllRooms()
+    if (!Sockets) {
+        Sockets = require('../sockets')
+    }
     if (Object.keys(rooms).includes(message.code)) {
         let ret = Games.addToRoom(id, message.code)
         if (ret) {
             console.log(`User ${id} joined room ${message.code}`)
-            require('../sockets').joinRoom(id, message.code)
+            Sockets.joinRoom(id, message.code)
             socket.emit('roomJoined', { 
                 code: message.code,
                 chatHistory: Games.getChatHistory(message.code),

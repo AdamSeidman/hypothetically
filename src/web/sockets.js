@@ -8,6 +8,7 @@ const { getDisplayName } = require('../db/tables/users')
 
 const sockets = {}
 const handlers = []
+const eventHandlers = {}
 
 fs.readdirSync(path.join(__dirname, 'socket')).forEach((file) => {
     if (path.extname(file) === '.js') {
@@ -24,7 +25,10 @@ function openSocket(id, socket) {
     handlers.forEach(event => {
         socket.on(event, (message) => {
             if (socket.user) {
-                require(`./socket/${event}`).handle(message, socket, id)
+                if (!eventHandlers[event]) {
+                    eventHandlers[event] = require(`./socket/${event}`)
+                }
+                eventHandlers[event].handle(message, socket, id)
             } else {
                 console.error(`Received '${event}' message with no socket user!`, message)
             }
@@ -89,6 +93,7 @@ function sendToRoom(socket, message, payload) {
 }
 
 function sendToRoomByCode(code, message, payload) {
+    if (!code) return
     let socket = Object.values(sockets).find(x => x.room === code)
     if (socket) {
         socket.to(code).emit(message, payload)

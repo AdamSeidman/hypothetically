@@ -115,9 +115,7 @@ function joinRoomEvent(data) {
     let exists = players.find(x => x.id === data?.id)
     if (exists || players.length >= MAX_PLAYERS) return
     players.push(data)
-    $('#player-list').html(
-        players.map(player => `<li id="player-${player.id}">${player.displayName || "Unknown Player"}</li>`).join('')
-    )
+    updatePlayerList(players)
     updateChatWindow(`${data.displayName || "Unknown Player"} joined the room`)
 }
 

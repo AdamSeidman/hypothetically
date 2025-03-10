@@ -42,6 +42,9 @@ class GameRoom {
     removePlayer(id) {
         if (this.players.length <= 1) {
             delete rooms[this.code]
+            if (playerMap[id]) {
+                delete playerMap[id]
+            }
             return
         }
         if (!this.players.includes(id)) return
@@ -148,7 +151,8 @@ function removeFromRoom(id) {
 function addChatMessage(message) {
     if (!message?.message) return
     let room = rooms[playerMap[message?.id]]
-    return room?.addChatMessage(message)
+    if (!room || !room.players.includes(message?.id)) return
+    return room.addChatMessage(message)
 }
 
 function getChatHistory(code) {
