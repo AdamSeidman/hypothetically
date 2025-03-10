@@ -40,9 +40,13 @@ socket.on('roomLeft', (data) => {
 })
 
 socket.on('roomDisbanded', (data) => {
-    console.log('room disbanded', data)
     alert('Host has left the room!')
     window.location.href = "/lobbies"
+})
+
+socket.on('loginLocationChanged', (data) => {
+    alert('You have logged in from a different location!')
+    window.location.href = '/'
 })
 
 function joinRoom(code) {

@@ -5,6 +5,7 @@ const fs = require('fs')
 const path = require('path')
 const Game = require('../game/gameManager')
 const { getDisplayName } = require('../db/tables/users')
+const { randomUUID } = require('crypto')
 
 const sockets = {}
 const handlers = []
@@ -21,14 +22,25 @@ fs.readdirSync(path.join(__dirname, 'socket')).forEach((file) => {
 
 function openSocket(id, socket) {
     console.log('Socket opened.', id)
+    if (sockets[id]) {
+        sockets[id].emit('loginLocationChanged')
+        if (sockets[id].room) {
+            sockets[id].leave(sockets[id].room)
+        }
+    }
+    socket.uuid = randomUUID()
     sockets[id] = socket
     handlers.forEach(event => {
         socket.on(event, (message) => {
             if (socket.user) {
-                if (!eventHandlers[event]) {
-                    eventHandlers[event] = require(`./socket/${event}`)
+                if (sockets[id].uuid === socket.uuid) {
+                    if (!eventHandlers[event]) {
+                        eventHandlers[event] = require(`./socket/${event}`)
+                    }
+                    eventHandlers[event].handle(message, socket, id)
+                } else {
+                    console.warn(`Received '${event}' message on stale socket!`, id, message)
                 }
-                eventHandlers[event].handle(message, socket, id)
             } else {
                 console.error(`Received '${event}' message with no socket user!`, message)
             }
@@ -42,8 +54,10 @@ function openSocket(id, socket) {
     }
     socket.on('disconnect', () => {
         console.log('Socket closed.', id)
-        if (sockets[id]) {
+        if (sockets[id] && sockets[id].uuid === socket.uuid) {
             delete sockets[id]
+        } else {
+            console.warn('Socket was stale or missing!', id)
         }
     })
 }
