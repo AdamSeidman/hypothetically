@@ -25,6 +25,7 @@ class GameRoom {
         this.active = true
         this.joinable = true
         this.isPublic = !!isPublic
+        this.gameObj = null
         rooms[code] = this
         playerMap[hostId] = code
     }
@@ -72,6 +73,7 @@ class GameRoom {
                 delete playerMap[id]
             }
         })
+        console.log(`Deleting room ${this.code}.`)
         delete rooms[this.code]
         return this.code
     }
@@ -84,6 +86,10 @@ class GameRoom {
 
     get chatHistory() {
         return JSON.parse(JSON.stringify(this.#chatHistory))
+    }
+
+    get game() {
+        return this.gameObj
     }
 }
 
@@ -133,6 +139,9 @@ function getAllRooms() {
 
 function addToRoom(id, code) {
     let room = rooms[code]
+    if (room) {
+        room.addChatMessage({ message: `${getDisplayName(id)} joined the room` })
+    }
     return room?.addPlayer(id)
 }
 
@@ -144,6 +153,7 @@ function removeFromRoom(id) {
         room.conclude()
         return code
     } else {
+        room.addChatMessage({ message: `${getDisplayName(id)} left the room` })
         room.removePlayer(id)
     }
 }

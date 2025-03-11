@@ -1,4 +1,4 @@
-const socket = io() // TODO
+const socket = io()
 
 socket.on('newChat', (data) => {
     if (typeof newChatEvent === 'function') {
@@ -66,3 +66,9 @@ function sendChat(message) {
     message = message.trim()
     socket.emit('chat', { message })
 }
+
+setInterval(() => {
+    socket.emit('ping', {
+        page: window.location.href
+    })
+}, (1000 * 60))

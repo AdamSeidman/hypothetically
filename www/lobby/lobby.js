@@ -25,9 +25,13 @@ function sendChatMessage(message) {
 function updateChatWindow(message, id) {
     messages.push([message, id])
     const chatWindow = document.getElementById('chat-window')
+    const isAtBottom = chatWindow.scrollHeight - chatWindow.scrollTop <= chatWindow.clientHeight + 5
     const messageElement = document.createElement('div')
     messageElement.textContent = message
     chatWindow.appendChild(messageElement)
+    if (isAtBottom) {
+        chatWindow.scrollTop = chatWindow.scrollHeight
+    }
 }
 
 function startGame() {
@@ -108,7 +112,11 @@ $(document).ready(() => {
 })
 
 function newChatEvent(data) {
-    updateChatWindow(`${data.displayName}: ${data.message}`, data.id)
+    if (data.displayName) {
+        updateChatWindow(`${data.displayName}: ${data.message}`, data.id)
+    } else {
+        updateChatWindow(data.message, -1)
+    }
 }
 
 function joinRoomEvent(data) {
@@ -122,7 +130,7 @@ function joinRoomEvent(data) {
 function leaveRoomEvent(data) {
     let player = players.find(x => x.id === data?.id)
     if (!player) return
-    players = players.filter(x => x.id === data.id)
+    players = players.filter(x => x.id !== data.id)
     updatePlayerList(players)
     updateChatWindow(`${data.displayName || "Unknown Player"} left the room`)
 }
