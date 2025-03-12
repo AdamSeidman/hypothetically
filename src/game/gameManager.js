@@ -8,8 +8,12 @@ const { getDisplayName } = require('../db/tables/users')
 let rooms = {}
 let playerMap = {}
 
+const DEFAULT_GAME_TYPE = 'hypothetically'
+
 class GameRoom {
     #chatHistory = []
+    #gameObj = null
+    #gameType = DEFAULT_GAME_TYPE
 
     constructor(hostId, isPublic) {
         if (playerMap[hostId]) {
@@ -24,8 +28,8 @@ class GameRoom {
         this.players = [hostId]
         this.active = true
         this.joinable = true
+        this.running = false
         this.isPublic = !!isPublic
-        this.gameObj = null
         rooms[code] = this
         playerMap[hostId] = code
     }
@@ -84,12 +88,23 @@ class GameRoom {
         return message
     }
 
+    setGameType(type, id) {
+        if (id == this.host) {
+            this.#gameType = type
+            return this.code
+        }
+    }
+
     get chatHistory() {
         return JSON.parse(JSON.stringify(this.#chatHistory))
     }
 
     get game() {
         return this.gameObj
+    }
+
+    get gameType() {
+        return this.#gameType
     }
 }
 
@@ -170,6 +185,11 @@ function getChatHistory(code) {
     return room?.chatHistory
 }
 
+function getGameType(code) {
+    let room = rooms[code]
+    return room?.gameType
+}
+
 function getPublicGames() {
     let games = []
     Object.entries(rooms).forEach(([code, room]) => {
@@ -186,6 +206,13 @@ function getPublicGames() {
     return games
 }
 
+function setGameType(type, id) {
+    if (typeof type !== 'string') return
+    let room = rooms[playerMap[id]]
+    if (!room || room.running) return
+    return room.setGameType(type, id)
+}
+
 module.exports = {
     makeRoom,
     deleteRoom,
@@ -198,5 +225,7 @@ module.exports = {
     removeFromRoom,
     addChatMessage,
     getChatHistory,
-    getPublicGames
+    getPublicGames,
+    setGameType,
+    getGameType
 }

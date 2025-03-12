@@ -75,9 +75,18 @@ $(document).ready(() => {
         .finally(() => {
             if (room) {
                 isHost = room.isHost
+                if (isHost) {
+                    let gameModeSelect = $('#game-mode')
+                    gameModeSelect.attr('disabled', false)
+                    gameModeSelect.change(() => {
+                        setGameType(gameModeSelect.val())
+                    })
+                }
                 if (room.yourName) {
                     myName = room.yourName
                 }
+                $('#game-mode').val(room.gameType)
+                $('#game-mode-default').remove()
                 myId = room.id
                 hostId = room.host
                 $('#room-code').text('Room Code: ' + room.code)
@@ -133,4 +142,10 @@ function leaveRoomEvent(data) {
     players = players.filter(x => x.id !== data.id)
     updatePlayerList(players)
     updateChatWindow(`${data.displayName || "Unknown Player"} left the room`)
+}
+
+function gameTypeChangedEvent(data) {
+    if (!data?.type) return
+    if (typeof data.type !== 'string' || data.type.trim().length < 1) return
+    $('#game-mode').val(data.type.trim())
 }

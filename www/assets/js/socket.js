@@ -49,6 +49,12 @@ socket.on('loginLocationChanged', (data) => {
     window.location.href = '/'
 })
 
+socket.on('gameTypeChanged', (data) => {
+    if (typeof gameTypeChangedEvent === 'function') {
+        gameTypeChangedEvent(data)
+    }
+})
+
 function joinRoom(code) {
     if (!code) return
     socket.emit('joinGame', { code })
@@ -65,6 +71,12 @@ function sendChat(message) {
     if (typeof message !== 'string' || message.trim().length < 1) return
     message = message.trim()
     socket.emit('chat', { message })
+}
+
+function setGameType(type) {
+    if (typeof type !== 'string' || type.trim().length < 1) return
+    type = type.trim()
+    socket.emit('setGameType', { type })
 }
 
 setInterval(() => {
