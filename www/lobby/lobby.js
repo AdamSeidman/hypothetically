@@ -136,6 +136,7 @@ $(document).ready(() => {
                 sessionStorage.setItem('myName', (room.yourName || 'You'))
                 $('#game-mode').val(room.gameType)
                 $('#game-mode-default').remove()
+                sessionStorage.setItem('gameMode', room.gameType)
                 sessionStorage.setItem('myId', room.id)
                 sessionStorage.setItem('hostId', room.host)
                 sessionStorage.setItem('roomCode', room.code)
@@ -205,6 +206,7 @@ function leaveRoomEvent(data) {
 function gameTypeChangedEvent(data) {
     if (!data?.type) return
     if (typeof data.type !== 'string' || data.type.trim().length < 1) return
+    sessionStorage.setItem('gameMode', data.type.trim())
     $('#game-mode').val(data.type.trim())
 }
 
