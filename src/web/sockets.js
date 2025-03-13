@@ -126,6 +126,31 @@ function disbandRoom(code) {
     })
 }
 
+function kickFromRoom(id, code) {
+    if (!id || !code) return
+    let socket = sockets[id]
+    if (socket && socket.room === code) {
+        let name = getDisplayName(id)
+        socket.to(code).emit('leaveRoom', {
+            id,
+            displayName: name
+        })
+        console.log(`${name} (${id}) kicked from room ${code}.`)
+        socket.emit('kicked', {})
+        socket.leave(code)
+        socket.room = null
+        return code
+    } else {
+        console.error(`Could not find socket for ${id} (Room ${code})`)
+    }
+}
+
+function sendToId(id, message, payload) {
+    if (!sockets[id] || typeof message !== 'string' || !payload) return
+    sockets[id].emit(message, payload)
+    return true
+}
+
 module.exports = {
     openSocket,
     joinRoom,
@@ -133,5 +158,7 @@ module.exports = {
     sendToRoomById,
     sendToRoom,
     sendToRoomByCode,
-    disbandRoom
+    disbandRoom,
+    kickFromRoom,
+    sendToId
 }

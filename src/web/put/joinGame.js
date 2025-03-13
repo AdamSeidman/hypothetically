@@ -13,7 +13,13 @@ module.exports = async function (req, res) {
         return 400
     }
     let ret = Games.addToRoom(req.user.id, req.body.code)
-    if (ret) {
+    if (ret.failReason) {
+        console.log(`User ${req.user.id} could not join ${req.body.code}`)
+        return {
+            code: 400,
+            err: ret.failReason
+        }
+    } else if (ret) {
         console.log(`User ${req.user.id} joined room ${req.body.code}`)
         Sockets.sendToRoomByCode(req.body.code, 'joinRoom', {
             id: req.user.id,

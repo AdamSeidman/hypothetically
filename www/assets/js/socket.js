@@ -27,11 +27,11 @@ socket.on('roomJoinFailed', (data) => {
 })
 
 socket.on('chatSendFailure', (data) => {
-    console.log('chat send failure', data)
+    console.warn('chat send failure', data)
 })
 
 socket.on('roomLeaveFailed', (data) => {
-    console.log('room leave failed', data)
+    console.error('room leave failed', data)
 })
 
 socket.on('roomLeft', (data) => {
@@ -41,7 +41,9 @@ socket.on('roomLeft', (data) => {
 
 socket.on('roomDisbanded', (data) => {
     alert('Host has left the room!')
-    window.location.href = "/lobbies"
+    setTimeout(() => {
+        window.location.href = "/lobbies"
+    }, 100)
 })
 
 socket.on('loginLocationChanged', (data) => {
@@ -52,6 +54,12 @@ socket.on('loginLocationChanged', (data) => {
 socket.on('gameTypeChanged', (data) => {
     if (typeof gameTypeChangedEvent === 'function') {
         gameTypeChangedEvent(data)
+    }
+})
+
+socket.on('kicked', (data) => {
+    if (typeof kickedEvent === 'function') {
+        kickedEvent(data)
     }
 })
 

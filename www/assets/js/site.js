@@ -1,14 +1,19 @@
 function standardREQUEST(ep, query, options) {
     return new Promise((resolve, reject) => {
         try {
+            let err = false
             fetch(`/api/${ep}${(typeof query !== 'undefined')? '?' : ''}${[(query || [])].flat().join('&')}`, options)
                 .then(data => {
-                    if (data.ok) {
-                        return data.json()
-                    }
-                    reject(data)
+                    err = !data.ok
+                    return data.json()
                 })
-                .then(json => resolve(json))
+                .then(json => {
+                    if (err) {
+                        reject(json)
+                    } else {
+                        resolve(json)
+                    }
+                })
                 .catch(err => reject(err))
         } catch (error) {
             reject(error)
@@ -64,4 +69,8 @@ function getCurrentRoom() {
 
 function joinGame(code) {
     return standardPUT('joinGame', { code })
+}
+
+function kickPlayer(code, kickId) {
+    return standardPUT('kickPlayer', { code, kickId })
 }

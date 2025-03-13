@@ -26,6 +26,7 @@ class GameRoom {
         this.code = code
         this.host = hostId
         this.players = [hostId]
+        this.kickedPlayers = []
         this.active = true
         this.joinable = true
         this.running = false
@@ -35,13 +36,19 @@ class GameRoom {
     }
 
     addPlayer(id) {
-        if (this.players.includes(id)) return
+        if (this.players.includes(id)) return { failReason: 'You are already in this room!' }
+        if (this.kickedPlayers.includes(id)) return { failReason: 'You are not allowed to join this room!' }
         if (playerMap[id]) {
+            console.warn(`Removed player ${id} from ${playerMap[id]} to add to ${this.code}!`)
             rooms[playerMap[id]].removePlayer(id)
         }
         this.players.push(id)
         playerMap[id] = this.code
-        return id
+        return {
+            id,
+            pass: true,
+            code: this.code
+        }
     }
 
     removePlayer(id) {
@@ -93,6 +100,16 @@ class GameRoom {
             this.#gameType = type
             return this.code
         }
+    }
+
+    kickPlayer(id) {
+        if (!id || !this.players.includes(id)) return
+        if (this.host === id) return
+        let ret = this.removePlayer(id)
+        if (ret) {
+            this.kickedPlayers.push(id)
+        }
+        return ret
     }
 
     get chatHistory() {
@@ -154,10 +171,11 @@ function getAllRooms() {
 
 function addToRoom(id, code) {
     let room = rooms[code]
-    if (room) {
+    let ret = room?.addPlayer(id)
+    if (room && !ret?.failReason) {
         room.addChatMessage({ message: `${getDisplayName(id)} joined the room` })
     }
-    return room?.addPlayer(id)
+    return ret
 }
 
 function removeFromRoom(id) {
@@ -213,6 +231,15 @@ function setGameType(type, id) {
     return room.setGameType(type, id)
 }
 
+function kickPlayer(hostId, kickId, code) {
+    if (hostId === kickId) return
+    if (!hostId || !kickId || !code) return
+    if (playerMap[hostId] !== code || playerMap[kickId] !== code) return
+    let room = rooms[code]
+    room.addChatMessage({ message: `${getDisplayName(kickId)} left the room` })
+    return room.kickPlayer(kickId)
+}
+
 module.exports = {
     makeRoom,
     deleteRoom,
@@ -227,5 +254,6 @@ module.exports = {
     getChatHistory,
     getPublicGames,
     setGameType,
-    getGameType
+    getGameType,
+    kickPlayer
 }

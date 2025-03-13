@@ -1,30 +1,34 @@
 const MAX_PLAYERS = 12
 const ROOM_CODE_LENGTH = 7
 
-function joinLobby(code) {
+function performJoin(code, isPrivate) {
     joinGame(code)
         .then(() => {
             window.location.href = '/lobby'
         })
         .catch((err) => {
-            alert('Could not join lobby!')
-            console.error(err)
+            if (err.err) {
+                alert(err.err)
+            } else if (isPrivate) {
+                alert('Could not find room!')
+            } else {
+                alert('Error joining lobby!')
+                console.error(err)
+            }
         })
+}
+
+function joinLobby(code) {
+    performJoin(code, false)
 }
 
 function joinPrivateLobby() {
     const code = document.getElementById("room-code").value.toUpperCase().trim()
     if (code.length !== ROOM_CODE_LENGTH) {
-        alert("Invalid room code")
+        alert("Invalid Room Code")
         return
     }
-    joinGame(code)
-        .then(() => {
-            window.location.href = '/lobby'
-        })
-        .catch(() => {
-            alert('Could not find room!')
-        })
+    performJoin(code, true)
 }
 
 function refreshLobbies() {

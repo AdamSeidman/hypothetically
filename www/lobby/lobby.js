@@ -6,6 +6,7 @@ let isHost = false
 let myName = '[DisplayName]'
 let myId = -1
 let hostId = -1
+let roomCode = ""
 
 function sendMessage(event) {
     if (event.key === 'Enter') {
@@ -47,13 +48,38 @@ function leaveLobby() {
     }
 }
 
+function performKick(id) {
+    if (!id) return
+    let name = players.find(x => x.id == id)?.displayName
+    if (confirm(`Are you sure you want to kick ${name || '"Unknown Player"'}?`)) {
+        kickPlayer(roomCode, id).catch((err) => {
+            console.error('Failed to kick ' + name, err)
+            alert('Failed to kick player!')
+        })
+    }
+}
+
 function updatePlayerList(players) {
     if (!Array.isArray(players)) return
     $('#player-list').html(
-        players.map(player => `<li id="player-${player.id}">${player.displayName || "Unknown Player"}</li>`).join('')
+        players.map(player => `
+            <tr>
+                <td id="player-${player.id}" class="player-name">
+                    ${player.displayName || "Unknown Player"}
+                </td>
+                <td>&ensp;&ensp;</td>
+                <td>
+                    ${(player.id === hostId)? '&nbsp;' : 
+                        `<button onclick="performKick('${player.id}')" class="hidden kick-btn">Kick</button>`}
+                </td>
+            </tr>
+        `).join('')
     )
     $('#player-' + myId).append(' (you)')
     $('#player-' + hostId).prepend('<i class="fa-solid fa-crown"></i>&nbsp;')
+    if (myId === hostId) {
+        $('.kick-btn').toggleClass('hidden', false)
+    }
 }
 
 $(document).ready(() => {
@@ -89,6 +115,7 @@ $(document).ready(() => {
                 $('#game-mode-default').remove()
                 myId = room.id
                 hostId = room.host
+                roomCode = room.code
                 $('#room-code').text('Room Code: ' + room.code)
                 Object.entries(room.players).forEach(([id, displayName]) => {
                     if (id == room.host) {
@@ -148,4 +175,12 @@ function gameTypeChangedEvent(data) {
     if (!data?.type) return
     if (typeof data.type !== 'string' || data.type.trim().length < 1) return
     $('#game-mode').val(data.type.trim())
+}
+
+function kickedEvent(data) {
+    if (!data) return
+    alert('You were kicked from this room.')
+    setTimeout(() => {
+        window.location.href = '/lobbies'
+    }, 1)
 }
