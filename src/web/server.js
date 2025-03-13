@@ -122,7 +122,11 @@ app.get('/logout', (req, res) => {
                         if (typeof ret === 'number') {
                             res.status(ret).json({})
                         } else if (ret) {
-                            res.status(200).json(ret) // TODO THIS IS WHAT WE ARE DOING
+                            let code = ret.code
+                            if (typeof code !== 'number') {
+                                code = 200
+                            }
+                            res.status(code).json(ret)
                         }
                     }
                 })
