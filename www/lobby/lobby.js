@@ -83,6 +83,31 @@ function updatePlayerList(players) {
     }
 }
 
+function validateStillInRoom() {
+    getCurrentRoom()
+        .then((data) => {
+            if (data.none) {
+                throw new Error(data)
+            }
+            let roomCode = sessionStorage.getItem('roomCode')
+            if (!roomCode || room.code !== roomCode) {
+                throw new Error(room.code)
+            }
+            let isValid = sessionStorage.getItem('valid')
+            if (!isValid) {
+                throw new Error({ valid: false })
+            }
+        })
+        .catch((err) => {
+            sessionStorage.setItem('valid', false)
+            console.warn('Room no longer valid', err)
+            alert('Room is no longer valid!')
+            setTimeout(() => {
+                window.location.href = '/lobbies'
+            }, 100)
+        })
+}
+
 $(document).ready(() => {
     let room = {}
     getCurrentRoom()
@@ -140,6 +165,9 @@ $(document).ready(() => {
                     newChatEvent(msg)
                 })
                 updatePlayerList(players)
+                setTimeout(() => {
+                    setInterval(validateStillInRoom, (60 * 1000))
+                }, (120 * 1000))
                 sessionStorage.setItem('valid', true)
             } else {
                 sessionStorage.setItem('valid', false)
