@@ -35,11 +35,12 @@ socket.on('roomLeaveFailed', (data) => {
 })
 
 socket.on('roomLeft', (data) => {
-    console.log('room left', data)
+    sessionStorage.setItem('valid', false)
     window.location.href = "/lobbies"
 })
 
 socket.on('roomDisbanded', (data) => {
+    sessionStorage.setItem('valid', false)
     alert('Host has left the room!')
     setTimeout(() => {
         window.location.href = "/lobbies"
@@ -70,6 +71,7 @@ function joinRoom(code) {
 
 function leaveRoom() {
     socket.emit('leaveGame', {})
+    sessionStorage.setItem('valid', false)
     setTimeout(() => {
         window.location.href = '/lobby'
     }, 100)
