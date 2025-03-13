@@ -74,3 +74,17 @@ function joinGame(code) {
 function kickPlayer(code, kickId) {
     return standardPUT('kickPlayer', { code, kickId })
 }
+
+async function callbackAndNavigate(cb, url='/') {
+    await new Promise((resolve) => {
+        cb()
+        setTimeout(() => resolve(), 1)
+    })
+    setTimeout(() => {
+        window.location.href = url
+    }, 1)
+}
+
+async function alertAndNavigate(text, url) {
+    await callbackAndNavigate(() => alert(text), url)
+}
