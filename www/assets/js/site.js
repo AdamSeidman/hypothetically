@@ -88,3 +88,14 @@ async function callbackAndNavigate(cb, url='/') {
 async function alertAndNavigate(text, url) {
     await callbackAndNavigate(() => alert(text), url)
 }
+
+function renderPartial(partial, contentId='partial-content') {
+    fetch(`/partials/${partial}`)
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById(contentId).innerHTML = data
+        })
+        .catch(err => {
+            console.error('Failed to render partial!', err)
+        })
+}

@@ -2,6 +2,7 @@ const fs = require('fs')
 const cors = require('cors')
 const path = require('path')
 const express = require('express')
+const nunjucks = require('nunjucks')
 const passport = require('passport')
 const { Server } = require('socket.io')
 const bodyParser = require('body-parser')
@@ -133,6 +134,21 @@ app.get('/logout', (req, res) => {
             }
         }
     })
+})
+
+// NJK Partials
+nunjucks.configure(path.join(__dirname, 'partials'), { express: app })
+app.set('view engine', 'njk')
+
+const partialRenderers = {}
+fs.readdirSync(path.join(__dirname, 'partials')).forEach((file) => {
+    if (path.extname(file) === '.js') {
+        let partial = file.slice(0, file.indexOf('.'))
+        partialRenderers[partial] = require(`./partials/${partial}`)
+        app.get(`/partials/${partial}`, (req, res) => {
+            res.render(partial, partialRenderers[partial].get(req))
+        })
+    }
 })
 
 // WebSocket server setup
