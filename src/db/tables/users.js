@@ -8,6 +8,7 @@ let users = []
 let client = undefined
 
 const TABLE_NAME = 'users'
+const REFRESH_INTERVAL_MINS = 5
 
 async function create(supabase) {
     client = supabase
@@ -18,6 +19,14 @@ async function create(supabase) {
     else {
         users = data
     }
+    setInterval(async () => {
+        const { data, error } = await client.from(TABLE_NAME).select()
+        if (error) {
+            console.error('Error refreshing users!', error)
+        } else {
+            users = data
+        }
+    }, (REFRESH_INTERVAL_MINS * 60 * 1000))
 }
 
 async function login(googleData) {
