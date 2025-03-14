@@ -42,6 +42,9 @@ function isSessionValid() {
             })
             .finally(() => {
                 if (room) {
+                    if (code !== room.code) {
+                        sessionStorage.removeItem('myAvatar')
+                    }
                     if (!room.gameRunning) {
                         sessionStorage.setItem('valid', (room.host === hostId && room.id === myId && room.code == code))
                         resolve(SESSION_VALID_GO_TO_LOBBY)
@@ -64,11 +67,13 @@ function isSessionValid() {
                         return
                     } else {
                         sessionStorage.setItem('valid', false)
+                        sessionStorage.removeItem('myAvatar')
                         resolve(SESSION_NOT_VALID)
                         return
                     }
                 } else {
                     sessionStorage.setItem('valid', false)
+                    sessionStorage.removeItem('myAvatar')
                     resolve(SESSION_NOT_VALID)
                     return
                 }
@@ -77,6 +82,7 @@ function isSessionValid() {
 }
 
 function gameRenderEvent(data) {
+    console.log('Game render event', data)
     if (typeof data?.currentGamePage !== 'string' || !data.currentGameCode) return
     if (sessionStorage.getItem('roomCode') != data.currentGameCode) {
         console.error('Game render event occurred with wrong code!', data)
