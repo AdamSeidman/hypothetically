@@ -188,13 +188,7 @@ function avatarSuccessEvent(data) {
     checkWaitStartText(data)
     $('#selection-container').html(`
         <p>
-            <strong>
-                <span id="avatars-submitted-text">
-                    ${data.numAvatarsChosen}
-                </span>/<span id="total-avatars-text">
-                    ${data.totalPlayers}
-                </span>
-            </strong> Submitted
+            <strong id="avatars-submitted-text">${data.numAvatarsChosen} / ${data.totalPlayers} </strong> Submitted
         </p>
     `)
     updateAvatarDisplay()
@@ -202,8 +196,7 @@ function avatarSuccessEvent(data) {
 
 function newAvatarEvent(data) {
     if (submitted) {
-        $('#avatars-submitted-text').text(data.numAvatarsChosen)
-        $('#total-avatars-text').text(data.totalPlayers)
+        $('#avatars-submitted-text').text(`${data.numAvatarsChosen} / ${data.totalPlayers}`)
     } else {
         sessionStorage.setItem('latestAvatarInfo', JSON.stringify(data))
     }
