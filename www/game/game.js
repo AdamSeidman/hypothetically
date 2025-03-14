@@ -74,8 +74,10 @@ function submitAvatar() {
 }
 
 function updateAvatarDisplay() {
-    let players = sessionStorage.getItem('player') || '[]'
-    players = JSON.parse(players)
+    let playerMap = JSON.parse(sessionStorage.getItem('playerMap') || '{}')
+    let players = Object.entries(playerMap).map(([id, displayName]) => {
+        return { id, displayName }
+    })
     let avatarData = sessionStorage.getItem('avatarData') || '{}'
     avatarData = JSON.parse(avatarData)
     let myAvatar = sessionStorage.getItem('myAvatar')
