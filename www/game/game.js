@@ -17,11 +17,7 @@ function isSessionValid() {
         let myId = sessionStorage.getItem('myId') || ''
         let hostId = sessionStorage.getItem('hostId') || ''
         let gameMode = sessionStorage.getItem('gameMode') || 'invalid'
-        if (!VALID_GAMES.includes(gameMode) || typeof getCurrentRoom !== 'function') {
-            resolve(SESSION_NOT_VALID)
-            return
-        }
-        if (!code || !myId || !hostId) {
+        if (typeof getCurrentRoom !== 'function') {
             resolve(SESSION_NOT_VALID)
             return
         }
@@ -44,7 +40,12 @@ function isSessionValid() {
                     if (code !== room.code) {
                         sessionStorage.removeItem('myAvatar')
                     }
-                    if (!room.gameRunning) {
+                    if (!VALID_GAMES.includes(room.gameType)) {
+                        sessionStorage.setItem('valid', false)
+                        sessionStorage.removeItem('myAvatar')
+                        resolve(SESSION_NOT_VALID)
+                        return
+                    } else if (!room.gameRunning) {
                         sessionStorage.setItem('valid', (room.host === hostId && room.id === myId && room.code == code))
                         resolve(SESSION_VALID_GO_TO_LOBBY)
                         return
