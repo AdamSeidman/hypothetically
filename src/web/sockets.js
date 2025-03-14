@@ -112,14 +112,17 @@ function sendToRoom(socket, message, payload, includeSelf) {
 
 function sendToRoomByCode(code, message, payload) {
     if (!code) return
-    let socket = Object.values(sockets).find(x => x.room === code)
-    if (socket) {
-        socket.to(code).emit(message, payload)
-        socket.emit(message, payload)
-        return code
-    } else {
-        console.warn(`Could not find socket for code '${code}'`)
+    let roomSockets = Object.values(sockets).filter(x => x.room === code)
+    if ((roomSockets?.length || 0) < 1) {
+        console.warn(`Could not find socket(s) for code '${code}'`)
+        return
     }
+    roomSockets.forEach(socket => {
+        if (socket) {
+            socket.emit(message, payload)
+        }
+    })
+    return code
 }
 
 function disbandRoom(code) {
