@@ -167,7 +167,7 @@ $(document).ready(() => {
                 let character = randomArrayItem(Object.keys(characterAssetsBase64))
             
                 if (hasAvatar) {
-                    let data = room.avatarData.map[myId].split('|')
+                    let data = room.avatarData.map[room.id].split('|')
                     character = data[0]
                     color = data[1]
                 }
