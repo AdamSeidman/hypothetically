@@ -50,6 +50,7 @@ function isSessionValid() {
                     } else if (room.gameType === gameMode && room.host === hostId && room.id === myId && room.code == code) {
                         sessionStorage.setItem('valid', true)
                         sessionStorage.setItem('avatarData', JSON.stringify(room.avatarData))
+                        sessionStorage.setItem('playerMap', JSON.stringify(room.players))
                         resolve(SESSION_VALID)
                         return
                     } else if (VALID_GAMES.includes(room.gameType) && room.code && room.id) {
@@ -59,6 +60,7 @@ function isSessionValid() {
                         sessionStorage.setItem('roomCode', room.code)
                         sessionStorage.setItem('valid', true)
                         sessionStorage.setItem('avatarData', JSON.stringify(room.avatarData) || '{}')
+                        sessionStorage.setItem('playerMap', JSON.stringify(room.players))
                         resolve(SESSION_MADE_VALID)
                         return
                     } else {
@@ -139,6 +141,23 @@ function submitAvatar() {
     }
 }
 
+function updateAvatarDisplay() {
+    let playerMap = sessionStorage.getItem('players') || '{}'
+    playerMap = JSON.parse(playerMap)
+    $('#player-display').html(Object.entries(playerMap).map(([id, displayName]) => `
+        <div class="player-avatar" data-playerid="${id}" data-playername="${displayName}">
+            <img class="player-bkg-image" src="${avatarData.map[id]? backgroundAssetsBase64[avatarMap[id]].split('|')[1] : ''}"}>
+            <img class="player-character-image" src="${avatarData.map[id]? characterAssetsBase64[avatarMap[id]].split('|')[0] : ''}"}>
+            <div class="player-info">
+                <p class="player-name">${displayName}</p>
+                <p class="player-score hidden">
+                    Score: <span id="score-${id}">0</span>
+                </p>
+            </div>
+        </div>
+    `).join(''))
+}
+
 function avatarSuccessEvent(data) {
     submitted = true
     $('.arrow').html('&nbsp;')
@@ -154,6 +173,7 @@ function avatarSuccessEvent(data) {
             </strong> Submitted
         </p>
     `)
+    updateAvatarDisplay()
 }
 
 function newAvatarEvent(data) {
@@ -163,6 +183,7 @@ function newAvatarEvent(data) {
     } else {
         sessionStorage.setItem('latestAvatarInfo', JSON.stringify(data))
     }
+    updateAvatarDisplay()
 }
 
 $(document).ready(async () => {
@@ -199,5 +220,7 @@ $(document).ready(async () => {
 
     if (hasAvatar) {
         avatarSuccessEvent(avatarData)
+    } else {
+        updateAvatarDisplay()
     }
 })
