@@ -147,8 +147,10 @@ function updateAvatarDisplay() {
     avatarData = JSON.parse(avatarData)
     $('#player-display').html(players.map(({ id, displayName }) => `
         <div class="player-avatar" data-playerid="${id}" data-playername="${displayName}">
-            <img class="player-bkg-image" src="${avatarData.map[id]? backgroundAssetsBase64[avatarData.map[id].split('|')[1]] : ''}"}>
-            <img class="player-character-image" src="${avatarData.map[id]? characterAssetsBase64[avatarData.map[id].split('|')[0]] : ''}"}>
+            <img class="player-bkg-image" src="${
+                avatarData.map[id]? backgroundAssetsBase64[avatarData.map[id].split('|')[1]] : unknownBackgroundAssetBase64}"}>
+            <img class="player-character-image" src="${
+                avatarData.map[id]? characterAssetsBase64[avatarData.map[id].split('|')[0]] : unknownCharacterAssetBase64}"}>
             <div class="player-info">
                 <p class="player-name">${displayName}</p>
                 <p class="player-score">&nbsp;<span id="score-${id}"></span></p>
