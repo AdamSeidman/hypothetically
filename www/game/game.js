@@ -180,7 +180,7 @@ $(document).ready(() => {
                 localStorage.setItem('color', color)
             
                 if (hasAvatar) {
-                    avatarSuccessEvent(avatarData)
+                    avatarSuccessEvent(room.avatarData)
                 } else {
                     updateAvatarDisplay()
                 }
