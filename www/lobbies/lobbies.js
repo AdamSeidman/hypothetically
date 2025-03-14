@@ -33,10 +33,14 @@ function joinPrivateLobby() {
 
 function refreshLobbies() {
     let getGames = getPublicGames()
-    getCurrentRoom().then(async ({ none }) => {
+    getCurrentRoom().then(async ({ none, gameRunning }) => {
         if (!none) {
             await getGames
-            window.location.href = '/Lobby'
+            if (gameRunning) {
+                window.location.href = '/game'
+            } else {
+                window.location.href = '/lobby'
+            }
         }
     })
     getGames.then(({ games }) => {
