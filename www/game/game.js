@@ -151,7 +151,7 @@ function updateAvatarDisplay() {
             <img class="player-character-image" src="${avatarData.map[id]? characterAssetsBase64[avatarData.map[id].split('|')[0]] : ''}"}>
             <div class="player-info">
                 <p class="player-name">${displayName}</p>
-                <p class="player-score hidden">&nbsp;<span id="score-${id}"></span></p>
+                <p class="player-score">&nbsp;<span id="score-${id}"></span></p>
             </div>
         </div>
     `).join(''))
@@ -159,8 +159,7 @@ function updateAvatarDisplay() {
 
 function avatarSuccessEvent(data) {
     submitted = true
-    $('.arrow').html('&nbsp;')
-    $('.arrow').addClass('unpointable')
+    $('#icon-picker').html('<h4>Waiting for game to start...</h4>')
     $('#selection-container').html(`
         <p>
             <strong>

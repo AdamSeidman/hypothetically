@@ -25,19 +25,21 @@
                     <img id="character-image" class="selection-image">
                 </div>
                 <br>
-                <div>
-                    <span class="arrow left" onclick="nextIcon(-1)">&larr;</span>
-                    <strong>Icon:</strong>
-                    <span id="character-text"></span>
-                    <span class="arrow right" onclick="nextIcon(1)">&rarr;</span>
+                <div id="icon-picker">
+                    <div>
+                        <span class="arrow left" onclick="nextIcon(-1)">&larr;</span>
+                        <strong>Icon:</strong>
+                        <span id="character-text"></span>
+                        <span class="arrow right" onclick="nextIcon(1)">&rarr;</span>
+                    </div>
+                    <div>
+                        <span class="arrow left" onclick="nextColor(-1)">&larr;</span>
+                        <strong>Color:</strong>
+                        <span id="color-text"></span>
+                        <span class="arrow right" onclick="nextColor(1)">&rarr;</span>
+                    </div>
+                    <br>
                 </div>
-                <div>
-                    <span class="arrow left" onclick="nextColor(-1)">&larr;</span>
-                    <strong>Color:</strong>
-                    <span id="color-text"></span>
-                    <span class="arrow right" onclick="nextColor(1)">&rarr;</span>
-                </div>
-                <br>
                 <div id="selection-container">
                     <button onclick="submitAvatar()" id="avatar-submit">Select</button>
                 </div>
