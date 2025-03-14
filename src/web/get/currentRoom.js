@@ -21,7 +21,8 @@ module.exports = function (req, res) {
         yourName: getDisplayName(req.user.id),
         none: false,
         id: req.user.id,
-        gameType: Games.getGameType(code)
+        gameType: Games.getGameType(code),
+        gameRunning: Games.isGameRunning(code)
     }
     ret.isHost = ret.host == req.user.id
     res.send(ret)

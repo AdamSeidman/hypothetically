@@ -3,6 +3,7 @@ const VALID_GAMES = ['hypothetically', 'things']
 const SESSION_NOT_VALID = 0
 const SESSION_VALID = 1
 const SESSION_MADE_VALID = 2
+const SESSION_VALID_GO_TO_LOBBY = 3
 
 let submitted = false
 
@@ -41,7 +42,11 @@ function isSessionValid() {
             })
             .finally(() => {
                 if (room) {
-                    if (room.gameType === gameMode && room.host === hostId && room.id === myId && room.code == code) {
+                    if (!room.gameRunning) {
+                        sessionStorage.setItem('valid', (room.host === hostId && room.id === myId && room.code == code))
+                        resolve(SESSION_VALID_GO_TO_LOBBY)
+                        return
+                    } if (room.gameType === gameMode && room.host === hostId && room.id === myId && room.code == code) {
                         sessionStorage.setItem('valid', true)
                         resolve(SESSION_VALID)
                         return
@@ -130,7 +135,10 @@ function submitAvatar() {
 
 $(document).ready(async () => {
     let sessionValue = await isSessionValid()
-    if (sessionValue !== SESSION_VALID && sessionValue !== SESSION_MADE_VALID) {
+    if (sessionValue === SESSION_VALID_GO_TO_LOBBY) {
+        window.location.href = '/lobby'
+        return
+    } if (sessionValue !== SESSION_VALID && sessionValue !== SESSION_MADE_VALID) {
         await alertAndNavigate('Could not find valid game!', '/lobbies')
         return
     } else if (sessionValue === SESSION_MADE_VALID) {

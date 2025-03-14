@@ -145,6 +145,17 @@ $(document).ready(() => {
         })
         .finally(() => {
             if (room) {
+                if (room.gameRunning) {
+                    sessionStorage.setItem('gameMode', room.gameType)
+                    sessionStorage.setItem('myId', room.id)
+                    sessionStorage.setItem('hostId', room.host)
+                    sessionStorage.setItem('roomCode', room.code)
+                    sessionStorage.setItem('valid', true)
+                    setTimeout(() => {
+                        window.location.href = '/game'
+                    }, 1)
+                    return
+                }
                 if (room.isHost) {
                     let gameModeSelect = $('#game-mode')
                     gameModeSelect.attr('disabled', false)

@@ -122,6 +122,14 @@ class GameRoom {
         }
     }
 
+    endGame() {
+        this.inGame = false
+        this.joinable = true
+        return {
+            code: this.code
+        }
+    }
+
     get chatHistory() {
         return JSON.parse(JSON.stringify(this.#chatHistory))
     }
@@ -221,7 +229,7 @@ function getGameType(code) {
 function getPublicGames() {
     let games = []
     Object.entries(rooms).forEach(([code, room]) => {
-        if (room.isPublic && room.active) {
+        if (room.isPublic && room.active && !room.inGame) {
             games.push({
                 isPublic: true,
                 code,
@@ -257,6 +265,12 @@ function startGame(hostId, code) {
     return room.startGame()
 }
 
+function isGameRunning(code) {
+    let room = rooms[code]
+    if (!room) return
+    return room.inGame
+}
+
 module.exports = {
     makeRoom,
     deleteRoom,
@@ -273,5 +287,6 @@ module.exports = {
     setGameType,
     getGameType,
     kickPlayer,
-    startGame
+    startGame,
+    isGameRunning
 }
