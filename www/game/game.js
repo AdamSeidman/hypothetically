@@ -11,8 +11,7 @@ function isSessionValid() {
     return new Promise((resolve) => {
         let isValid = sessionStorage.getItem('valid') === 'true'
         if (!isValid) {
-            resolve(SESSION_NOT_VALID)
-            return
+            sessionStorage.removeItem('roomCode')
         }
         let code = sessionStorage.getItem('roomCode') || '?'
         let myId = sessionStorage.getItem('myId') || ''
