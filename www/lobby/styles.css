@@ -58,12 +58,20 @@ body {
     color: white;
     font-size: 16px;
     border-radius: 5px;
-    cursor: pointer;
     margin-right: 10px;
 }
 
-.action-buttons button:hover {
+.action-buttons button:not(:enabled) {
+    background-color: #485a6e;
+    color: lightgray;
+    &:hover {
+        cursor: not-allowed;
+    }
+}
+
+.action-buttons button:hover:enabled {
     background-color: #0056b3;
+    cursor: pointer;
 }
 
 .chat-container {

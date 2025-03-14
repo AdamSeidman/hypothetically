@@ -98,12 +98,16 @@ function sendToRoomById(id, message, payload) {
     })
 }
 
-function sendToRoom(socket, message, payload) {
+function sendToRoom(socket, message, payload, includeSelf) {
     if (!socket?.room) return
-    socket.to(socket.room).emit(message, {
+    let data = {
         socketMessageFrom: socket.user.id,
         ...payload
-    })
+    }
+    socket.to(socket.room).emit(message, data)
+    if (includeSelf) {
+        socket.emit(message, data)
+    }
 }
 
 function sendToRoomByCode(code, message, payload) {

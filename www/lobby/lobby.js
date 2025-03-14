@@ -29,14 +29,14 @@ function updateChatWindow(message, id) {
 }
 
 function startGame() {
-    let hostId = localStorage.getItem('hostId') || 'unknown'
-    let myId = localStorage.getItem('myId')
+    let hostId = sessionStorage.getItem('hostId') || 'unknown'
+    let myId = sessionStorage.getItem('myId')
     if (hostId !== myId) {
         console.warn('Tried to start game without being host!')
         return
     }
     if (confirm('Start the game?')) {
-        // TODO
+        emitStartGame(sessionStorage.getItem('roomCode') || '_')
     }
 }
 
@@ -112,6 +112,21 @@ function validateStillInRoom() {
         })
 }
 
+function startGameFailedEvent(data) {
+    let text = 'Failed to start game'
+    if (data?.reason) {
+        text += `.\nReason: ${data.reason}`
+    } else {
+        text += '!'
+    }
+    alert(text)
+}
+
+function gameStartedEvent(data) {
+    // TODO compare against data
+    window.location.href = '/game'
+}
+
 $(document).ready(() => {
     let room = {}
     getCurrentRoom()
@@ -136,7 +151,9 @@ $(document).ready(() => {
                     gameModeSelect.change(() => {
                         setGameType(gameModeSelect.val())
                     })
+                    $('.action-buttons button').attr('disabled', (Object.keys(room.players).length <= 1))
                 }
+                $('.action-buttons').toggleClass('hidden', !room.isHost)
                 sessionStorage.setItem('myName', (room.yourName || 'You'))
                 $('#game-mode').val(room.gameType)
                 $('#game-mode-default').remove()
@@ -196,6 +213,9 @@ function joinRoomEvent(data) {
     storePlayers()
     updatePlayerList(players)
     updateChatWindow(`${data.displayName || "Unknown Player"} joined the room`)
+    if (sessionStorage.getItem('myId') === sessionStorage.getItem('hostId')) {
+        $('.action-buttons button').attr('disabled', false)
+    }
 }
 
 function leaveRoomEvent(data) {
@@ -205,6 +225,9 @@ function leaveRoomEvent(data) {
     storePlayers()
     updatePlayerList(players)
     updateChatWindow(`${data.displayName || "Unknown Player"} left the room`)
+    if (sessionStorage.getItem('myId') === sessionStorage.getItem('hostId')) {
+        $('.action-buttons button').attr('disabled', (players.length <= 1))
+    }
 }
 
 function gameTypeChangedEvent(data) {

@@ -76,6 +76,18 @@ socket.on('gameRender', (data) => {
     }
 })
 
+socket.on('startGameFailed', (data) => {
+    if (typeof startGameFailedEvent === 'function') {
+        startGameFailedEvent(data)
+    }
+})
+
+socket.on('gameStarted', (data) => {
+    if (typeof gameStartedEvent === 'function') {
+        gameStartedEvent(data)
+    }
+})
+
 function joinRoom(code) {
     if (!code) return
     socket.emit('joinGame', { code })
@@ -99,6 +111,10 @@ function setGameType(type) {
     if (typeof type !== 'string' || type.trim().length < 1) return
     type = type.trim()
     socket.emit('setGameType', { type })
+}
+
+function emitStartGame(code) {
+    socket.emit('startGame', { code })
 }
 
 setInterval(() => {

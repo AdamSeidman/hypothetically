@@ -30,6 +30,7 @@ class GameRoom {
         this.active = true
         this.joinable = true
         this.running = false
+        this.inGame = false
         this.isPublic = !!isPublic
         rooms[code] = this
         playerMap[hostId] = code
@@ -110,6 +111,15 @@ class GameRoom {
             this.kickedPlayers.push(id)
         }
         return ret
+    }
+
+    startGame() {
+        this.inGame = true
+        this.joinable = false
+        return {
+            type: this.gameType,
+            code: this.code
+        }
     }
 
     get chatHistory() {
@@ -240,6 +250,13 @@ function kickPlayer(hostId, kickId, code) {
     return room.kickPlayer(kickId)
 }
 
+function startGame(hostId, code) {
+    let room = rooms[code]
+    if (!room || room.host !== hostId) return { failReason: 'Could not find game!' }
+    if (room.inGame) return { failReason: 'Already in game!' }
+    return room.startGame()
+}
+
 module.exports = {
     makeRoom,
     deleteRoom,
@@ -255,5 +272,6 @@ module.exports = {
     getPublicGames,
     setGameType,
     getGameType,
-    kickPlayer
+    kickPlayer,
+    startGame
 }
