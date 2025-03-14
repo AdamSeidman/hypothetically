@@ -1,91 +1,6 @@
 const VALID_GAMES = ['hypothetically', 'things']
 
-const SESSION_NOT_VALID = 0
-const SESSION_VALID = 1
-const SESSION_MADE_VALID = 2
-const SESSION_VALID_GO_TO_LOBBY = 3
-
 let submitted = false
-
-function isSessionValid() {
-    return new Promise((resolve) => {
-        let isValid = sessionStorage.getItem('valid') === 'true'
-        if (!isValid) {
-            sessionStorage.removeItem('roomCode')
-        }
-        let code = sessionStorage.getItem('roomCode') || '?'
-        let myId = sessionStorage.getItem('myId') || ''
-        let hostId = sessionStorage.getItem('hostId') || ''
-        let gameMode = sessionStorage.getItem('gameMode') || 'invalid'
-        if (typeof getCurrentRoom !== 'function') {
-            resolve(SESSION_NOT_VALID)
-            return
-        }
-        let room = null
-        getCurrentRoom()
-            .then((data) => {
-                if (data?.players) {
-                    let players = Object.entries(data.players).map(([id, displayName]) => {
-                        return { id, displayName }
-                    })
-                    sessionStorage.setItem('players', JSON.stringify(players))
-                }
-                if (data.none) {
-                    room = undefined
-                } else {
-                    delete data.none
-                    room = data
-                }
-            })
-            .catch((err) => {
-                console.warn('Error retreiving current room in isSessionValid', err)
-                room = null
-            })
-            .finally(() => {
-                if (room) {
-                    if (code !== room.code) {
-                        sessionStorage.removeItem('myAvatar')
-                    }
-                    if (!VALID_GAMES.includes(room.gameType)) {
-                        sessionStorage.setItem('valid', false)
-                        sessionStorage.removeItem('myAvatar')
-                        resolve(SESSION_NOT_VALID)
-                        return
-                    } else if (!room.gameRunning) {
-                        sessionStorage.setItem('valid', (room.host === hostId && room.id === myId && room.code == code))
-                        resolve(SESSION_VALID_GO_TO_LOBBY)
-                        return
-                    } else if (room.gameType === gameMode && room.host === hostId && room.id === myId && room.code == code) {
-                        sessionStorage.setItem('valid', true)
-                        sessionStorage.setItem('avatarData', JSON.stringify(room.avatarData))
-                        sessionStorage.setItem('playerMap', JSON.stringify(room.players))
-                        resolve(SESSION_VALID)
-                        return
-                    } else if (VALID_GAMES.includes(room.gameType) && room.code && room.id) {
-                        sessionStorage.setItem('gameMode', room.gameType)
-                        sessionStorage.setItem('myId', room.id)
-                        sessionStorage.setItem('hostId', room.host)
-                        sessionStorage.setItem('roomCode', room.code)
-                        sessionStorage.setItem('valid', true)
-                        sessionStorage.setItem('avatarData', JSON.stringify(room.avatarData) || '{}')
-                        sessionStorage.setItem('playerMap', JSON.stringify(room.players))
-                        resolve(SESSION_MADE_VALID)
-                        return
-                    } else {
-                        sessionStorage.setItem('valid', false)
-                        sessionStorage.removeItem('myAvatar')
-                        resolve(SESSION_NOT_VALID)
-                        return
-                    }
-                } else {
-                    sessionStorage.setItem('valid', false)
-                    sessionStorage.removeItem('myAvatar')
-                    resolve(SESSION_NOT_VALID)
-                    return
-                }
-            })
-    })
-}
 
 function gameRenderEvent(data) {
     if (typeof data?.currentGamePage !== 'string' || !data.currentGameCode) return
@@ -159,7 +74,7 @@ function submitAvatar() {
 }
 
 function updateAvatarDisplay() {
-    let players = sessionStorage.getItem('players') || '[]'
+    let players = sessionStorage.getItem('player') || '[]'
     players = JSON.parse(players)
     let avatarData = sessionStorage.getItem('avatarData') || '{}'
     avatarData = JSON.parse(avatarData)
@@ -211,41 +126,68 @@ function newAvatarEvent(data) {
     checkWaitStartText(data)
 }
 
-$(document).ready(async () => {
-    let sessionValue = await isSessionValid()
-    if (sessionValue === SESSION_VALID_GO_TO_LOBBY) {
-        window.location.href = '/lobby'
-        return
-    } if (sessionValue !== SESSION_VALID && sessionValue !== SESSION_MADE_VALID) {
-        await alertAndNavigate('Could not find valid game!', '/lobbies')
-        return
-    } else if (sessionValue === SESSION_MADE_VALID) {
-        console.warn('Had to make current session information valid.')
-    }
+$(document).ready(() => {
+    let room = null
+    getCurrentRoom()
+        .then((data) => {
+            if (data.none) {
+                room = undefined
+            } else {
+                delete data.none
+                room = data
+            }
+        })
+        .catch((err) => {
+            console.warn('Error retreiving current room!', err)
+            room = null
+        })
+        .finally(() => {
+            if (room) {
+                if (!room.gameRunning) {
+                    window.location.href = '/lobby'
+                    return
+                } else if (!room.code || !room.id) {
+                    alertAndNavigate('Invalid room information retreived!', '/lobbies')
+                    return
+                }
+                if (sessionStorage.getItem('roomCode') !== room.code) {
+                    sessionStorage.removeItem('myAvatar')
+                }
+                sessionStorage.setItem('gameMode', room.gameType)
+                sessionStorage.setItem('myId', room.id)
+                sessionStorage.setItem('hostId', room.host)
+                sessionStorage.setItem('roomCode', room.code)
+                sessionStorage.setItem('avatarData', JSON.stringify(room.avatarData) || '{}')
+                sessionStorage.setItem('playerMap', JSON.stringify(room.players))
+                let players = Object.entries(room.players).map(([id, displayName]) => {
+                    return { id, displayName }
+                })
+                sessionStorage.setItem('players', JSON.stringify(players))
 
-    let avatarData = sessionStorage.getItem('avatarData') || '{}'
-    avatarData = JSON.parse(avatarData)
-    let myId = sessionStorage.getItem('myId') || '??'
-    let hasAvatar = (avatarData?.map && avatarData.map[myId])
-    let color = randomArrayItem(Object.keys(backgroundAssetsBase64))
-    let character = randomArrayItem(Object.keys(characterAssetsBase64))
+                let hasAvatar = (room.avatarData?.map && avatarData.map[room.id])
+                let color = randomArrayItem(Object.keys(backgroundAssetsBase64))
+                let character = randomArrayItem(Object.keys(characterAssetsBase64))
+            
+                if (hasAvatar) {
+                    let data = avatarData.map[myId].split('|')
+                    character = data[0]
+                    color = data[1]
+                }
 
-    if (hasAvatar) {
-        let data = avatarData.map[myId].split('|')
-        character = data[0]
-        color = data[1]
-    }
-
-    $('#character-image').attr('src', characterAssetsBase64[character])
-    $('#color-image').attr('src', backgroundAssetsBase64[color])
-    $('#character-text').text(character)
-    localStorage.setItem('character', character)
-    $('#color-text').text(color)
-    localStorage.setItem('color', color)
-
-    if (hasAvatar) {
-        avatarSuccessEvent(avatarData)
-    } else {
-        updateAvatarDisplay()
-    }
+                $('#character-image').attr('src', characterAssetsBase64[character])
+                $('#color-image').attr('src', backgroundAssetsBase64[color])
+                $('#character-text').text(character)
+                localStorage.setItem('character', character)
+                $('#color-text').text(color)
+                localStorage.setItem('color', color)
+            
+                if (hasAvatar) {
+                    avatarSuccessEvent(avatarData)
+                } else {
+                    updateAvatarDisplay()
+                }
+            } else {
+                alertAndNavigate('Could not find valid game!', '/lobbies')
+            }
+        })
 })
