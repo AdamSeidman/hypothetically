@@ -178,7 +178,7 @@ $(document).ready(async () => {
 
     let avatarData = sessionStorage.getItem('avatarData') || '{}'
     avatarData = JSON.parse(avatarData)
-    let myId = sessionStoraget.getItem('myId') || '??'
+    let myId = sessionStorage.getItem('myId') || '??'
     let hasAvatar = (avatarData?.map && avatarData.map[myId])
     let color = randomArrayItem(Object.keys(backgroundAssetsBase64))
     let character = randomArrayItem(Object.keys(characterAssetsBase64))
