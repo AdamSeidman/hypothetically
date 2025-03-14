@@ -118,7 +118,7 @@ img {
     margin-top: 30px;
 }
 
-.player-container {
+.player-avatar {
     position: relative;
     width: 64px;
     height: 64px;
@@ -127,10 +127,10 @@ img {
     align-items: center;
 }
 
-.player-container .player-info {
+.player-avatar .player-info {
     position: absolute;
     bottom: -30px;
-    left: 0;
+    /* left: 0; */
 }
 
 .player-info p {

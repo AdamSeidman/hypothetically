@@ -151,9 +151,7 @@ function updateAvatarDisplay() {
             <img class="player-character-image" src="${avatarData.map[id]? characterAssetsBase64[avatarData.map[id].split('|')[0]] : ''}"}>
             <div class="player-info">
                 <p class="player-name">${displayName}</p>
-                <p class="player-score hidden">
-                    Score: <span id="score-${id}">0</span>
-                </p>
+                <p class="player-score hidden">&nbsp;<span id="score-${id}"></span></p>
             </div>
         </div>
     `).join(''))
