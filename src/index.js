@@ -5,5 +5,3 @@ const app = async () => {
 }
 
 app()
-
-// TODO
