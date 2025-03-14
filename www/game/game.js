@@ -40,7 +40,7 @@ function isSessionValid() {
                 console.warn('Error retreiving current room in isSessionValid', err)
                 room = null
             })
-            .finally(() => {
+            .finally(() => { // TODO Check if avatar already chosen
                 if (room) {
                     if (!room.gameRunning) {
                         sessionStorage.setItem('valid', (room.host === hostId && room.id === myId && room.code == code))
@@ -126,11 +126,40 @@ function nextColor(inc) {
 }
 
 function submitAvatar() {
-    alert('Submitted')
+    if (submitted) return
+    let character = $('#character-text').text()
+    let color = $('#color-text').text()
+    if (character.trim().length < 2 || color.trim().length < 2) {
+        alert('Invalid avatar information!')
+    } else {
+        emitSubmitAvatar(character, color)
+    }
+}
+
+function avatarSuccessEvent(data) {
+    submitted = true
     $('.arrow').html('&nbsp;')
     $('.arrow').addClass('unpointable')
-    submitted = true
-    // TODO
+    $('#selection-container').html(`
+        <p>
+            <strong>
+                <span id="avatars-submitted-text">
+                    ${data.numAvatarsChosen}
+                </span>/<span id="total-avatars-text">
+                    ${data.totalPlayers}
+                </span>
+            </strong> Submitted
+        </p>
+    `)
+}
+
+function newAvatarEvent(data) {
+    if (submitted) {
+        $('#avatars-submitted-text').text(data.numAvatarsChosen)
+        $('#total-avatars-text').text(data.totalPlayers)
+    } else {
+        sessionStorage.setItem('latestAvatarInfo', JSON.stringify(data))
+    }
 }
 
 $(document).ready(async () => {

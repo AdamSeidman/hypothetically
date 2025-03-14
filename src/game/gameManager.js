@@ -32,6 +32,7 @@ class GameRoom {
         this.running = false
         this.inGame = false
         this.isPublic = !!isPublic
+        this.avatarMap = {}
         rooms[code] = this
         playerMap[hostId] = code
     }
@@ -116,6 +117,7 @@ class GameRoom {
     startGame() {
         this.inGame = true
         this.joinable = false
+        this.avatarMap = {}
         return {
             type: this.gameType,
             code: this.code
@@ -125,8 +127,21 @@ class GameRoom {
     endGame() {
         this.inGame = false
         this.joinable = true
+        this.avatarMap = {}
         return {
             code: this.code
+        }
+    }
+
+    submitAvatar(id, avatar) {
+        if (!this.players.includes(id) || !this.inGame || Object.keys(this.avatarMap) === this.players.length) return
+        this.avatarMap[id] = avatar
+        return {
+            numAvatarsChosen: Object.keys(this.avatarMap).length,
+            totalPlayers: this.players.length,
+            code: this.code,
+            avatar,
+            map: this.avatarMap
         }
     }
 
@@ -140,6 +155,15 @@ class GameRoom {
 
     get gameType() {
         return this.#gameType
+    }
+
+    get avatarInfo() {
+        return {
+            numAvatarsChosen: Object.keys(this.avatarMap).length,
+            totalPlayers: this.players.length,
+            code: this.code,
+            map: this.avatarMap
+        }
     }
 }
 
@@ -271,6 +295,12 @@ function isGameRunning(code) {
     return room.inGame
 }
 
+function submitAvatar(id, avatar) {
+    let room = rooms[playerMap[id]]
+    if (!room) return
+    return room.submitAvatar(id, avatar)
+}
+
 module.exports = {
     makeRoom,
     deleteRoom,
@@ -288,5 +318,6 @@ module.exports = {
     getGameType,
     kickPlayer,
     startGame,
-    isGameRunning
+    isGameRunning,
+    submitAvatar
 }

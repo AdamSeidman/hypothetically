@@ -88,6 +88,22 @@ socket.on('gameStarted', (data) => {
     }
 })
 
+socket.on('avatarSubmissionFailed', () => {
+    alert('Error submitting avatar!')
+})
+
+socket.on('newAvatar', (data) => {
+    if (typeof newAvatarEvent === 'function') {
+        newAvatarEvent(data)
+    }
+})
+
+socket.on('avatarSubmissionSuccess', (data) => {
+    if (typeof avatarSuccessEvent === 'function') {
+        avatarSuccessEvent(data)
+    }
+})
+
 function joinRoom(code) {
     if (!code) return
     socket.emit('joinGame', { code })
@@ -115,6 +131,12 @@ function setGameType(type) {
 
 function emitStartGame(code) {
     socket.emit('startGame', { code })
+}
+
+function emitSubmitAvatar(character, color) {
+    socket.emit('submitAvatar', {
+        avatar: `${character.trim()}|${color.trim()}`
+    })
 }
 
 setInterval(() => {
