@@ -35,7 +35,8 @@ function handle(message, socket, id) {
                 if (code) {
                     let gameType = Games.getGameType(code)
                     Sockets.sendToRoomByCode(code, 'gameRender', {
-                        currentGamePage: `start_${gameType.toLowerCase()}`
+                        currentGamePage: `start_${gameType.toLowerCase()}`,
+                        currentGameCode: code
                     })
                 }
             }, GAME_START_WAIT)

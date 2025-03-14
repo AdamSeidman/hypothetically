@@ -82,7 +82,6 @@ function isSessionValid() {
 }
 
 function gameRenderEvent(data) {
-    console.log('Game render event', data)
     if (typeof data?.currentGamePage !== 'string' || !data.currentGameCode) return
     if (sessionStorage.getItem('roomCode') != data.currentGameCode) {
         console.error('Game render event occurred with wrong code!', data)
