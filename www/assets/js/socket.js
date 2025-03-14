@@ -134,9 +134,9 @@ function emitStartGame(code) {
 }
 
 function emitSubmitAvatar(character, color) {
-    socket.emit('submitAvatar', {
-        avatar: `${character.trim()}|${color.trim()}`
-    })
+    let avatar = `${character.trim()}|${color.trim()}`
+    socket.emit('submitAvatar', { avatar })
+    return avatar
 }
 
 setInterval(() => {

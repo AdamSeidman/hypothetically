@@ -136,7 +136,8 @@ function submitAvatar() {
     if (character.trim().length < 2 || color.trim().length < 2) {
         alert('Invalid avatar information!')
     } else {
-        emitSubmitAvatar(character, color)
+        let avatar = emitSubmitAvatar(character, color)
+        sessionStorage.setItem('myAvatar', avatar)
     }
 }
 
@@ -145,6 +146,11 @@ function updateAvatarDisplay() {
     players = JSON.parse(players)
     let avatarData = sessionStorage.getItem('avatarData') || '{}'
     avatarData = JSON.parse(avatarData)
+    let myAvatar = sessionStorage.getItem('myAvatar')
+    let myId = sessionStorage.getItem('myId')
+    if (myAvatar && myId && !avatarData.map[myId]) {
+        avatarData.map[myId] = myAvatar
+    }
     $('#player-display').html(players.map(({ id, displayName }) => `
         <div class="player-avatar" data-playerid="${id}" data-playername="${displayName}">
             <img class="player-bkg-image" src="${
