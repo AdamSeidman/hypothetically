@@ -84,7 +84,8 @@ button:hover {
     align-items: center;
 }
 
-.selection-image {
+.selection-image,
+.player-avatar > img {
     position: absolute;
     top: 0;
     left: 0;
@@ -101,4 +102,42 @@ img {
     justify-content: center;
     align-items: center;
     height: 50vh;
+}
+
+#player-display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+}
+  
+.player-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.player-container {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.player-container .player-info {
+    position: absolute;
+    bottom: -30px;
+    left: 0;
+}
+
+.player-info p {
+    position: relative;
+    bottom: -15px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    margin-block: 2px;
 }
