@@ -40,8 +40,9 @@ function isSessionValid() {
                 console.warn('Error retreiving current room in isSessionValid', err)
                 room = null
             })
-            .finally(() => { // TODO Check if avatar already chosen
+            .finally(() => {
                 if (room) {
+                    console.log(room) // TODO remove
                     if (!room.gameRunning) {
                         sessionStorage.setItem('valid', (room.host === hostId && room.id === myId && room.code == code))
                         resolve(SESSION_VALID_GO_TO_LOBBY)
