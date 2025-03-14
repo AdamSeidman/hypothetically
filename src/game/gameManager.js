@@ -301,6 +301,18 @@ function submitAvatar(id, avatar) {
     return room.submitAvatar(id, avatar)
 }
 
+function getAvatarInfo(code) {
+    let room = rooms[code]
+    if (!room) return
+    if (room.inGame) {
+        return room.avatarInfo
+    } else {
+        return {
+            inGame: false
+        }
+    }
+}
+
 module.exports = {
     makeRoom,
     deleteRoom,
@@ -319,5 +331,6 @@ module.exports = {
     kickPlayer,
     startGame,
     isGameRunning,
-    submitAvatar
+    submitAvatar,
+    getAvatarInfo
 }

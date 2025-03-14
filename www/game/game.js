@@ -46,8 +46,9 @@ function isSessionValid() {
                         sessionStorage.setItem('valid', (room.host === hostId && room.id === myId && room.code == code))
                         resolve(SESSION_VALID_GO_TO_LOBBY)
                         return
-                    } if (room.gameType === gameMode && room.host === hostId && room.id === myId && room.code == code) {
+                    } else if (room.gameType === gameMode && room.host === hostId && room.id === myId && room.code == code) {
                         sessionStorage.setItem('valid', true)
+                        sessionStorage.setItem('avatarData', JSON.stringify(room.avatarData))
                         resolve(SESSION_VALID)
                         return
                     } else if (VALID_GAMES.includes(room.gameType) && room.code && room.id) {
@@ -56,6 +57,7 @@ function isSessionValid() {
                         sessionStorage.setItem('hostId', room.host)
                         sessionStorage.setItem('roomCode', room.code)
                         sessionStorage.setItem('valid', true)
+                        sessionStorage.setItem('avatarData', JSON.stringify(room.avatarData) || '{}')
                         resolve(SESSION_MADE_VALID)
                         return
                     } else {
@@ -174,8 +176,18 @@ $(document).ready(async () => {
         console.warn('Had to make current session information valid.')
     }
 
+    let avatarData = sessionStorage.getItem('avatarData') || '{}'
+    avatarData = JSON.parse(avatarData)
+    let myId = sessionStoraget.getItem('myId') || '??'
+    let hasAvatar = (avatarData?.map && avatarData.map[myId])
     let color = randomArrayItem(Object.keys(backgroundAssetsBase64))
     let character = randomArrayItem(Object.keys(characterAssetsBase64))
+
+    if (hasAvatar) {
+        let data = avatarData.map[myId].split('|')
+        character = data[0]
+        color = data[1]
+    }
 
     $('#character-image').attr('src', characterAssetsBase64[character])
     $('#color-image').attr('src', backgroundAssetsBase64[color])
@@ -183,4 +195,8 @@ $(document).ready(async () => {
     localStorage.setItem('character', character)
     $('#color-text').text(color)
     localStorage.setItem('color', color)
+
+    if (hasAvatar) {
+        avatarSuccessEvent(avatarData)
+    }
 })

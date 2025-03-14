@@ -24,6 +24,9 @@ module.exports = function (req, res) {
         gameType: Games.getGameType(code),
         gameRunning: Games.isGameRunning(code)
     }
+    if (ret.gameRunning) {
+        ret.avatarData = Games.getAvatarInfo(ret.code)
+    }
     ret.isHost = ret.host == req.user.id
     res.send(ret)
 }
