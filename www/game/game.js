@@ -24,6 +24,9 @@ function isSessionValid() {
         let room = null
         getCurrentRoom()
             .then((data) => {
+                if (data?.players) {
+                    sessionStorage.setItem('players', JSON.stringify(data.players))
+                }
                 if (data.none) {
                     room = undefined
                 } else {
