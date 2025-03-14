@@ -25,7 +25,10 @@ function isSessionValid() {
         getCurrentRoom()
             .then((data) => {
                 if (data?.players) {
-                    sessionStorage.setItem('players', JSON.stringify(data.players))
+                    let players = Object.entries(data.players).map(([id, displayName]) => {
+                        return { id, displayName }
+                    })
+                    sessionStorage.setItem('players', JSON.stringify(players))
                 }
                 if (data.none) {
                     room = undefined
@@ -156,7 +159,7 @@ function submitAvatar() {
 }
 
 function updateAvatarDisplay() {
-    let players = sessionStorage.getItem('players') || '{}'
+    let players = sessionStorage.getItem('players') || '[]'
     players = JSON.parse(players)
     let avatarData = sessionStorage.getItem('avatarData') || '{}'
     avatarData = JSON.parse(avatarData)
