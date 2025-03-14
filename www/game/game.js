@@ -42,7 +42,6 @@ function isSessionValid() {
             })
             .finally(() => {
                 if (room) {
-                    console.log(room) // TODO remove
                     if (!room.gameRunning) {
                         sessionStorage.setItem('valid', (room.host === hostId && room.id === myId && room.code == code))
                         resolve(SESSION_VALID_GO_TO_LOBBY)
@@ -146,7 +145,7 @@ function updateAvatarDisplay() {
     playerMap = JSON.parse(playerMap)
     let avatarData = sessionStorage.getItem('avatarData') || '{}'
     avatarData = JSON.parse(avatarData)
-    $('#player-display').html(Object.entries(playerMap).map(([id, displayName]) => `
+    $('#player-display').html(playerMap.map(({ id, displayName }) => `
         <div class="player-avatar" data-playerid="${id}" data-playername="${displayName}">
             <img class="player-bkg-image" src="${avatarData.map[id]? backgroundAssetsBase64[avatarData.map[id]].split('|')[1] : ''}"}>
             <img class="player-character-image" src="${avatarData.map[id]? characterAssetsBase64[avatarData.map[id]].split('|')[0] : ''}"}>
