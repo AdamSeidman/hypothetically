@@ -9,6 +9,7 @@ let client = undefined
 
 const TABLE_NAME = 'users'
 const REFRESH_INTERVAL_MINS = 5
+const MAX_DISPLAY_NAME_LENGTH = 20
 
 async function create(supabase) {
     client = supabase
@@ -44,12 +45,16 @@ async function login(googleData) {
             return user
         }
     } else {
+        let display_name = googleData.displayName.trim().split(' ')[0] || googleData.displayName || 'User'
+        if (display_name.length > MAX_DISPLAY_NAME_LENGTH) {
+            display_name = display_name.slice(0, MAX_DISPLAY_NAME_LENGTH)
+        }
         user = {
             google_id: googleData.id,
             email: googleData.email || '',
             profile_picture: googleData.photo,
             name: googleData.displayName || googleData.email,
-            display_name: googleData.displayName.trim().split(' ')[0] || googleData.displayName || 'name'
+            display_name
         }
         console.log(`Registering new user (${user.name}): ${user.email}`)
         const { data, error } = await client
@@ -58,8 +63,7 @@ async function login(googleData) {
             .select()
         if (error || data.length !== 1) {
             console.error('Error registering user!', error || '[no return data]')
-        }
-        else {
+        } else {
             user = data[0]
             users.push(user)
             return user
