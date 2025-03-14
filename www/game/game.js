@@ -159,10 +159,6 @@ $(document).ready(() => {
                 sessionStorage.setItem('roomCode', room.code)
                 sessionStorage.setItem('avatarData', JSON.stringify(room.avatarData) || '{}')
                 sessionStorage.setItem('playerMap', JSON.stringify(room.players))
-                let players = Object.entries(room.players).map(([id, displayName]) => {
-                    return { id, displayName }
-                })
-                sessionStorage.setItem('players', JSON.stringify(players))
 
                 let hasAvatar = (room.avatarData?.map && room.avatarData.map[room.id])
                 let color = randomArrayItem(Object.keys(backgroundAssetsBase64))
