@@ -9,6 +9,7 @@ const bodyParser = require('body-parser')
 const session = require('express-session')
 const database = require('../db/database')
 const { openSocket } = require('./sockets')
+const Games = require('../game/gameManager')
 const GoogleStrategy = require('passport-google-oauth20').Strategy
 require('dotenv').config()
 
@@ -88,6 +89,16 @@ app.use((req, res, next) => {
             return req.logout(() => {
                 res.redirect('/login')
             })
+        } else if (req.path === '/') { // TODO Expand?
+            // Check if user is in a game/lobby
+            let code = Games.getGameCodeOf(req.user?.id)
+            if (code) {
+                if (Games.isGameRunning(code) && !req.path.includes('game')) {
+                    return res.redirect('/game')
+                } else if (!req.path.includes('lobby')) {
+                    return res.redirect('/lobby')
+                }
+            }
         }
     }
     next()
