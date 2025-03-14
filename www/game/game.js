@@ -6,7 +6,8 @@ const SESSION_MADE_VALID = 2
 
 function isSessionValid() {
     return new Promise((resolve) => {
-        if (!sessionStorage.getItem('valid')) {
+        let isValid = sessionStorage.getItem('valid') === 'true'
+        if (!isValid) {
             resolve(SESSION_NOT_VALID)
             return
         }

@@ -83,6 +83,10 @@ function updatePlayerList(players) {
     }
 }
 
+function storePlayers() {
+    sessionStorage.setItem('players', JSON.stringify(players))
+}
+
 function validateStillInRoom() {
     getCurrentRoom()
         .then((data) => {
@@ -90,10 +94,10 @@ function validateStillInRoom() {
                 throw new Error(data)
             }
             let roomCode = sessionStorage.getItem('roomCode')
-            if (!roomCode || room.code !== roomCode) {
-                throw new Error(room.code)
+            if (!roomCode || data.code !== roomCode) {
+                throw new Error(data.code)
             }
-            let isValid = sessionStorage.getItem('valid')
+            let isValid = sessionStorage.getItem('valid') === 'true'
             if (!isValid) {
                 throw new Error({ valid: false })
             }
@@ -157,7 +161,7 @@ $(document).ready(() => {
                         })
                     }
                 })
-                sessionStorage.setItem('players', players)
+                storePlayers()
                 updateChatWindow('(Room Created)', 0)
                 room.chatHistory.forEach(msg => {
                     if (msg.id == sessionStorage.getItem('myId')) {
@@ -189,7 +193,7 @@ function joinRoomEvent(data) {
     let exists = players.find(x => x.id === data?.id)
     if (exists || players.length >= MAX_PLAYERS) return
     players.push(data)
-    sessionStorage.setItem('players', players)
+    storePlayers()
     updatePlayerList(players)
     updateChatWindow(`${data.displayName || "Unknown Player"} joined the room`)
 }
@@ -198,7 +202,7 @@ function leaveRoomEvent(data) {
     let player = players.find(x => x.id === data?.id)
     if (!player) return
     players = players.filter(x => x.id !== data.id)
-    sessionStorage.setItem('players', players)
+    storePlayers()
     updatePlayerList(players)
     updateChatWindow(`${data.displayName || "Unknown Player"} left the room`)
 }
