@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/site.css">
+    <link rel="stylesheet" href="./styles.css">
+    <script src="/assets/js/lib/jquery.min.js"></script>
+    <script src="/assets/js/site.js" defer></script>
+    <script src="/assets/js/lib/socket.io.min.js"></script>
+    <script src="/assets/js/socket.js" defer></script>
+    <script src="./game.js" defer></script>
+    <script src="/assets/img/characters.js"></script>
+    <script src="https://kit.fontawesome.com/a843fa2d6a.js" crossorigin="anonymous" defer></script>
+</head>
+<body>
+    <div id="app">
+        <div class="card" id="partial-content">
+            <div id="character-selection">
+                <h2>Choose Your Avatar</h2>
+                <div class="image-container">
+                    <img id="color-image" class="selection-image">
+                    <img id="character-image" class="selection-image">
+                </div>
+                <br>
+                <div>
+                    <span class="arrow left" onclick="nextIcon(-1)">&larr;</span>
+                    <strong>Icon:</strong>
+                    <span id="character-text"></span>
+                    <span class="arrow right" onclick="nextIcon(1)">&rarr;</span>
+                </div>
+                <div>
+                    <span class="arrow left" onclick="nextColor(-1)">&larr;</span>
+                    <strong>Color:</strong>
+                    <span id="color-text"></span>
+                    <span class="arrow right" onclick="nextColor(1)">&rarr;</span>
+                </div>
+                <br>
+                <div id="selection-container">
+                    <button onclick="submitAvatar()">Select</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

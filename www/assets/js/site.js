@@ -99,3 +99,10 @@ function renderPartial(partial, contentId='partial-content') {
             console.error('Failed to render partial!', err)
         })
 }
+
+function randomArrayItem(arr) {
+    if (arr === undefined || !Array.isArray(arr) || arr.length <= 1) {
+        return
+    }
+    return arr[Math.floor(Math.random() * arr.length)]
+}

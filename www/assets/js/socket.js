@@ -64,6 +64,18 @@ socket.on('kicked', (data) => {
     }
 })
 
+socket.on('gameEnded', (data) => {
+    if (typeof gameEndedEvent === 'function') {
+        gameEndedEvent(data)
+    }
+})
+
+socket.on('gameRender', (data) => {
+    if (typeof gameRenderEvent === 'function') {
+        gameRenderEvent(data)
+    }
+})
+
 function joinRoom(code) {
     if (!code) return
     socket.emit('joinGame', { code })
