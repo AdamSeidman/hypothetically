@@ -164,12 +164,12 @@ $(document).ready(() => {
                 })
                 sessionStorage.setItem('players', JSON.stringify(players))
 
-                let hasAvatar = (room.avatarData?.map && avatarData.map[room.id])
+                let hasAvatar = (room.avatarData?.map && room.avatarData.map[room.id])
                 let color = randomArrayItem(Object.keys(backgroundAssetsBase64))
                 let character = randomArrayItem(Object.keys(characterAssetsBase64))
             
                 if (hasAvatar) {
-                    let data = avatarData.map[myId].split('|')
+                    let data = room.avatarData.map[myId].split('|')
                     character = data[0]
                     color = data[1]
                 }
