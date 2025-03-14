@@ -6,6 +6,7 @@ const Games = require('../../game/gameManager')
 const Avatars = require('../../../www/assets/img/characters')
 
 let Sockets = undefined
+const GAME_START_WAIT = 5 * 1000
 
 function isValidAvatar(avatar) {
     if (typeof avatar !== 'string') return false
@@ -28,6 +29,17 @@ function handle(message, socket, id) {
     if (ret) {
         socket.emit('avatarSubmissionSuccess', ret)
         Sockets.sendToRoom(socket, 'newAvatar', ret)
+        if (ret.totalPlayers && ret.totalPlayers === ret.numAvatarsChosen) {
+            setTimeout(() => {
+                let code = Games.getGameCodeOf(id)
+                if (code) {
+                    let gameType = Games.getGameType(code)
+                    Sockets.sendToRoomByCode(code, 'gameRender', {
+                        currentGamePage: `start_${gameType.toLowerCase()}`
+                    })
+                }
+            }, GAME_START_WAIT)
+        }
     } else {
         socket.emit('avatarSubmissionFailed', {})
     }

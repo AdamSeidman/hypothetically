@@ -1,9 +1,9 @@
 /**
- * 
+ * Start the game of hypotheticals
  */
 
 function get(req) {
-    return {input: 'test'}
+    return {} // TODO
 }
 
 module.exports = { get }
