@@ -141,11 +141,11 @@ function submitAvatar() {
 }
 
 function updateAvatarDisplay() {
-    let playerMap = sessionStorage.getItem('players') || '{}'
-    playerMap = JSON.parse(playerMap)
+    let players = sessionStorage.getItem('players') || '{}'
+    players = JSON.parse(player)
     let avatarData = sessionStorage.getItem('avatarData') || '{}'
     avatarData = JSON.parse(avatarData)
-    $('#player-display').html(playerMap.map(({ id, displayName }) => `
+    $('#player-display').html(players.map(({ id, displayName }) => `
         <div class="player-avatar" data-playerid="${id}" data-playername="${displayName}">
             <img class="player-bkg-image" src="${avatarData.map[id]? backgroundAssetsBase64[avatarData.map[id]].split('|')[1] : ''}"}>
             <img class="player-character-image" src="${avatarData.map[id]? characterAssetsBase64[avatarData.map[id]].split('|')[0] : ''}"}>
