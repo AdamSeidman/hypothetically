@@ -94,6 +94,12 @@ function gameRenderEvent(data) {
         }
         localStorage.setItem(`${data.currentGameCode}-${key}`, value)
     })
+    $('.score-text').text('Score:')
+    $('.score').each(function () {
+        if ($(this).text()?.trim().length < 1) {
+            $(this).text('0')
+        }
+    })
 }
 
 function gameEndedEvent(data) {
@@ -164,15 +170,22 @@ function updateAvatarDisplay() {
                 avatarData.map[id]? characterAssetsBase64[avatarData.map[id].split('|')[0]] : unknownCharacterAssetBase64}"}>
             <div class="player-info">
                 <p class="player-name">${displayName}</p>
-                <p class="player-score">&nbsp;<span id="score-${id}"></span></p>
+                <p class="player-score"><span class="score-text">&nbsp;</span><span class="score" id="score-${id}"></span></p>
             </div>
         </div>
     `).join(''))
 }
 
+function checkWaitStartText(data) {
+    if (data.numAvatarsChosen && data.numAvatarsChosen === data.totalPlayers) {
+        $('#start-wait-text').text('Starting game...')
+    }
+}
+
 function avatarSuccessEvent(data) {
     submitted = true
-    $('#icon-picker').html('<h4>Waiting for game to start...</h4>')
+    $('#icon-picker').html('<h4 id="start-wait-text">Waiting for game to start...</h4>')
+    checkWaitStartText(data)
     $('#selection-container').html(`
         <p>
             <strong>
@@ -196,6 +209,7 @@ function newAvatarEvent(data) {
     }
     sessionStorage.setItem('avatarData', JSON.stringify(data))
     updateAvatarDisplay()
+    checkWaitStartText(data)
 }
 
 $(document).ready(async () => {
