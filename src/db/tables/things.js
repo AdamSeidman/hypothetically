@@ -41,10 +41,20 @@ async function getRandom() {
     return randomArrayItem(data)
 }
 
+async function getAllThings() {
+    const { error, data } = await client.from(TABLE_NAME).select()
+    if (error || !Array.isArray(data) || data.length < 1) {
+        console.error(error || '[bad data]')
+        return
+    }
+    return data.map(x => x.thing)
+}
+
 module.exports = {
     create,
     queries: {
         add,
-        getRandom
+        getRandom,
+        getAllThings
     }
 }

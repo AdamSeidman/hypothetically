@@ -1,3 +1,12 @@
-<div>
-    Things!
+<div id="answer-container">
+    <h2>THINGS...</h2>
+    <p>{{ prompt | titlecase }}</p>
+    <div id="answer-input-container">
+        {% if answer %}
+            <p id="answer-inputted-text">{{ answer }}</p>
+        {% else %}
+            <input id="answer-input" maxLength="{{ maxLength }}" onkeypress="return keyWrapper(event, submit)" placeholder="Enter response...">
+        {% endif %}
+    </div>
+    <br>
 </div>

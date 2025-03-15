@@ -104,6 +104,16 @@ socket.on('avatarSubmissionSuccess', (data) => {
     }
 })
 
+socket.on('answerAccepted', (data) => {
+    if (typeof answerAcceptedEvent === 'function') {
+        answerAcceptedEvent(data)
+    }
+})
+
+socket.on('answerRejected', () => {
+    alert('Error submitting answer!')
+})
+
 function joinRoom(code) {
     if (!code) return
     socket.emit('joinGame', { code })
@@ -137,6 +147,14 @@ function emitSubmitAvatar(character, color) {
     let avatar = `${character.trim()}|${color.trim()}`
     socket.emit('submitAvatar', { avatar })
     return avatar
+}
+
+function submitThingsAnswer(answer) {
+    socket.emit('submitThing', { answer })
+}
+
+function stopReading() {
+    socket.emit('doneReading', {})
 }
 
 setInterval(() => {

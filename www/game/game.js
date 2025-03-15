@@ -88,9 +88,9 @@ function updateAvatarDisplay() {
     $('#player-display').html(players.map(({ id, displayName }) => `
         <div class="player-avatar" data-playerid="${id}" data-playername="${displayName}">
             <img class="player-bkg-image" src="${
-                avatarData.map[id]? backgroundAssetsBase64[avatarData.map[id].split('|')[1]] : unknownBackgroundAssetBase64}"}>
+                avatarData.map[id]? backgroundAssetsBase64[avatarData.map[id].split('|')[1]] : unknownAssetBase64}"}>
             <img class="player-character-image" src="${
-                avatarData.map[id]? characterAssetsBase64[avatarData.map[id].split('|')[0]] : unknownCharacterAssetBase64}"}>
+                avatarData.map[id]? characterAssetsBase64[avatarData.map[id].split('|')[0]] : unknownAssetBase64}"}>
             <div class="player-info">
                 <p class="player-name">${displayName}</p>
                 <p class="player-score"><span class="score-text">&nbsp;</span><span class="score" id="score-${id}"></span></p>
@@ -128,6 +128,16 @@ function newAvatarEvent(data) {
     checkWaitStartText(data)
 }
 
+function loadScript(scriptName) {
+    $.getScript(`./${scriptName.trim().toLowerCase()}.js`)
+        .done(() => {
+            console.log(scriptName + ' loaded.')
+        })
+        .fail(() => {
+            alert(`Failed to load "${scriptName.trim()}" file!`)
+        })
+}
+
 $(document).ready(() => {
     let room = null
     getCurrentRoom()
@@ -152,37 +162,46 @@ $(document).ready(() => {
                     alertAndNavigate('Invalid room information retreived!', '/lobbies')
                     return
                 }
-                if (sessionStorage.getItem('roomCode') !== room.code) {
+                if (sessionStorage.getItem('loadedRoomCode') !== room.code) {
                     sessionStorage.removeItem('myAvatar')
                 }
                 sessionStorage.setItem('gameMode', room.gameType)
                 sessionStorage.setItem('myId', room.id)
                 sessionStorage.setItem('hostId', room.host)
                 sessionStorage.setItem('roomCode', room.code)
+                sessionStorage.setItem('loadedRoomCode', room.code)
                 sessionStorage.setItem('avatarData', JSON.stringify(room.avatarData) || '{}')
                 sessionStorage.setItem('playerMap', JSON.stringify(room.players))
 
-                let hasAvatar = (room.avatarData?.map && room.avatarData.map[room.id])
-                let color = randomArrayItem(Object.keys(backgroundAssetsBase64))
-                let character = randomArrayItem(Object.keys(characterAssetsBase64))
-            
-                if (hasAvatar) {
-                    let data = room.avatarData.map[room.id].split('|')
-                    character = data[0]
-                    color = data[1]
-                }
-
-                $('#character-image').attr('src', characterAssetsBase64[character])
-                $('#color-image').attr('src', backgroundAssetsBase64[color])
-                $('#character-text').text(character)
-                localStorage.setItem('character', character)
-                $('#color-text').text(color)
-                localStorage.setItem('color', color)
-            
-                if (hasAvatar) {
+                if (typeof room.currentPage === 'string') {
+                    loadScript(room.gameType)
                     avatarSuccessEvent(room.avatarData)
+                    renderPartial(`${room.currentPage}_${room.gameType.trim().toLowerCase()}`)
                 } else {
-                    updateAvatarDisplay()
+                    let hasAvatar = (room.avatarData?.map && room.avatarData.map[room.id])
+                    let color = randomArrayItem(Object.keys(backgroundAssetsBase64))
+                    let character = randomArrayItem(Object.keys(characterAssetsBase64))
+                
+                    if (hasAvatar) {
+                        let data = room.avatarData.map[room.id].split('|')
+                        character = data[0]
+                        color = data[1]
+                    }
+
+                    $('#character-image').attr('src', characterAssetsBase64[character])
+                    $('#color-image').attr('src', backgroundAssetsBase64[color])
+                    $('#character-text').text(character)
+                    localStorage.setItem('character', character)
+                    $('#color-text').text(color)
+                    localStorage.setItem('color', color)
+                
+                    if (hasAvatar) {
+                        avatarSuccessEvent(room.avatarData)
+                    } else {
+                        updateAvatarDisplay()
+                    }
+
+                    loadScript(room.gameType)
                 }
             } else {
                 alertAndNavigate('Could not find valid game!', '/lobbies')

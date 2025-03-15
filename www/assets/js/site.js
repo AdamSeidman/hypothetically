@@ -94,6 +94,9 @@ function renderPartial(partial, contentId='partial-content') {
         .then(response => response.text())
         .then(data => {
             document.getElementById(contentId).innerHTML = data
+            if (data.scoreUpdate && typeof scoreUpdateEvent === 'function') {
+                scoreUpdateEvent(data.scoreUpdate)
+            }
         })
         .catch(err => {
             console.error('Failed to render partial!', err)
@@ -105,4 +108,12 @@ function randomArrayItem(arr) {
         return
     }
     return arr[Math.floor(Math.random() * arr.length)]
+}
+
+function keyWrapper(evt, fn) {
+    if (evt.keyCode == 13) {
+        fn()
+        return false
+    }
+    return true
 }

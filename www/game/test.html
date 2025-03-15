@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/site.css">
+    <link rel="stylesheet" href="./styles.css">
+    <script src="/assets/js/lib/jquery.min.js"></script>
+    <!-- <script src="/assets/js/site.js" defer></script> -->
+    <!-- <script src="/assets/js/lib/socket.io.min.js"></script>
+    <script src="/assets/js/socket.js" defer></script> -->
+    <!-- <script src="./game.js" defer></script> -->
+    <script src="/assets/img/characters.js"></script>
+    <script src="https://kit.fontawesome.com/a843fa2d6a.js" crossorigin="anonymous" defer></script>
+</head>
+<body>
+    <div id="app">
+        <div class="card" id="partial-content">
+            <!-- <div id="character-selection">
+                <h2>Choose Your Avatar</h2>
+                <div class="image-container">
+                    <img id="color-image" class="selection-image">
+                    <img id="character-image" class="selection-image">
+                </div>
+                <br>
+                <div id="icon-picker">
+                    <div>
+                        <span class="arrow left" onclick="nextIcon(-1)">&larr;</span>
+                        <strong>Icon:</strong>
+                        <span id="character-text"></span>
+                        <span class="arrow right" onclick="nextIcon(1)">&rarr;</span>
+                    </div>
+                    <div>
+                        <span class="arrow left" onclick="nextColor(-1)">&larr;</span>
+                        <strong>Color:</strong>
+                        <span id="color-text"></span>
+                        <span class="arrow right" onclick="nextColor(1)">&rarr;</span>
+                    </div>
+                    <br>
+                </div>
+                <div id="selection-container">
+                    <button onclick="submitAvatar()" id="avatar-submit">Select</button>
+                </div>
+            </div> -->
+
+            <div id="answer-container">
+                <h2>THINGS...</h2>
+                <p>I got from sheetz</p>
+                <div id="answer-input-container">
+                    <input>
+                </div>
+                <br>
+            </div>
+        </div>
+
+        <div id="player-display">
+
+        <div class="player-avatar" data-playerid="101661461098478349392" data-playername="Adam">
+            <img class="player-bkg-image" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAnYAAAJ2AHHoLmtAAAB2ElEQVR4nO2b23GDMBBFrzypIRTjFEQqCgWFYnATyoe9GUXhoRUSq8eeL9sz4L1HF/iwZay16Jk3APj8eGT/omkeWKbH+2JyzUJ8fb8/BeTADzzel7PHZxGSXAANzg3s4x/vnDepiGQCUgXfgs6bWsRpAbmD+6QWES3g6uA+qURECZjmwUoF93FFxEi4cQ8oKbzLeF/Yj1qAKaDU8ESMhGABpYcnuBKCBNQSnuBIOBRQW3giVMKugFrDEyESNgXUHp44ksB+DLbGqoBWVp/Ya4E2wP+gtdUntlqgDXDftLr6xFoLtAH0ovXVJ/wWaAOkB5CmewHGWgtjTBfXv8s0D7DWmu4boAKkB5BGBUgPII0KkB5AGhUgPYA0KkB6AGluwPO39WkepGe5jGkefv9PoA2QHkAaFUAverkPuNc/oA34K6D1FvirD2gD/gtotQVrqw9oA9YFtNaCrdUHtAHbAlppwd7qAwcNqF3CUXgg4BKoVUJIeCDwHlCbhNDwAOMmWIsETniA+RQoXQI3PBDxGCxVQkx4IHLHyEuC6JYZghbj0i0z7hdKiTgbnDi9a+xqEamCE8n2DeYWkTo4kXznqC/C+Zx1Hv9GW83WWcIfuMTN08DrT1I98wPEuB+kjMPVYgAAAABJRU5ErkJggg==" }="">
+            <img class="player-character-image" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAnYAAAJ2AHHoLmtAAADJklEQVR4nO1aYZKzIAx9fLNH8Rh6F3syuUs5Ru+S/bGNH0VQEqLszPpmdqbbGpL3EiIijojwl/GvdwC9cQvQO4DeuAXoHUBv3AL0DqA3bgF6B9AbX1pD59y6hCQiZxPO9XGoBHDO0TzPmyCuFIJ9pnFIY3DSZ4GUfAzv/SUiWMag7gHe+8138zx/lOQZKJHPxVM1nqQC2Pnr9QIAhBAAfJYhB1OTBen8zZFn4uM4AgCGYRBVgboJxk699x8icCWkQaTVkesjjJxtjjzHoEWTAIxxHDciMGJipXmb++2oOizIA0YCAHkR9prVEfaqw4o8YCgA8F8EYD/bUvBY6Xy3QHUTTBtgDiEEU+IlHFWApBGaLYWvIg/8VATfgVphIsCV5BlWIjQL0IM8w0KE6iZIRK6mD8RYlmXz3ePxOM0OkC+EmleCueznCKTIEdLaxU1RKoDpfsCyLFUk+Nq9/y181EAkABE57z2GYdhk3zKoGsT+uBdIsw8YVYCWPNu12regWYCrM2/un4jEfwBonmeygOU4P3SEXKQGRLz7ZQMrAYhIJcCf3xUWC/De6BDZTNOU/Z7v6aVFTsmuBCISb8mZPg6niAnw5+fzeZqdBqdNgVL2jrKqtdNCJEBt+cfBhhDU2Utta0SQTgPzCsgF6dx2YZbO+1IfSG2tK8G0B+SCa9m+KtlO02TWE8wqoDYzR4HXErOqhGoB9ua/FXnpdSW/kj4g2hTNXasln+sL6fgtwjrnzt8Utc681q5lOqgFaJ2Dabalq8sU2niqBEjLX+JsL4s85h55SfXEcdX2AVEPAGS3tZrg33P18DqJ6LxTXNMDVAckgGMhajNXKwBwLIKE+OpfO/f2hJCSbxVBQ5yhXgmyM+ccWb6slCKE0HQsp3klSEQufjtTuien9/0461wFRzbp+K3kgYYpsBmo4kkxJpS79uj39NpW8oChAMDHcTmzMTM+8PZhchrNVIB10BOEsCa+jntytuJzPhr79bM18dXHmQJ8OMqsymLfhYej8w9dXiVA1vkvOG/cVYDfgPvFSO8AeuMWoHcAvXEL0DuA3rgF6B1Ab3wDHV3Hu7E2EukAAAAASUVORK5CYII=" }="">
+            <div class="player-info">
+                <p class="player-name">Adam</p>
+                <p class="player-score"><span class="score-text">&nbsp;</span><span class="score" id="score-101661461098478349392"></span></p>
+            </div>
+        </div>
+    
+        <div class="player-avatar" data-playerid="100584582887331300188" data-playername="Tester">
+            <img class="player-bkg-image" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAnYAAAJ2AHHoLmtAAAB1klEQVR4nO2bS3KDMBBEW64chZR9rnAucq5Q4S7Kwp6UovDRCInRZ97KdhV4+qmBhS1jrUXPvAHA++cj+xct48wyPUx3k2sW4vvj6ykgB37gYbqfPT6LkOQCaHBuYB//eOe8SUUkE5Aq+BZ03tQiTgvIHdwntYhoAVcH90klIkrAMs5WKriPKyJGwo17QEnhXYbpzn7UAkwBpYYnYiQECyg9PMGVECSglvAER8KhgNrCE6ESdgXUGp4IkbApoPbwxJEE9mOwNVYFtLL6xF4LtAH+B62tPrHVAm2A+6bV1SfWWqANoBetrz7ht0AbID2ANN0LMNZaGGO6uP5dlnGGtdZ03wAVID2ANCpAegBpVID0ANKoAOkBpFEB0gNIcwOev60v4yw9y2Us4/z7fwJtgPQA0qgAetHLfcC9/gFtwF8BrbfAX31AG/BfQKstWFt9QBuwLqC1FmytPqAN2BbQSgv2Vh84aEDtEo7CAwGXQK0SQsIDgfeA2iSEhgcYN8FaJHDCA8ynQOkSuOGBiMdgqRJiwgORO0ZeEkS3zBC0GJdumXG/UErE2eDE6V1jV4tIFZxItm8wt4jUwYnkO0d9Ec7nrPP4N9pqts4S/sAlbp4GXn+S6pkfcY4YmJak81QAAAAASUVORK5CYII=" }="">
+            <img class="player-character-image" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAnYAAAJ2AHHoLmtAAAFXklEQVR4nO1bX2gcRRj/janp0cBpLl44cqzBFNprLmraUmOSVgXRlwgt1tiqsVFoH8xriIE8+NCHiJSKUMhLgjFGTSVU2gdfhEKrJUGhRWzTXh80tkeOaORaA3ekyYXx4TKb/TO7t39mb4TeD8rtzs5+8/1+833fzG62hFKKhxmPyHZANioCyHZANioCyHZANioCyHZANioCyHZANnwLQAihhBAp20kRY2/x60BbMq4eU0qJH3syxiZengWY6swBhp/nFmDliJeZsrPFG9vuHiu4jgDe4Axtybgl0a7OnSVttygR01hW41i1uY0GVxFgRx4ozoKWaHdHDNMzi+juiAEApmcWTfcYSTvBJ2dnuSJo/XAqgmMBnJLXktb+Mmyp2sq9P9FQ48gPBlEi+CqCbsCIZ5fziIS3ma6nMjn12K0YfiBkH2CcfR4K6w9QWH+AcE0Vsst5W3upTE4nCA+DR9vVwucHjgWglBKnAxqF6O6IYX+y3r13HuGmBriKgFIiGGe/uyOGqcuLmLq8iPvLBRTWgMIa/15e2JeKAh7ckAc8pIBRBGPlZ2CVHwBODvXi1z+yaG0qVvxt1fw04Inw+juHLX0xpoFb8oDHGlAqEvIkjDwJq+cfDU+oIpSC1wLohTzgowhaidDVuUM9zpMwTg71AiiKEAptVaPADkyEoYFjjnzxSh4QsAq0KtXqMSO/t6Nd/QdAFQGAZRQY891pJAwebXflrxFC9gELd+cRf/Ip9Xx0/Lx6fOL9Q7q+rU0RR6mgBasD3319zrOPVvAtwHYljt/TC1i4Ow907sC123/pro+On9eJkMrkkF9d59pKZXKmmR8+9aXuXPQmSUgEMBEA4N7SEs7NzAMAKKU49OKzGP70LEIh/hbYDoz8hR9/09kTKYKwN0LblTguXrmhayPEvi6V2hEaUcqeF0h5JcZ7FmBwu/nZtzvhyxehD0O10SgA4PjBqNq2dG+F29dOBIZEQw1SmRwOvvCMGAc58BUBlFLC8r02GkXrzgZTn1eeb8K7XXstbZz+7GNTm5MoYDP/xuC45z0AICgCeOR5YrhBbmUNNaFHfdlwAmE1IFZXC6BInJGP1dWq7aKQaKhRZ99v/gOCa4AbskMDx1AX32V5PZ1dhRLZrANBoSyrwOT3Vz3dl86uIreyFugbIinLoNOHHIZ9uxOBiRD4O0Hj7Lslz1DM95SQvNfCdwRQSsnYhV8c9bUiz1sKGdLZVVyavQ7AXPT8LoFAGSLAirRdAQSA/r4enB75Ckqk+Lh9afY6Xmp/Wrh//5u/DltFQTq7Gui4wiJASbYgPXejdMcNvNnTZ7bxxGO6cxYFxSWx2tRfBAJPgfTNOSjNSQDAB4Nn7Pv+86+pjYkAAPWNu/D3nVtC/RMqgF0UPPdaPzB4Btdu3ilpZ09zIw4cGcBP355S24JKhcAjQGlOFsl7ABOhv69HsFebEFIEKaWkbYOkkmzRXfNKnuHAkQHdeX1jcfUQsQQCAa8Chz/83NS2p7nR9h7edaMIIhGYADzyV+f+BGAtAmtn/bTQisCiQAQCEYBHnkErAiOsPeaRZwgiEjx9I2RprPh5iqO+UxNjAIC33zuBb74YBQC81Xvc6ThC8h+QtBNk5K9c/EH3y9rLibJ9IcIwNTGmEh6ZnAal1PS622kkiIBQASilxCoNtLM+MjnN+qu/vHf+PCFEhj9QpgjgzboRrK3c0SBcAKsoMM46oCfLi4b9L7+qsyF69gHBq4DO8IYIhJAqAOvMce3Hj1oyvPaNtscppfeDIA8EKACwScqP4yJs2Nqv/L/BhxwVAWQ7IBsVAWQ7IBsVAWQ7IBv/AVYuXDSHE08gAAAAAElFTkSuQmCC" }="">
+            <div class="player-info">
+                <p class="player-name">Tester</p>
+                <p class="player-score"><span class="score-text">&nbsp;</span><span class="score" id="score-100584582887331300188"></span></p>
+            </div>
+        </div>
+        </div>
+    </div>
+</body>
+</html>

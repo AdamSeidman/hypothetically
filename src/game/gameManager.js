@@ -7,12 +7,12 @@ const { getDisplayName } = require('../db/tables/users')
 
 let rooms = {}
 let playerMap = {}
+let gameMap = {}
 
-const DEFAULT_GAME_TYPE = 'hypothetically'
+const DEFAULT_GAME_TYPE = 'things'
 
 class GameRoom {
     #chatHistory = []
-    #gameObj = null
     #gameType = DEFAULT_GAME_TYPE
 
     constructor(hostId, isPublic) {
@@ -29,6 +29,7 @@ class GameRoom {
         this.kickedPlayers = []
         this.active = true
         this.joinable = true
+        this.gameObj = null
         this.running = false
         this.inGame = false
         this.isPublic = !!isPublic
@@ -143,6 +144,14 @@ class GameRoom {
             avatar,
             map: this.avatarMap
         }
+    }
+
+    start() {
+        if (!gameMap[this.gameType]) {
+            gameMap[this.gameType] = require(`./managers/${this.gameType.trim().toLowerCase()}`)
+        }
+        this.gameObj = gameMap[this.gameType].make(this)
+        return this
     }
 
     get chatHistory() {
@@ -313,6 +322,16 @@ function getAvatarInfo(code) {
     }
 }
 
+function getRoomByPlayerId(id) {
+    return rooms[playerMap[id] || '?']
+}
+
+function startGameObject(code) {
+    let room = rooms[code]
+    if (!room) return
+    return room.start()
+}
+
 module.exports = {
     makeRoom,
     deleteRoom,
@@ -332,5 +351,7 @@ module.exports = {
     startGame,
     isGameRunning,
     submitAvatar,
-    getAvatarInfo
+    getAvatarInfo,
+    getRoomByPlayerId,
+    startGameObject
 }

@@ -30,15 +30,16 @@ function handle(message, socket, id) {
         socket.emit('avatarSubmissionSuccess', ret)
         Sockets.sendToRoom(socket, 'newAvatar', ret)
         if (ret.totalPlayers && ret.totalPlayers === ret.numAvatarsChosen) {
+            let code = Games.getGameCodeOf(id)
+            if (!code) return
+            let room = Games.startGameObject(code)
+            if (!room) return
             setTimeout(() => {
-                let code = Games.getGameCodeOf(id)
-                if (code) {
-                    let gameType = Games.getGameType(code)
-                    Sockets.sendToRoomByCode(code, 'gameRender', {
-                        currentGamePage: `start_${gameType.toLowerCase()}`,
-                        currentGameCode: code
-                    })
-                }
+                let gameType = Games.getGameType(code)
+                Sockets.sendToRoomByCode(code, 'gameRender', {
+                    currentGamePage: `start_${gameType.toLowerCase()}`,
+                    currentGameCode: code
+                })
             }, GAME_START_WAIT)
         }
     } else {

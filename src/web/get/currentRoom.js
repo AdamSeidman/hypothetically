@@ -26,6 +26,10 @@ module.exports = function (req, res) {
     }
     if (ret.gameRunning) {
         ret.avatarData = Games.getAvatarInfo(ret.code)
+        let room = Games.getRoomByPlayerId(req.user.id)
+        if (room.gameObj) {
+            ret.currentPage = room.gameObj.currentState
+        }
     }
     ret.isHost = ret.host == req.user.id
     res.send(ret)

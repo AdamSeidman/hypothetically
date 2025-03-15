@@ -1,0 +1,14 @@
+<div id="read-container">
+    <h2>THINGS...</h2>
+    <p>{{ prompt | titlecase }}</p>
+    {% if reader %}
+        <div id="answers">
+            {% for answer in answers %}
+                <div class="things-answer">"{{ answer }}"</div>
+            {% endfor %}
+        </div>
+        <button onclick="stopReading()" id="finished-reading-btn">Finished</button>
+    {% else %}
+        <p>Please wait for {{ readerName }} to read the responses!</p>
+    {% endif %}
+</div>

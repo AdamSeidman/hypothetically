@@ -148,8 +148,9 @@ app.get('/logout', (req, res) => {
 })
 
 // NJK Partials
-nunjucks.configure(path.join(__dirname, 'partials'), { express: app })
+let njk = nunjucks.configure(path.join(__dirname, 'partials'), { express: app })
 app.set('view engine', 'njk')
+njk.addFilter('titlecase', (str) => str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '))
 
 const partialRenderers = {}
 fs.readdirSync(path.join(__dirname, 'partials')).forEach((file) => {
