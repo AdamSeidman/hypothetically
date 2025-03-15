@@ -8,7 +8,7 @@ function gameRenderEvent(data) {
         console.error('Game render event occurred with wrong code!', data)
         return
     }
-    clearSelectionCovers()
+    clearSelectionCovers() // TODO Need to determine when we need to actually add
     renderPartial(data.currentGamePage)
     Object.entries(data).forEach(([key, value]) => {
         if (Array.isArray(value) || typeof value === 'object') {

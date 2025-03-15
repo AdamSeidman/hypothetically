@@ -1,1 +1,27 @@
-<div>Did they get it correct? Maybe, but I didn't implement this yet...</div>
+<div id="things-reveal-container">
+    <h2>THINGS...</h2>
+    <p>{{ prompt | titlecase }}</p>
+    <hr>
+    <h3>{{ guesserName }} Guessed:</h3>
+    <div class="selection-pane">
+        <div class="player-avatar guessed-avatar">
+            <img id="guess-bkg" class="player-bkg-image" src="{{ colorAsset }}">
+            <img id="guess-character" class="player-character-image" src="{{ characterAsset }}">
+        </div>
+    </div>
+    <span class="things-that-text"><br>that <strong>{{ guessedName }}</strong> said</span>
+    <h2 class="guessed-things-answer">{{ answerText }}</h2>
+    <hr>
+    <h4 class="things-result-text">
+        {% if correct %}
+            Correct! 
+            <i class="fa-solid fa-check"></i>
+        {% else %}
+            Incorrect. 
+            <i class="fa-solid fa-x"></i>
+        {% endif %}
+    </h4> <!-- TODO Stylize FA icons better. -->
+    {% if isGuesser %}
+    <button onclick="alert(1)">Next &rarr;</button>
+    {% endif %}
+</div>
