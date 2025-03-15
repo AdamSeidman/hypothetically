@@ -9,6 +9,9 @@ function gameRenderEvent(data) {
         return
     }
     clearSelectionCovers() // TODO Need to determine when we need to actually add
+    if (data.scoreUpdate && typeof scoreUpdateEvent === 'function') {
+        scoreUpdateEvent(data.scoreUpdate)
+    }
     renderPartial(data.currentGamePage)
     Object.entries(data).forEach(([key, value]) => {
         if (Array.isArray(value) || typeof value === 'object') {

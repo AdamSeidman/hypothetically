@@ -94,9 +94,6 @@ function renderPartial(partial, contentId='partial-content') {
         .then(response => response.text())
         .then(data => {
             document.getElementById(contentId).innerHTML = data
-            if (data.scoreUpdate && typeof scoreUpdateEvent === 'function') {
-                scoreUpdateEvent(data.scoreUpdate)
-            }
         })
         .catch(err => {
             console.error('Failed to render partial!', err)

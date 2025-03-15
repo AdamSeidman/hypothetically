@@ -28,3 +28,11 @@ function makeGuess() {
     let answerText = $('.answer-option').not('.hidden').data('text')
     makeThingsGuess(characterId, answerText)
 }
+
+function scoreUpdateEvent(data) {
+    if (data) {
+        Object.entries(data).forEach(([id, score]) => {
+            $('#score-' + id).text(score)
+        })
+    }
+}

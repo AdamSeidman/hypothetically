@@ -10,9 +10,11 @@ const { getDisplayName } = require('../../db/tables/users')
 const states = {
     0: 'start',
     1: 'read',
-    2: 'guess'
+    2: 'guess',
+    3: 'reveal',
+    4: 'postGame'
 }
-const numStates = 3
+const numStates = 4
 
 class Game {
     #reader = 0
@@ -28,13 +30,15 @@ class Game {
         this.round = 1
         this.answerMap = {}
         this.code = game.code
-        this.guessStache = {}
+        this.guessStash = {}
         async function loadPrompts(game) {
             game.prompts = await database.things.getAllThings() || []
             game.prompts = utils.shuffleArray(game.prompts)
         }
         loadPrompts(this)
         this.#readers = utils.shuffleArray(JSON.parse(JSON.stringify(this.game.players)))
+        this.scoreMap = {}
+        this.#readers.forEach(id => this.scoreMap[id] = 0)
     }
 
     get currentPrompt() {
@@ -142,16 +146,36 @@ class Game {
     }
 
     guess(guesserId, guessId, answerText) {
-        this.guessStache = {
+        this.guessStash = {
             guesserId, guessId, answerText,
             correct: false
         }
         if (guessId && answerText && this.#guessesLeft.includes(guessId) && 
                 this.guesser == guesserId && this.answerMap[guessId].trim() === answerText.trim()) {
-            this.guessStache.correct = true
+            this.guessStash.correct = true
+            this.scoreMap[guesserId] += 1
             this.#guessesLeft = this.#guessesLeft.filter(x => x !== guessId)
         }
-        return this.guessStache.correct
+        this.nextState()
+        return this.guessStash.correct
+    }
+
+    roundFinished(id) {
+        if (!this.game.players.includes(id)) return
+        if (states[this.#stateKey] !== 'reveal') return
+        if (this.#guessesLeft.length > 1) {
+            this.#guesser += 1
+            if (this.#guesser >= this.#readers.length) {
+                this.#guesser = 0
+            }
+            this.#stateKey -= 1
+        } else {
+            if (this.#guessesLeft.length > 0) {
+                this.scoreMap[this.#guessesLeft[0]] += 2
+            }
+            this.nextState()
+        }
+        return `${this.currentState}_things`
     }
 }
 

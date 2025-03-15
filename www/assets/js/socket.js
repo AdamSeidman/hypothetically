@@ -168,6 +168,10 @@ function makeThingsGuess(characterId, answerText) {
     socket.emit('guessThing', { characterId, answerText })
 }
 
+function emitNextThings() {
+    socket.emit('thingsNext', {})
+}
+
 setInterval(() => {
     socket.emit('ping', {
         page: window.location.href

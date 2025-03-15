@@ -18,7 +18,8 @@ function handle(message, socket, id) {
     setTimeout(() => {
         Sockets.sendToRoomByCode(room.code, 'gameRender', {
             currentGamePage: 'reveal_things',
-            currentGameCode: room.code
+            currentGameCode: room.code,
+            scoreUpdate: room.gameObj.scoreMap
         })
     }, 100)
 }
