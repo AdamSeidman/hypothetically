@@ -150,8 +150,11 @@ class Game {
             guesserId, guessId, answerText,
             correct: false
         }
+        if (answerText?.trim) {
+            answerText = answerText.trim()
+        }
         if (guessId && answerText && this.#guessesLeft.includes(guessId) && 
-                this.guesser == guesserId && this.answerMap[guessId].trim() === answerText.trim()) {
+                this.guesser == guesserId && this.answerMap[guessId].trim() === answerText) {
             this.guessStash.correct = true
             this.scoreMap[guesserId] += 1
             this.#guessesLeft = this.#guessesLeft.filter(x => x !== guessId)

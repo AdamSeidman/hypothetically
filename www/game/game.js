@@ -12,6 +12,12 @@ function gameRenderEvent(data) {
     if (data.scoreUpdate && typeof scoreUpdateEvent === 'function') {
         scoreUpdateEvent(data.scoreUpdate)
     }
+    if (data.iconChange && typeof iconChangeEvent === 'function') {
+        iconChangeEvent(data.iconChange)
+    }
+    if (data.currentGamePage.toLowerCase().includes('reveal') && typeof revealEvent === 'function') {
+        revealEvent()
+    }
     renderPartial(data.currentGamePage)
     Object.entries(data).forEach(([key, value]) => {
         if (Array.isArray(value) || typeof value === 'object') {
@@ -222,4 +228,9 @@ $(document).ready(() => {
                 alertAndNavigate('Could not find valid game!', '/lobbies')
             }
         })
+    setTimeout(() => {
+        if (typeof revealEvent === 'function') {
+            revealEvent()
+        }
+    }, 500)
 })

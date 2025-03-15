@@ -47,7 +47,7 @@ button {
     cursor: default !important;
 }
 
-button:hover {
+button:hover:not(:disabled) {
     background-color: #27ae60;
 }
 
@@ -171,4 +171,11 @@ h2.guessed-things-answer {
 h4.things-result-text {
     font-size: 1.5em;
     margin: 30px 0 15px;
+}
+
+#things-next-button:disabled {
+    cursor: not-allowed;
+    background: #57b37f;
+    color: gray;
+
 }

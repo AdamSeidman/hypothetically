@@ -15,11 +15,17 @@ function handle(message, socket, id) {
     let ret = room.gameObj?.roundFinished(id)
     if (ret) {
         setTimeout(() => {
-            Sockets.sendToRoomByCode(room.code, 'gameRender', {
+            let payload = {
                 currentGamePage: ret,
                 currentGameCode: room.code,
                 scoreUpdate: room.gameObj.scoreMap
-            })
+            }
+            if (ret.toLowerCase().includes('start')) {
+                payload.iconChange = {
+                    clear: true
+                }
+            }
+            Sockets.sendToRoomByCode(room.code, 'gameRender', payload)
         }, 50)
     }
 }

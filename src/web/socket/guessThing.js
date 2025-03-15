@@ -16,11 +16,17 @@ function handle(message, socket, id) {
     let ret = room.gameObj.guess(id, message.characterId, message.answerText)
     console.log(`Guess made by (${id}). Result: ${ret}`, message.characterId, message.answerText)
     setTimeout(() => {
-        Sockets.sendToRoomByCode(room.code, 'gameRender', {
+        let payload = {
             currentGamePage: 'reveal_things',
             currentGameCode: room.code,
             scoreUpdate: room.gameObj.scoreMap
-        })
+        }
+        if (ret) {
+            payload.iconChange = {
+                id: message.characterId
+            }
+        }
+        Sockets.sendToRoomByCode(room.code, 'gameRender', payload)
     }, 100)
 }
 

@@ -13,8 +13,10 @@ function answerAcceptedEvent(data) {
 }
 
 function showReader(idx = 1) {
-    $('.avatar-option').toggleClass('hidden', true)
-    $(`#things-avatar-selection-${idx}`).removeClass('hidden')
+    if ($('.avatar-option').length > 1) {
+        $('.avatar-option').toggleClass('hidden', true)
+        $(`#things-avatar-selection-${idx}`).removeClass('hidden')
+    }
 }
 
 function showAnswer(idx = 1) {
@@ -35,4 +37,21 @@ function scoreUpdateEvent(data) {
             $('#score-' + id).text(score)
         })
     }
+}
+
+function iconChangeEvent(data) {
+    if (data) {
+        if (data.clear) {
+            clearSelectionCovers()
+        }
+        if (data.id) {
+            $(`#cover-image-${data.id}`).attr('src', eliminatedAssetBase64)
+        }
+    }
+}
+
+function revealEvent() {
+    setTimeout(() => {
+        $("#things-next-button").prop("disabled", false)
+    }, 3500)
 }

@@ -15,13 +15,13 @@
     <h4 class="things-result-text">
         {% if correct %}
             Correct! 
-            <i class="fa-solid fa-check"></i>
+            &nbsp;<i class="fa-solid fa-check" style="color: green;"></i>
         {% else %}
             Incorrect. 
-            <i class="fa-solid fa-x"></i>
+            &nbsp;<i class="fa-solid fa-x" style="color: red;"></i>
         {% endif %}
-    </h4> <!-- TODO Stylize FA icons better. -->
+    </h4>
     {% if isGuesser %}
-    <button onclick="emitNextThings()">Next &rarr;</button>
+        <button id="things-next-button" onclick="emitNextThings()" disabled>Next &rarr;</button>
     {% endif %}
 </div>
