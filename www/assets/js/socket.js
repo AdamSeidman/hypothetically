@@ -157,6 +157,10 @@ function stopReading() {
     socket.emit('doneReading', {})
 }
 
+function makeThingsGuess(characterId, answerText) {
+    socket.emit('guessThing', { characterId, answerText })
+}
+
 setInterval(() => {
     socket.emit('ping', {
         page: window.location.href

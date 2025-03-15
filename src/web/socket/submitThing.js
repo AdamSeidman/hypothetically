@@ -21,7 +21,7 @@ function handle(message, socket, id) {
     if (done) {
         setTimeout(() => {
             Sockets.sendToRoomByCode(room.code, 'gameRender', {
-                currentGamePage: `read_things`,
+                currentGamePage: 'read_things',
                 currentGameCode: room.code
             })
         }, 1000)

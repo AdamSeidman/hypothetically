@@ -147,3 +147,17 @@ img {
 div.things-answer {
     margin-block: 15px;
 }
+
+.selection-pane {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+h3.guess-text {
+    margin-bottom: 0;
+}
+
+.things-guess-btn {
+    margin-top: 10px;
+}

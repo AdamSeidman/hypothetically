@@ -6,7 +6,7 @@ const Games = require('../../game/gameManager')
 const Avatars = require('../../../www/assets/img/characters')
 
 let Sockets = undefined
-const GAME_START_WAIT = 5 * 1000
+const GAME_START_WAIT = 2 * 1000
 
 function isValidAvatar(avatar) {
     if (typeof avatar !== 'string') return false

@@ -1,3 +1,31 @@
-<div>
-    IDK... Guess now?
+<div id="things-guess-container">
+    <h2>THINGS...</h2>
+    <p>{{ prompt | titlecase }}</p>
+    <hr>
+    {% if guesser %}
+        <h3 class="guess-text">Time to guess!</h3>
+        {% for avatar in avatars %}
+            <div id="things-avatar-selection-{{loop.index}}" class="selection-pane avatar-option{% if loop.index > 1 %} hidden{% endif %}" data-id="{{avatar.id}}">
+                <span class="arrow left" onclick="showReader({{avatar.prev}})">&larr;</span>
+                <div class="avatar-guess-pane">
+                    <div class="player-avatar">
+                        <img class="guess-bkg" src="{{avatar.backgroundAsset}}">
+                        <img class="guess-character" src="{{avatar.characterAsset}}">
+                    </div>
+                    <p class="player-name">{{avatar.name}}</p>
+                </div>
+                <span class="arrow right" onclick="showReader({{avatar.next}})">&rarr;</span>
+            </div>
+        {% endfor %}
+        {% for guess in guesses %}
+            <div id="things-answer-selection-{{loop.index}}" class="selection-pane answer-option{% if loop.index > 1 %} hidden{% endif %}" data-text="{{guess.text}}">
+                <span class="arrow left" onclick="showAnswer({{guess.prev}})">&larr;</span>
+                <p id="things-answer-guess">{{guess.text}}</p>
+                <span class="arrow right" onclick="showAnswer({{guess.next}})">&rarr;</span>
+            </div>
+        {% endfor %}
+        <button onclick="makeGuess()" id="things-guess-btn">Guess</button>
+    {% else %}
+        <p>Waiting for <strong>{{ guesserName }}</strong> to make a guess!</p>
+    {% endif %}
 </div>
