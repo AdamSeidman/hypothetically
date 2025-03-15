@@ -114,6 +114,13 @@ socket.on('answerRejected', () => {
     alert('Error submitting answer!')
 })
 
+socket.on('thingSubmitted', (data) => {
+    if (!data?.id) return
+    if (typeof thingSubmittedEvent === 'function') {
+        thingSubmittedEvent(data.id)
+    }
+})
+
 function joinRoom(code) {
     if (!code) return
     socket.emit('joinGame', { code })

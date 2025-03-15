@@ -8,6 +8,7 @@ function gameRenderEvent(data) {
         console.error('Game render event occurred with wrong code!', data)
         return
     }
+    clearSelectionCovers()
     renderPartial(data.currentGamePage)
     Object.entries(data).forEach(([key, value]) => {
         if (Array.isArray(value) || typeof value === 'object') {
@@ -88,15 +89,26 @@ function updateAvatarDisplay() {
     $('#player-display').html(players.map(({ id, displayName }) => `
         <div class="player-avatar" data-playerid="${id}" data-playername="${displayName}">
             <img class="player-bkg-image" src="${
-                avatarData.map[id]? backgroundAssetsBase64[avatarData.map[id].split('|')[1]] : unknownAssetBase64}"}>
+                avatarData.map[id]? backgroundAssetsBase64[avatarData.map[id].split('|')[1]] : unknownAssetBase64}">
             <img class="player-character-image" src="${
-                avatarData.map[id]? characterAssetsBase64[avatarData.map[id].split('|')[0]] : unknownAssetBase64}"}>
+                avatarData.map[id]? characterAssetsBase64[avatarData.map[id].split('|')[0]] : unknownAssetBase64}">
+            <img class="player-cover-image" id="cover-image-${id}" src="${transparentAssetBase64}">
             <div class="player-info">
                 <p class="player-name">${displayName}</p>
                 <p class="player-score"><span class="score-text">&nbsp;</span><span class="score" id="score-${id}"></span></p>
             </div>
         </div>
     `).join(''))
+}
+
+function thingSubmittedEvent(id) {
+    if (id) {
+        $(`#cover-image-${id}`).attr('src', selectedAssetBase64)
+    }
+}
+
+function clearSelectionCovers() {
+    $('img.player-cover-image').attr('src', transparentAssetBase64)
 }
 
 function checkWaitStartText(data) {

@@ -18,6 +18,7 @@ function handle(message, socket, id) {
     }
     let done = room.gameObj.submitAnswer(id, message.answer)
     socket.emit('answerAccepted', { answer: message.answer })
+    Sockets.sendToRoomByCode(room.code, 'thingSubmitted', { id })
     if (done) {
         setTimeout(() => {
             Sockets.sendToRoomByCode(room.code, 'gameRender', {
