@@ -14,7 +14,6 @@ function handle(message, socket, id) {
     if (room.gameObj.guesser != id || !message?.characterId, !message?.answerText) return
     // TODO Handle other errors
     let ret = room.gameObj.guess(id, message.characterId, message.answerText)
-    console.log(`Guess made by (${id}). Result: ${ret}`, message.characterId, message.answerText)
     setTimeout(() => {
         let payload = {
             currentGamePage: 'reveal_things',

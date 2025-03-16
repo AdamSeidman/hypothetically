@@ -47,7 +47,6 @@ function openSocket(id, socket) {
     })
     let code = Game.getGameCodeOf(id)
     if (code) {
-        console.log('New socket already in game.', code)
         socket.join(code)
         socket.room = code
     }
