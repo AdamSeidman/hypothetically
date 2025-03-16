@@ -89,7 +89,7 @@ app.use((req, res, next) => {
             return req.logout(() => {
                 res.redirect('/login')
             })
-        } else if (req.path === '/') { // TODO Expand?
+        } else if (req.path === '/') { // TODO Expand? Other ways to use redirecting??
             // Check if user is in a game/lobby
             let code = Games.getGameCodeOf(req.user?.id)
             if (code) {

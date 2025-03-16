@@ -12,7 +12,7 @@ function handle(message, socket, id) {
     }
     let room = Games.getRoomByPlayerId(id)
     if (room.gameObj.guesser != id || !message?.characterId, !message?.answerText) return
-    // TODO Handle other errors
+    // TODO Handle other possible mis-guessing errors
     let ret = room.gameObj.guess(id, message.characterId, message.answerText)
     setTimeout(() => {
         let payload = {

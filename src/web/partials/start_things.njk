@@ -5,7 +5,8 @@
         {% if answer %}
             <p id="answer-inputted-text">{{ answer }}</p>
         {% else %}
-            <input id="answer-input" maxLength="{{ maxLength }}" onkeypress="return keyWrapper(event, submit)" placeholder="Enter response...">
+            <input id="answer-input" type="text" autocomplete="off" maxLength="{{ maxLength }}" 
+                onkeypress="return keyWrapper(event, submit)" placeholder="Enter response...">
         {% endif %}
     </div>
     <br>

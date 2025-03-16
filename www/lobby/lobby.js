@@ -123,7 +123,7 @@ function startGameFailedEvent(data) {
 }
 
 function gameStartedEvent(data) {
-    // TODO compare against data
+    // TODO Compare against the incoming data to make sure the game should actually start.
     window.location.href = '/game'
 }
 

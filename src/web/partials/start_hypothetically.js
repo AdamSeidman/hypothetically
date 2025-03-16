@@ -3,7 +3,7 @@
  */
 
 function get(req) {
-    return {} // TODO
+    return {} // TODO Work on second game mode.
 }
 
 module.exports = { get }

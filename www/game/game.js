@@ -9,7 +9,7 @@ function gameRenderEvent(data) {
         return
     }
     if ($(`img.player-cover-image[src="${selectedAssetBase64}"]`).length > 0) {
-        clearSelectionCovers() // TODO Need to determine when we need to actually add
+        clearSelectionCovers() // TODO Need to determine when we need to actually add covers, too
     }
     if (data.scoreUpdate && typeof scoreUpdateEvent === 'function') {
         scoreUpdateEvent(data.scoreUpdate)
@@ -40,7 +40,7 @@ function gameRenderEvent(data) {
 
 function gameEndedEvent(data) {
     alert('Game Ended')
-    // TODO
+    // TODO Need a proper way to end the game.
     console.warn(data)
 }
 
