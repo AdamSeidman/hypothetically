@@ -23,6 +23,9 @@ function gameRenderEvent(data) {
     if (data.currentGamePage.toLowerCase().includes('reveal') && typeof revealEvent === 'function') {
         revealEvent()
     }
+    if (data.roundNumber && typeof roundNumberEvent === 'function') {
+        roundNumberEvent(data.roundNumber)
+    }
     renderPartial(data.currentGamePage)
     Object.entries(data).forEach(([key, value]) => {
         if (Array.isArray(value) || typeof value === 'object') {
@@ -210,6 +213,11 @@ $(document).ready(() => {
                             }
                             if (room.scoreMap && typeof scoreUpdateEvent === 'function') {
                                 scoreUpdateEvent(room.scoreMap)
+                            }
+                            if (room.roundNumber && typeof roundNumberEvent === 'function') {
+                                roundNumberEvent(room.roundNumber)
+                            } else if (room.gameType?.trim().toLowerCase() === 'things') {
+                                $('#things-number-header').toggleClass('hidden', false)
                             }
                         }, 100)
                     })

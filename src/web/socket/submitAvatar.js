@@ -38,7 +38,8 @@ function handle(message, socket, id) {
                 let gameType = Games.getGameType(code)
                 let payload = {
                     currentGamePage: `start_${gameType.toLowerCase()}`,
-                    currentGameCode: code
+                    currentGameCode: code,
+                    roundNumber: 1
                 }
                 let readerMap = room.gameObj?.readerMap
                 if (readerMap) {

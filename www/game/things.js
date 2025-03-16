@@ -67,3 +67,10 @@ function readerOrderEvent(data) {
     }).appendTo('#player-display')
     hasReordered = true
 }
+
+function roundNumberEvent(data) {
+    if (data) {
+        $('#things-round-number').text(data)
+    }
+    $('#things-number-header').toggleClass('hidden', false)
+}

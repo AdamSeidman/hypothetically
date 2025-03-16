@@ -24,6 +24,7 @@ function handle(message, socket, id) {
                 payload.iconChange = {
                     clear: true
                 }
+                payload.roundNumber = ++room.gameObj.round
             }
             Sockets.sendToRoomByCode(room.code, 'gameRender', payload)
         }, 50)

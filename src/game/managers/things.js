@@ -65,7 +65,6 @@ class Game {
             if (this.#reader >= this.#readers.length) {
                 this.#reader = 0
                 this.#guesser = 1
-                this.round += 1
             }
             if (this.#guesser >= this.#readers.length) {
                 this.#guesser = 0

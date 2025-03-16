@@ -12,13 +12,13 @@ function handle(message, socket, id) {
     }
     let room = Games.getRoomByPlayerId(id)
     if (room.gameObj.guesser != id || !message?.characterId, !message?.answerText) return
-    // TODO Handle other possible mis-guessing errors
     let ret = room.gameObj.guess(id, message.characterId, message.answerText)
     setTimeout(() => {
         let payload = {
             currentGamePage: 'reveal_things',
             currentGameCode: room.code,
-            scoreUpdate: room.gameObj.scoreMap
+            scoreUpdate: room.gameObj.scoreMap,
+            roundNumber: room.gameObj.round
         }
         if (ret) {
             payload.iconChange = {

@@ -177,5 +177,11 @@ h4.things-result-text {
     cursor: not-allowed;
     background: #57b37f;
     color: gray;
+}
 
+.avatar-guess-pane {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }

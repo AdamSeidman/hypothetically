@@ -31,6 +31,7 @@ module.exports = function (req, res) {
             ret.currentPage = room.gameObj.currentState
             ret.readerOrder = room.gameObj.readerMap
             ret.scoreMap = room.gameObj.scoreMap
+            ret.roundNumber = room.gameObj.round
         }
     }
     ret.isHost = ret.host == req.user.id

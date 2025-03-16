@@ -123,8 +123,11 @@ function startGameFailedEvent(data) {
 }
 
 function gameStartedEvent(data) {
-    // TODO Compare against the incoming data to make sure the game should actually start.
-    window.location.href = '/game'
+    if (sessionStorage.getItem('roomCode') === data.code) {
+        window.location.href = '/game'
+    } else {
+        console.warn('Tried to start game from wrong lobby!', data)
+    }
 }
 
 $(document).ready(() => {
