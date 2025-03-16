@@ -21,7 +21,6 @@ fs.readdirSync(path.join(__dirname, 'socket')).forEach((file) => {
 })
 
 function openSocket(id, socket) {
-    console.log('Socket opened.', id)
     if (sockets[id]) {
         sockets[id].emit('loginLocationChanged')
         if (sockets[id].room) {
@@ -53,7 +52,6 @@ function openSocket(id, socket) {
         socket.room = code
     }
     socket.on('disconnect', () => {
-        console.log('Socket closed.', id)
         if (sockets[id] && sockets[id].uuid === socket.uuid) {
             delete sockets[id]
         } else {

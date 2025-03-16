@@ -28,7 +28,10 @@ async function add(thing, user) {
         .from(TABLE_NAME)
         .insert(item)
     if (error) {
+        console.error('Add thing error', error)
         return error
+    } else {
+        console.log('Added', thing)
     }
 }
 
