@@ -107,8 +107,11 @@ class Game {
         return this.guesser
     }
 
-    get currentAvatars() {
+    getCurrentAvatars(idToFilter) {
         let ids = utils.shuffleArray(JSON.parse(JSON.stringify(this.#guessesLeft)))
+        if (idToFilter && ids.length > 1) {
+            ids = ids.filter(x => x !== idToFilter)
+        }
         return ids.map((id, n) => {
             let avatarItems = this.game.avatarMap[id]?.split('|') || ['', '']
             let ret = {
@@ -179,6 +182,14 @@ class Game {
             this.nextState()
         }
         return `${this.currentState}_things`
+    }
+
+    get readerMap() {
+        let ret = {}
+        this.#readers.forEach((id, n) => {
+            ret[id] = n
+        })
+        return ret
     }
 }
 

@@ -1,6 +1,8 @@
 <div id="read-container">
     <h2>THINGS...</h2>
     <p>{{ prompt | titlecase }}</p>
+    <hr>
+    <h3 class="guess-text">Please read the responses!</h3>
     {% if reader %}
         <div id="answers">
             {% for answer in answers %}

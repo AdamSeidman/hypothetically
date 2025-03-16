@@ -29,6 +29,8 @@ module.exports = function (req, res) {
         let room = Games.getRoomByPlayerId(req.user.id)
         if (room.gameObj) {
             ret.currentPage = room.gameObj.currentState
+            ret.readerOrder = room.gameObj.readerMap
+            ret.scoreMap = room.gameObj.scoreMap
         }
     }
     ret.isHost = ret.host == req.user.id

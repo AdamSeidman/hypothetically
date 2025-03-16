@@ -36,10 +36,15 @@ function handle(message, socket, id) {
             if (!room) return
             setTimeout(() => {
                 let gameType = Games.getGameType(code)
-                Sockets.sendToRoomByCode(code, 'gameRender', {
+                let payload = {
                     currentGamePage: `start_${gameType.toLowerCase()}`,
                     currentGameCode: code
-                })
+                }
+                let readerMap = room.gameObj?.readerMap
+                if (readerMap) {
+                    payload.readerOrder = readerMap
+                }
+                Sockets.sendToRoomByCode(code, 'gameRender', payload)
             }, GAME_START_WAIT)
         }
     } else {

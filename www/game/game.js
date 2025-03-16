@@ -8,12 +8,17 @@ function gameRenderEvent(data) {
         console.error('Game render event occurred with wrong code!', data)
         return
     }
-    clearSelectionCovers() // TODO Need to determine when we need to actually add
+    if ($(`img.player-cover-image[src="${selectedAssetBase64}"]`).length > 0) {
+        clearSelectionCovers() // TODO Need to determine when we need to actually add
+    }
     if (data.scoreUpdate && typeof scoreUpdateEvent === 'function') {
         scoreUpdateEvent(data.scoreUpdate)
     }
     if (data.iconChange && typeof iconChangeEvent === 'function') {
         iconChangeEvent(data.iconChange)
+    }
+    if (data.readerOrder && typeof readerOrderEvent === 'function') {
+        readerOrderEvent(data.readerOrder)
     }
     if (data.currentGamePage.toLowerCase().includes('reveal') && typeof revealEvent === 'function') {
         revealEvent()
@@ -25,7 +30,7 @@ function gameRenderEvent(data) {
         }
         localStorage.setItem(`${data.currentGameCode}-${key}`, value)
     })
-    $('.score-text').text('Score:')
+    $('.score-text').text('Score: ')
     $('.score').each(function () {
         if ($(this).text()?.trim().length < 1) {
             $(this).text('0')
@@ -149,10 +154,12 @@ function newAvatarEvent(data) {
     checkWaitStartText(data)
 }
 
-function loadScript(scriptName) {
+function loadScript(scriptName, callback) {
     $.getScript(`./${scriptName.trim().toLowerCase()}.js`)
         .done(() => {
-            console.log(scriptName + ' loaded.')
+            if (typeof callback === 'function') {
+                callback()
+            }
         })
         .fail(() => {
             alert(`Failed to load "${scriptName.trim()}" file!`)
@@ -195,10 +202,21 @@ $(document).ready(() => {
                 sessionStorage.setItem('playerMap', JSON.stringify(room.players))
 
                 if (typeof room.currentPage === 'string') {
-                    loadScript(room.gameType)
+                    loadScript(room.gameType, () => {
+                        $('.score-text').text('Score: ')
+                        setTimeout(() => {
+                            if (room.readerOrder && typeof readerOrderEvent === 'function') {
+                                readerOrderEvent(room.readerOrder)
+                            }
+                            if (room.scoreMap && typeof scoreUpdateEvent === 'function') {
+                                scoreUpdateEvent(room.scoreMap)
+                            }
+                        }, 100)
+                    })
                     avatarSuccessEvent(room.avatarData)
                     renderPartial(`${room.currentPage}_${room.gameType.trim().toLowerCase()}`)
                 } else {
+                    $('#character-selection').toggleClass('hidden', false)
                     let hasAvatar = (room.avatarData?.map && room.avatarData.map[room.id])
                     let color = randomArrayItem(Object.keys(backgroundAssetsBase64))
                     let character = randomArrayItem(Object.keys(characterAssetsBase64))

@@ -53,5 +53,17 @@ function iconChangeEvent(data) {
 function revealEvent() {
     setTimeout(() => {
         $("#things-next-button").prop("disabled", false)
-    }, 3500)
+    }, 5000)
+}
+
+let reorderData = ''
+function readerOrderEvent(data) {
+    if (!data || reorderData === JSON.stringify(data)) {
+        return
+    }
+    reorderData = JSON.stringify(data)
+    $('#player-display .player-avatar').sort((a, b) => {
+        return (data[a.dataset.playerid] || 0) - (data[b.dataset.playerid] || 0)
+    }).appendTo('#player-display')
+    hasReordered = true
 }
