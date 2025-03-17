@@ -176,4 +176,4 @@ setInterval(() => {
     socket.emit('ping', {
         page: window.location.href
     })
-}, (1000 * 60))
+}, (1000 * 30))
