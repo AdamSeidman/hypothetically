@@ -47,10 +47,11 @@ $(document).ready(() => {
     nextColor(0)
     $('#character-selection').toggleClass('hidden', false)
     $('input[name="avatar-cover"]').click(function() {
-        console.log(123)
         let asset = coverAssets[$('input[name="avatar-cover"]:checked').val()]
-        console.log(asset)
         $('#cover-image').attr('src', asset)
+    })
+    $('input[name="avatar-size"]').click(function() {
+        $('#avatar-box').toggleClass('smaller', !$('#size-box').prop('checked'))
     })
     getUserInfo().then((data) => $('#submit-link').toggleClass('hidden', !data.isAdmin))
 })

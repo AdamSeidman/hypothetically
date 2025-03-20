@@ -1,5 +1,11 @@
 :root {
     --img-size: 256px;
+    --img-margin: 0px;
+}
+
+#avatar-box.smaller {
+    --img-size: 64px;
+    --img-margin: 96px;
 }
 
 .container {
@@ -44,6 +50,7 @@
     position: relative;
     width: var(--img-size);
     height: var(--img-size);
+    margin: var(--img-margin);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -73,4 +80,8 @@ img {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+input#size-box {
+    margin-top: 20px;
 }
