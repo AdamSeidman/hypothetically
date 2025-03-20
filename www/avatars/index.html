@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/site.css">
+    <link rel="stylesheet" href="./avatars.css">
+    <script src="/assets/js/lib/jquery.min.js"></script>
+    <script src="/assets/js/site.js"></script>
+    <script src="./avatars.js" defer></script>
+    <script src="/assets/img/characters.js"></script>
+    <script src="https://kit.fontawesome.com/a843fa2d6a.js" crossorigin="anonymous" defer></script>
+</head>
+<body>
+    <header class="navbar">
+        <div class="navbar-container">
+            <a href="/" class="navbar-logo">Games!</a>
+            <nav class="navbar-links">
+                <a href="/admin" id="submit-link" class="navbar-link hidden">Submit Items</a>
+                <a href="/profile" class="navbar-link">Profile</a>
+                <a href="/logout" class="navbar-link logout">Logout</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div id="avatar-box">
+            <div id="character-selection" class="hidden">
+                <h2>Avatars</h2>
+                <div class="image-container">
+                    <img id="color-image" class="selection-image">
+                    <img id="character-image" class="selection-image">
+                    <img id="cover-image" class="selection-image">
+                </div>
+                <br>
+                <div id="icon-picker">
+                    <div>
+                        <span class="arrow left" onclick="nextIcon(-1)">&larr;</span>
+                        <strong>Icon:</strong>
+                        <span id="character-text"></span>
+                        <span class="arrow right" onclick="nextIcon(1)">&rarr;</span>
+                    </div>
+                    <div>
+                        <span class="arrow left" onclick="nextColor(-1)">&larr;</span>
+                        <strong>Color:</strong>
+                        <span id="color-text"></span>
+                        <span class="arrow right" onclick="nextColor(1)">&rarr;</span>
+                    </div>
+                    <br>
+                </div>
+                <div>
+                    <input name="avatar-cover" type="radio" id="none-btn" value="transparent" checked>
+                    <label for="none-btn">No Cover</label><br>
+                    <input name="avatar-cover" type="radio" id="unknown-btn" value="unknown">
+                    <label for="unknown-btn">Unknown Avatar</label><br>
+                    <input name="avatar-cover" type="radio" id="elim-btn" value="eliminated">
+                    <label for="elim-btn">Eliminated</label><br>
+                    <input name="avatar-cover" type="radio" id="selected-btn" value="selected">
+                    <label for="selected-btn">Submitted</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
