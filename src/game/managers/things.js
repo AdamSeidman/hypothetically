@@ -15,6 +15,7 @@ const states = {
     4: 'postGame'
 }
 const numStates = 4
+let Sockets = undefined
 
 class Game {
     #reader = 0
@@ -78,22 +79,46 @@ class Game {
         return this.#readers[this.#reader || 0]
     }
 
-    submitAnswer(id, answer) {
+    submitAnswer(id, answer, socket) {
         this.answerMap[id] = answer.replaceAll('"', "'")
         if (!this.#guessesLeft.includes(id)) {
             this.#guessesLeft.push(id)
         }
-        if (Object.keys(this.answerMap).length === this.#readers.length) {
-            if (states[this.#stateKey] === 'start') {
-                this.nextState()
-            }
-            return true
+        if (Sockets === undefined) {
+            Sockets = require('../../web/sockets')
+        }
+        let allAnswersIn = Object.keys(this.answerMap).length === this.#readers.length
+        if (allAnswersIn && states[this.#stateKey] === 'start') {
+            this.nextState()
+        }
+        if (socket) {
+            socket.emit('answerAccepted', { answer })
+        }
+        Sockets.sendToRoomByCode(this.code, 'thingSubmitted', { id })
+        if (allAnswersIn) {
+            setTimeout(() => {
+                Sockets.sendToRoomByCode(this.code, 'gameRender', {
+                    currentGamePage: 'read_things',
+                    currentGameCode: this.code
+                }, 1000)
+            })
         }
     }
 
     doneReading() {
         if (states[this.#stateKey] === 'read') {
-            return this.nextState()
+            let state = this.nextState()
+            if (state) {
+                setTimeout(() => {
+                    if (Sockets === undefined) {
+                        Sockets = require('../../web/sockets')
+                    }
+                    Sockets.sendToRoomByCode(this.code, 'gameRender', {
+                        currentGamePage: 'guess_things',
+                        currentGameCode: this.code
+                    })
+                }, 200)
+            }
         }
     }
 
@@ -162,6 +187,23 @@ class Game {
             this.#guessesLeft = this.#guessesLeft.filter(x => x !== guessId)
         }
         this.nextState()
+        setTimeout(() => {
+            let payload = {
+                currentGamePage: 'reveal_things',
+                currentGameCode: this.code,
+                scoreUpdate: this.scoreMap,
+                roundNumber: this.round
+            }
+            if (this.guessStash.correct) {
+                payload.iconChange = {
+                    id: guessId
+                }
+            }
+            if (Sockets === undefined) {
+                Sockets = require('../../web/sockets')
+            }
+            Sockets.sendToRoomByCode(this.code, 'gameRender', payload)
+        }, 100)
         return this.guessStash.correct
     }
 
@@ -180,6 +222,24 @@ class Game {
             }
             this.nextState()
         }
+        setTimeout(() => {
+            let payload = {
+                currentGamePage: `${this.currentState}_things`,
+                currentGameCode: this.code,
+                scoreUpdate: this.scoreMap
+            }
+            if (states[this.#stateKey].toLowerCase().includes('start')) {
+                payload.iconChange = {
+                    clear: true
+                }
+                payload.roundNumber = ++this.round
+            }
+            if (Sockets === undefined) {
+                Sockets = require('../../web/sockets')
+            }
+            Sockets.sendToRoomByCode(this.code, 'gameRender', payload)
+        })
+
         return `${this.currentState}_things`
     }
 
@@ -189,6 +249,14 @@ class Game {
             ret[id] = n
         })
         return ret
+    }
+
+    stallEvent(id) {
+
+    }
+
+    inactiveEvent(id) {
+        
     }
 }
 

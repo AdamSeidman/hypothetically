@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Results</title>
+    <link rel="stylesheet" href="/assets/css/site.css">
+    <link rel="stylesheet" href="./results.css">
+    <script src="/assets/js/lib/jquery.min.js"></script>
+    <script src="/assets/js/site.js"></script>
+    <script src="./results.js" defer></script>
+    <script src="/assets/img/characters.js"></script>
+    <script src="https://kit.fontawesome.com/a843fa2d6a.js" crossorigin="anonymous" defer></script>
+</head>
+<body>
+    <div id="content">
+        <h1 class="results-text">Results</h1>
+        <div class="podium-container">
+            <div class="podium">
+                <div class="podium-place second-place">
+                    <div class="podium-image-container">
+                            <img id="color-image-silver" class="selection-image hidden" src="">
+                            <img id="character-image-silver" class="selection-image hidden" src="">
+                            <p id="podium-name-silver" class="podium-name-text">&nbsp;</p>
+                    </div>
+                    <div class="podium-box"></div>
+                    <h4 class="score-text" id="score-text-silver">&nbsp;</h4>
+                </div>
+                <div class="podium-place first-place">
+                    <i class="fa-solid fa-crown"></i>
+                    <div class="podium-image-container">
+                            <img id="color-image-gold" class="selection-image hidden" src="">
+                            <img id="character-image-gold" class="selection-image hidden" src="">
+                            <p id="podium-name-gold" class="podium-name-text">&nbsp;</p>
+                    </div>
+                    <div class="podium-box"></div>
+                    <h4 class="score-text" id="score-text-gold">&nbsp;</h4>
+                </div>
+                <div class="podium-place third-place">
+                    <div class="podium-image-container">
+                            <img id="color-image-bronze" class="selection-image hidden" src="">
+                            <img id="character-image-bronze" class="selection-image hidden" src="">
+                            <p id="podium-name-bronze" class="podium-name-text">&nbsp;</p>
+                    </div>
+                    <div class="podium-box"></div>
+                    <h4 class="score-text" id="score-text-bronze">&nbsp;</h4>
+                </div>
+            </div>
+        </div>
+        <div id="player-display"></div>
+    </div>
+</body>
+</html>

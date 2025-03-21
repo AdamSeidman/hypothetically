@@ -2,6 +2,7 @@
  * Join a game with WebSockets
  */
 
+const pingManager = require('../pingManager')
 const Games = require('../../game/gameManager')
 
 let Sockets = undefined
@@ -11,18 +12,10 @@ function handle(message, socket, id) {
         Sockets = require('../sockets')
     }
     if (!message || !socket) return
+    pingManager.clearPings(id)
     let game = Games.getRoomByPlayerId(id)?.gameObj
     if (game && id && game.reader == id) {
-        if (game.doneReading()) {
-            setTimeout(() => {
-                Sockets.sendToRoomByCode(game.code, 'gameRender', {
-                    currentGamePage: `guess_things`,
-                    currentGameCode: game.code
-                })
-            }, 200)
-        } else {
-            console.warn('Wrong state in doneReading!', id, game.code)
-        }
+        game.doneReading()
     } else {
         console.warn('Bad handling in doneReading!', id)
     }

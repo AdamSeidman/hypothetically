@@ -1,9 +1,13 @@
+/**
+ * Manage WebSockets for 'ping'
+ * Determines when players are inactive
+ */
+
 const { getDisplayName } = require('../db/tables/users')
 
-const USE_PING_MANAGER = false // TODO Move to .env and integrate with games
-const NUM_PINGS_FOR_STALL = 6
-const NUM_MISSED_PINGS_FOR_INACTIVE = 6
-const PING_TASK_FREQUENCY = (30 * 1000)
+const NUM_PINGS_FOR_STALL = 35
+const NUM_MISSED_PINGS_FOR_INACTIVE = 35
+const PING_TASK_FREQUENCY = (6 * 1000)
 
 class UserPingHandler {
     #id = -1
@@ -25,6 +29,7 @@ class UserPingHandler {
 }
 
 let users = []
+let Games = undefined
 
 function ping(id) {
     if (!id) return
@@ -44,6 +49,7 @@ function clearPings(id) {
         users.push(user)
     }
     user.numPings = 0
+    user.stalledOut = false
 }
 
 function setStallCheck(id, check) {
@@ -64,23 +70,37 @@ function setStallCheck(id, check) {
 
 function stalledOutEvent(user) {
     if (!user?.stalledOut) return
+    if (Games === undefined) {
+        Games = require('../game/gameManager')
+    }
     console.log(`Ping: ${user.displayName} stalled out!`)
+    Games.stallEvent(user.id)
 }
 
 function inactiveEvent(user) {
     if (!user?.inactive) return
+    if (Games === undefined) {
+        Games = require('../game/gameManager')
+    }
     console.log(`Ping: ${user.displayName} became inactive!`)
+    Games.inactiveEvent(user.id)
 }
 
 function comeAliveEvent(user) {
     if (!user) return
+    if (Games === undefined) {
+        Games = require('../game/gameManager')
+    }
     console.log(`Ping: ${user.displayName} returned!`)
+    // TODO Should we care if a user comes alive?
 }
 
 function pingTask() {
     users.forEach(user => {
         if (user.inactive || user.stalledOut) {
             if (!user.pendingPing) return
+            user.inactive = false
+            user.stalledOut = false
             comeAliveEvent(user)
         } else if (user.pendingPing) {
             user.pendingPing = false
@@ -104,9 +124,7 @@ function pingTask() {
     })
 }
 
-if (USE_PING_MANAGER) {
-    setInterval(pingTask, PING_TASK_FREQUENCY)
-}
+// setInterval(pingTask, PING_TASK_FREQUENCY)
 
 module.exports = {
     ping,

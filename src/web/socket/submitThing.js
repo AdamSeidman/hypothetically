@@ -2,6 +2,7 @@
  * Handle submission of Things answers
  */
 
+const pingManager = require('../pingManager')
 const Games = require('../../game/gameManager')
 
 let Sockets = undefined
@@ -16,17 +17,8 @@ function handle(message, socket, id) {
         socket.emit('answerRejected', message)
         return
     }
-    let done = room.gameObj.submitAnswer(id, message.answer)
-    socket.emit('answerAccepted', { answer: message.answer })
-    Sockets.sendToRoomByCode(room.code, 'thingSubmitted', { id })
-    if (done) {
-        setTimeout(() => {
-            Sockets.sendToRoomByCode(room.code, 'gameRender', {
-                currentGamePage: 'read_things',
-                currentGameCode: room.code
-            })
-        }, 1000)
-    }
+    pingManager.clearPings(id)
+    room.gameObj.submitAnswer(id, message.answer, socket)
 }
 
 module.exports = { handle }

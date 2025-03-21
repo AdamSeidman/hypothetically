@@ -3,17 +3,22 @@
  */
 
 const { generateRoomCode } = require('./utils')
+const pingManager = require('../web/pingManager')
 const { getDisplayName } = require('../db/tables/users')
 
 let rooms = {}
 let playerMap = {}
 let gameMap = {}
+let Sockets = undefined
 
 const DEFAULT_GAME_TYPE = 'things'
+const DEFAULT_NUM_ROUNDS = 5
+const GAME_START_WAIT = 2 * 1000
 
 class GameRoom {
     #chatHistory = []
     #gameType = DEFAULT_GAME_TYPE
+    #numRounds = DEFAULT_NUM_ROUNDS
 
     constructor(hostId, isPublic) {
         if (playerMap[hostId]) {
@@ -47,6 +52,7 @@ class GameRoom {
         }
         this.players.push(id)
         playerMap[id] = this.code
+        pingManager.setStallCheck(id, false)
         return {
             id,
             pass: true,
@@ -101,6 +107,13 @@ class GameRoom {
     setGameType(type, id) {
         if (id == this.host) {
             this.#gameType = type
+            return this.code
+        }
+    }
+
+    setNumRounds(numRounds, id) {
+        if (id == this.host) {
+            this.#numRounds = numRounds
             return this.code
         }
     }
@@ -164,6 +177,10 @@ class GameRoom {
 
     get gameType() {
         return this.#gameType
+    }
+
+    get numRounds() {
+        return this.#numRounds
     }
 
     get avatarInfo() {
@@ -259,6 +276,11 @@ function getGameType(code) {
     return room?.gameType
 }
 
+function getNumRounds(code) {
+    let room = rooms[code]
+    return room?.numRounds
+}
+
 function getPublicGames() {
     let games = []
     Object.entries(rooms).forEach(([code, room]) => {
@@ -280,6 +302,13 @@ function setGameType(type, id) {
     let room = rooms[playerMap[id]]
     if (!room || room.running) return
     return room.setGameType(type, id)
+}
+
+function setNumRounds(numRounds, id) {
+    if (isNaN(numRounds) || !id) return
+    let room = rooms[playerMap[id]]
+    if (!room || room.running) return
+    return room.setNumRounds(numRounds, id)
 }
 
 function kickPlayer(hostId, kickId, code) {
@@ -326,10 +355,60 @@ function getRoomByPlayerId(id) {
     return rooms[playerMap[id] || '?']
 }
 
-function startGameObject(code) {
+function moveToGame(codeOrId) {
+    let code = (codeOrId.length > 10)? playerMap[codeOrId] : codeOrId
+    if (!code) return
     let room = rooms[code]
+    room = room?.start()
     if (!room) return
-    return room.start()
+    if (!Sockets) {
+        Sockets = require('../web/sockets')
+    }
+    setTimeout(() => {
+        let payload = {
+            currentGamePage: `start_${room.gameType.toLowerCase()}`,
+            currentGameCode: code,
+            roundNumber: 1
+        }
+        let readerMap = room.gameObj?.readerMap
+        if (readerMap) {
+            payload.readerOrder = readerMap
+        }
+        Sockets.sendToRoomByCode(code, 'gameRender', payload)
+    }, GAME_START_WAIT)
+}
+
+function stallEvent(id) {
+    let room = rooms[playerMap[id]]
+    if (!room?.running && !room?.gameObj) return
+    return room.gameObj.stallEvent(id)
+}
+
+function inactiveEvent(id) {
+    let room = rooms[playerMap[id]]
+    if (!room || room.host === id) return
+    let canKick = true
+    if (room.running) {
+        if (room.gameObj) {
+            canKick = room.gameObj.inactiveEvent(id)
+        } else if (room.players.length > 2) {
+            canKick = true
+            let numAvatarsChosen = Object.keys(room.avatarMap).length
+            if (room.avatarMap[id]) {
+                numAvatarsChosen -= 1
+            }
+            if (numAvatarsChosen >= room.player.length - 1) {
+                // TODO avatar selection is done. Inform the players
+            }
+        } else {
+            canKick = false
+        }
+    }
+    if (canKick) {
+        room.removePlayer(id)
+        room.addChatMessage({ message: `${getDisplayName(id)} left the room due to inactivity` })
+        // TODO Inform the players that this player left
+    }
 }
 
 module.exports = {
@@ -346,12 +425,16 @@ module.exports = {
     getChatHistory,
     getPublicGames,
     setGameType,
+    setNumRounds,
     getGameType,
+    getNumRounds,
     kickPlayer,
     startGame,
     isGameRunning,
     submitAvatar,
     getAvatarInfo,
     getRoomByPlayerId,
-    startGameObject
+    moveToGame,
+    stallEvent,
+    inactiveEvent
 }

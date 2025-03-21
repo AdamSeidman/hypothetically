@@ -147,3 +147,7 @@ h2 {
               user-select: none; /* Non-prefixed version, currently
                                     supported by Chrome, Edge, Opera and Firefox */
 }
+
+.arrow {
+    padding-block: 0 !important;
+}

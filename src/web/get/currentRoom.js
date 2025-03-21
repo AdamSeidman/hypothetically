@@ -22,6 +22,7 @@ module.exports = function (req, res) {
         none: false,
         id: req.user.id,
         gameType: Games.getGameType(code),
+        numRounds: Games.getNumRounds(code),
         gameRunning: Games.isGameRunning(code)
     }
     if (ret.gameRunning) {

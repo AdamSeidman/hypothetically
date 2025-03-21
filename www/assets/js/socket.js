@@ -58,6 +58,12 @@ socket.on('gameTypeChanged', (data) => {
     }
 })
 
+socket.on('numRoundsChanged', (data) => {
+    if (typeof numRoundsChangedEvent === 'function') {
+        numRoundsChangedEvent(data)
+    }
+})
+
 socket.on('kicked', (data) => {
     if (typeof kickedEvent === 'function') {
         kickedEvent(data)
@@ -146,6 +152,19 @@ function setGameType(type) {
     socket.emit('setGameType', { type })
 }
 
+function setNumRounds(numRounds = '_') {
+    if (isNaN(numRounds)) {
+        try {
+            numRounds = parseInt(`${numRounds}`.trim())
+        } catch (err) {
+            console.warn('Could not parse int!', err)
+            return
+        }
+    }
+    if (isNaN(numRounds) || numRounds < 1 || numRounds > 20) return
+    socket.emit('setNumRounds', { numRounds })
+}
+
 function emitStartGame(code) {
     socket.emit('startGame', { code })
 }
@@ -176,4 +195,4 @@ setInterval(() => {
     socket.emit('ping', {
         page: window.location.href
     })
-}, (1000 * 30))
+}, (1000 * 5))

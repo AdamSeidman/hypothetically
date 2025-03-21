@@ -53,7 +53,7 @@ function iconChangeEvent(data) {
 function revealEvent() {
     setTimeout(() => {
         $("#things-next-button").prop("disabled", false)
-    }, 5000)
+    }, 4000)
 }
 
 let reorderData = ''

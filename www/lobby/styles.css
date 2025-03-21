@@ -51,6 +51,10 @@ body {
     margin-top: 10px;
 }
 
+.action-buttons {
+    margin: 15px;
+}
+
 .action-buttons button {
     padding: 10px 15px;
     border: none;
@@ -107,4 +111,8 @@ thead th {
 
 .player-name {
     min-width: 10em;
+}
+
+.game-option {
+    margin-inline: 5px 15px;
 }

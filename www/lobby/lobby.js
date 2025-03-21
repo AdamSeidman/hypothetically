@@ -161,15 +161,24 @@ $(document).ready(() => {
                 }
                 if (room.isHost) {
                     let gameModeSelect = $('#game-mode')
+                    let numRoundsSelect = $('#num-rounds')
                     gameModeSelect.attr('disabled', false)
                     gameModeSelect.change(() => {
-                        setGameType(gameModeSelect.val())
+                        let val = gameModeSelect.val()
+                        setGameType(val)
+                        numRoundsSelect.toggleClass('hidden', !val.toLowerCase().includes('things'))
+                        $('#num-rounds-label').toggleClass('hidden', !val.toLowerCase().includes('things'))
+                    })
+                    numRoundsSelect.attr('disabled', false)
+                    numRoundsSelect.change(() => {
+                        setNumRounds(numRoundsSelect.val())
                     })
                     $('.action-buttons button').attr('disabled', (Object.keys(room.players).length <= 1))
                 }
                 $('.action-buttons').toggleClass('hidden', !room.isHost)
                 sessionStorage.setItem('myName', (room.yourName || 'You'))
                 $('#game-mode').val(room.gameType)
+                $('#num-rounds').val(`${room.numRounds}`)
                 $('#game-mode-default').remove()
                 sessionStorage.setItem('gameMode', room.gameType)
                 sessionStorage.setItem('myId', room.id)
@@ -249,6 +258,11 @@ function gameTypeChangedEvent(data) {
     if (typeof data.type !== 'string' || data.type.trim().length < 1) return
     sessionStorage.setItem('gameMode', data.type.trim())
     $('#game-mode').val(data.type.trim())
+}
+
+function numRoundsChangedEvent(data) {
+    if (!data?.numRounds || isNaN(data.numRounds)) return
+    $('#num-rounds').val('' + data.numRounds)
 }
 
 function kickedEvent(data) {
