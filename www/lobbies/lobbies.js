@@ -33,6 +33,7 @@ function joinPrivateLobby() {
 
 function refreshLobbies() {
     let getGames = getPublicGames()
+    sessionStorage.setItem('cachedAvatar', '')
     getCurrentRoom().then(async ({ none, gameRunning }) => {
         if (!none) {
             await getGames

@@ -107,6 +107,7 @@ function validateStillInRoom() {
             console.warn('Room no longer valid', err)
             alert('Room is no longer valid!')
             setTimeout(() => {
+                sessionStorage.setItem('cachedAvatar', '')
                 window.location.href = '/lobbies'
             }, 100)
         })
@@ -216,6 +217,7 @@ $(document).ready(() => {
                 sessionStorage.setItem('valid', true)
             } else {
                 sessionStorage.setItem('valid', false)
+                sessionStorage.setItem('cachedAvatar', '')
                 window.location.href = '/lobbies'
             }
         })
@@ -270,6 +272,7 @@ function kickedEvent(data) {
     alert('You were kicked from this room.')
     setTimeout(() => {
         sessionStorage.setItem('valid', false)
+        sessionStorage.setItem('cachedAvatar', '')
         window.location.href = '/lobbies'
     }, 1)
 }

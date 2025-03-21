@@ -49,6 +49,7 @@ function gameEndedEvent(data) {
 
 function nextIcon(inc) {
     if (submitted) return
+    sessionStorage.setItem('cachedAvatar', '')
     let characters = Object.keys(characterAssetsBase64)
     let idx = characters.indexOf(localStorage.getItem('character'))
     idx += inc
@@ -65,6 +66,7 @@ function nextIcon(inc) {
 
 function nextColor(inc) {
     if (submitted) return
+    sessionStorage.setItem('cachedAvatar', '')
     let colors = Object.keys(backgroundAssetsBase64)
     let idx = colors.indexOf(localStorage.getItem('color'))
     idx += inc
@@ -83,6 +85,8 @@ function submitAvatar() {
     if (submitted) return
     let character = $('#character-text').text()
     let color = $('#color-text').text()
+    sessionStorage.setItem('cachedColor', color)
+    sessionStorage.setItem('cachedCharacter', character)
     if (character.trim().length < 2 || color.trim().length < 2) {
         alert('Invalid avatar information!')
     } else {
@@ -136,6 +140,7 @@ function checkWaitStartText(data) {
 
 function avatarSuccessEvent(data) {
     submitted = true
+    sessionStorage.setItem('cachedAvatar', 'set')
     $('#icon-picker').html('<h4 id="start-wait-text">Waiting for game to start...</h4>')
     checkWaitStartText(data)
     $('#selection-container').html(`
@@ -203,6 +208,7 @@ $(document).ready(() => {
                 sessionStorage.setItem('loadedRoomCode', room.code)
                 sessionStorage.setItem('avatarData', JSON.stringify(room.avatarData) || '{}')
                 sessionStorage.setItem('playerMap', JSON.stringify(room.players))
+                $('#things-total-rounds').text(room?.numRounds)
 
                 if (typeof room.currentPage === 'string') {
                     loadScript(room.gameType, () => {
@@ -233,6 +239,9 @@ $(document).ready(() => {
                         let data = room.avatarData.map[room.id].split('|')
                         character = data[0]
                         color = data[1]
+                    } else if (sessionStorage.getItem('cachedAvatar') === 'set') {
+                        character = sessionStorage.getItem('cachedCharacter')
+                        color = sessionStorage.getItem('cachedColor')
                     }
 
                     $('#character-image').attr('src', characterAssetsBase64[character])

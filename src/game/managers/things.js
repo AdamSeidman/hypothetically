@@ -4,8 +4,8 @@
 
 const utils = require('../utils')
 const database = require('../../db/database')
-const Avatars = require('../../../www/assets/img/characters')
 const { getDisplayName } = require('../../db/tables/users')
+const Avatars = require('../../../www/assets/img/characters')
 
 const states = {
     0: 'start',
@@ -210,12 +210,27 @@ class Game {
     roundFinished(id) {
         if (!this.game.players.includes(id)) return
         if (states[this.#stateKey] !== 'reveal') return
+        if (Sockets === undefined) {
+            Sockets = require('../../web/sockets')
+        }
         if (this.#guessesLeft.length > 1) {
             this.#guesser += 1
             if (this.#guesser >= this.#readers.length) {
                 this.#guesser = 0
             }
             this.#stateKey -= 1
+        } else if (this.round >= this.game.numRounds) {
+            if (this.#guessesLeft.length > 0) {
+                this.scoreMap[this.#guessesLeft[0]] += 2
+            }
+            console.log(`Game ${this.code} finished ${this.round} rounds. Sending to results...`)
+            this.#stateKey += 1
+            this.game.inGame = false
+            this.game.joinable = true
+            Sockets.sendToRoomByCode(this.code, 'goToResults', {
+                timeout: 1000
+            })
+            return
         } else {
             if (this.#guessesLeft.length > 0) {
                 this.scoreMap[this.#guessesLeft[0]] += 2
@@ -234,13 +249,8 @@ class Game {
                 }
                 payload.roundNumber = ++this.round
             }
-            if (Sockets === undefined) {
-                Sockets = require('../../web/sockets')
-            }
             Sockets.sendToRoomByCode(this.code, 'gameRender', payload)
         })
-
-        return `${this.currentState}_things`
     }
 
     get readerMap() {
@@ -256,7 +266,7 @@ class Game {
     }
 
     inactiveEvent(id) {
-        
+
     }
 }
 

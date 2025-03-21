@@ -324,6 +324,10 @@ function startGame(hostId, code) {
     let room = rooms[code]
     if (!room || room.host !== hostId) return { failReason: 'Could not find game!' }
     if (room.inGame) return { failReason: 'Already in game!' }
+    if (room.gameObj) {
+        room.avatarMap = {}
+        delete room.gameObj
+    }
     return room.startGame()
 }
 
@@ -411,6 +415,24 @@ function inactiveEvent(id) {
     }
 }
 
+function getResultsOf(code) {
+    let room = rooms[code]
+    if (!room) return
+    let ret = {}
+    room.players.forEach((playerId) => {
+        if (!playerId) return
+        ret[playerId] = {
+            avatar: room.avatarMap[playerId],
+            name: getDisplayName(playerId),
+            score: 0
+        }
+        if (room.gameObj?.scoreMap) {
+            ret[playerId].score = room.gameObj.scoreMap[playerId]
+        }
+    })
+    return ret
+}
+
 module.exports = {
     makeRoom,
     deleteRoom,
@@ -436,5 +458,6 @@ module.exports = {
     getRoomByPlayerId,
     moveToGame,
     stallEvent,
-    inactiveEvent
+    inactiveEvent,
+    getResultsOf
 }

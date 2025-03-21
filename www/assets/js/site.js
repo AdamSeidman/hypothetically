@@ -67,6 +67,10 @@ function getCurrentRoom() {
     return standardGET('currentRoom')
 }
 
+function getGameResults() {
+    return standardGET('gameResults')
+}
+
 function joinGame(code) {
     return standardPUT('joinGame', { code })
 }

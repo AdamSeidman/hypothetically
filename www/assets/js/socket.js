@@ -94,6 +94,18 @@ socket.on('gameStarted', (data) => {
     }
 })
 
+socket.on('goToResults', (data) => {
+    sessionStorage.removeItem('myAvatar')
+    sessionStorage.removeItem('avatarData')
+    let timeout = data?.timeout
+    if (isNaN(timeout) || timeout < 1) {
+        timeout = 1
+    }
+    setTimeout(() => {
+        window.location.href = '/results'
+    }, timeout)
+})
+
 socket.on('avatarSubmissionFailed', () => {
     alert('Error submitting avatar!')
 })

@@ -49,11 +49,21 @@ function getAvatars(avatarText) {
 }
 
 $(document).ready(() => {
-    getResults()
+    getCurrentRoom()
+        .then((data) => {
+            if (!data || data.none) {
+                alertAndNavigate('Could not find game/results!', '/lobbies')
+            }
+            if (data.gameRunning) {
+                alert(1)
+                window.location.href = '/game'
+            }
+            return getGameResults()
+        })
         .then((data) => {
             $('img.selection-image').attr('src', transparentAssetBase64)
             $('.selection-image.hidden').removeClass('hidden')
-            let results = Object.values(data).sort((a, b) => b.score - a.score)
+            let results = Object.values(data.results).sort((a, b) => b.score - a.score)
             let gold = results.shift()
             let silver = results.shift()
             let bronze = results.shift()
@@ -63,6 +73,7 @@ $(document).ready(() => {
                 $('#color-image-gold').attr('src', avatar[1])
                 $('#podium-name-gold').text(gold.name || '')
                 $('#score-text-gold').text('Score: ' + gold.score)
+                $('i.fa-crown').toggleClass('hidden', false)
             }
             if (silver) {
                 let avatar = getAvatars(silver.avatar)
