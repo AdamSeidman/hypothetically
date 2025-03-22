@@ -113,6 +113,8 @@ body {
     position: absolute;
     top: 70px;
     font-family: Arial, sans-serif;
+    width: 150px;
+    text-align: center;
 }
 
 .image-container {
