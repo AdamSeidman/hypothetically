@@ -203,6 +203,11 @@ class Game {
                 Sockets = require('../../web/sockets')
             }
             Sockets.sendToRoomByCode(this.code, 'gameRender', payload)
+            setTimeout(() => {
+                if (states[this.#stateKey].includes('reveal')) {
+                    this.roundFinished(this.game?.players[0])
+                }
+            }, (30 * 1000))
         }, 100)
         return this.guessStash.correct
     }
