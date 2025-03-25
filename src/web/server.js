@@ -90,17 +90,6 @@ app.use((req, res, next) => {
                 res.redirect('/login')
             })
         }
-        // else if (req.path === '/') {
-        //     // Check if user is in a game/lobby
-        //     let code = Games.getGameCodeOf(req.user?.id)
-        //     if (code) {
-        //         if (Games.isGameRunning(code) && !req.path.includes('game')) {
-        //             return res.redirect('/game')
-        //         } else if (!req.path.includes('lobby')) {
-        //             return res.redirect('/lobby')
-        //         }
-        //     }
-        // }
     }
     next()
 })
@@ -181,6 +170,11 @@ io.on('connection', (socket) => {
         socket.user = user
         openSocket(socket.user.id, socket)
     }
+})
+
+// Not Found handling catch-all
+app.use((req, res) => {
+    res.status(404).sendFile(path.join(__dirname, '../../www/404.html'))
 })
 
 // Server setup
