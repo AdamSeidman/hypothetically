@@ -82,7 +82,8 @@ app.get('/auth/google/callback', passport.authenticate('google', {
 app.use((req, res, next) => {
     let returnTo = [req.headers['cookie'] || ""].flat().find(x => x?.includes('returnTo='))
     if (returnTo) {
-        returnTo = returnTo.slice(returnTo.indexOf('returnTo=')).split('=')[1].split(';')[0].trim().replaceAll('%2F', '/')
+        returnTo = returnTo.slice(returnTo.indexOf('returnTo=')).split('=')[1].split(';')[0].trim()
+        returnTo = decodeURIComponent(returnTo)
     }
 
     if (req.path === '/' && req.isAuthenticated() && returnTo) {
