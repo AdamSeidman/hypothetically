@@ -185,7 +185,15 @@ $(document).ready(() => {
                 sessionStorage.setItem('myId', room.id)
                 sessionStorage.setItem('hostId', room.host)
                 sessionStorage.setItem('roomCode', room.code)
-                $('#room-code').text('Room Code: ' + room.code)
+                $('#room-code').prepend('Room Code: ' + room.code)
+                $('#copy-code').toggleClass('hidden', false)
+                $('#copy-code svg').click(() => {
+                    navigator.clipboard.writeText(`${window.location.origin}/join/${room.code}`)
+                    $('#copy-code').toggleClass('copied-tooltip', true)
+                    setTimeout(() => {
+                        $('#copy-code').toggleClass('copied-tooltip', false)
+                    }, 1000)
+                })
                 Object.entries(room.players).forEach(([id, displayName]) => {
                     if (id == room.host) {
                         players.push({
@@ -269,10 +277,9 @@ function numRoundsChangedEvent(data) {
 
 function kickedEvent(data) {
     if (!data) return
-    alert('You were kicked from this room.')
+    sessionStorage.setItem('valid', false)
+    sessionStorage.setItem('cachedAvatar', '')
     setTimeout(() => {
-        sessionStorage.setItem('valid', false)
-        sessionStorage.setItem('cachedAvatar', '')
-        window.location.href = '/lobbies'
+        alertAndNavigate('You were kicked from this room.', '/lobbies')
     }, 1)
 }

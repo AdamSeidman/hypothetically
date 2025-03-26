@@ -14,6 +14,7 @@ let Sockets = undefined
 const DEFAULT_GAME_TYPE = 'things'
 const DEFAULT_NUM_ROUNDS = 5
 const GAME_START_WAIT = 2 * 1000
+const ROOM_MAX_PLAYERS = 12
 
 class GameRoom {
     #chatHistory = []
@@ -46,6 +47,8 @@ class GameRoom {
     addPlayer(id) {
         if (this.players.includes(id)) return { failReason: 'You are already in this room!' }
         if (this.kickedPlayers.includes(id)) return { failReason: 'You are not allowed to join this room!' }
+        if (this.players.length >= ROOM_MAX_PLAYERS) return { failReason: 'This room is full!' }
+        if (this.running || this.inGame) return { failReason: 'This game is in progress!' }
         if (playerMap[id]) {
             console.warn(`Removed player ${id} from ${playerMap[id]} to add to ${this.code}!`)
             rooms[playerMap[id]].removePlayer(id)

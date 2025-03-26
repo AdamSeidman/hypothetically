@@ -80,12 +80,29 @@ app.get('/auth/google/callback', passport.authenticate('google', {
 
 // Session check and login guard
 app.use((req, res, next) => {
-    if (req.path.includes('login')) {
+    let returnTo = [req.headers['cookie'] || ""].flat().find(x => x?.includes('returnTo='))
+    if (returnTo) {
+        returnTo = returnTo.slice(returnTo.indexOf('returnTo=')).split('=')[1].split(';')[0].trim().replaceAll('%2F', '/')
+    }
+
+    if (req.path === '/' && req.isAuthenticated() && returnTo) {
+        res.clearCookie('returnTo')
+        return res.redirect(returnTo)
+    } else if (req.path.includes('login')) {
         if (req.isAuthenticated()) {
             return res.redirect('/')
         }
     } else if (!req.path.includes('login') && (req.path.endsWith('.html') || !req.path.includes('.'))) {
         if (!req.session || !req.isAuthenticated()) {
+            let returnTo = null
+            if (req.path.startsWith('/join/') || req.path === '/lobby') {
+                returnTo = req.path
+            } else if (req.path === '/game') {
+                returnTo = '/lobby'
+            }
+            if (returnTo) {
+                res.cookie('returnTo', returnTo, { maxAge: (1000 * 60 * 5) })
+            }
             return req.logout(() => {
                 res.redirect('/login')
             })
@@ -135,6 +152,23 @@ app.get('/logout', (req, res) => {
             }
         }
     })
+})
+
+const joinGame = require('./put/joinGame')
+app.get('/join/:code', async (req, res) => {
+    if (!req.body) {
+        req.body = {}
+    }
+    req.body.code = req.params?.code?.trim() || "."
+
+    let ret = await joinGame(req)
+    if (ret === 200) {
+        res.status(200).redirect('/lobby')
+    } else if (ret?.err) {
+        res.status(400).redirect('/lobbies')
+    } else {
+        res.status(404).sendFile(path.join(__dirname, '../../www/badCode.html'))
+    }
 })
 
 // NJK Partials
