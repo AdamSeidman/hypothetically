@@ -7,27 +7,9 @@
     <link rel="stylesheet" href="/assets/css/site.css">
     <link rel="stylesheet" href="./admin.css">
     <script src="/assets/js/lib/jquery.min.js"></script>
-    <script>
-        function modifyDescription(text) {
-            $('.input-copy').text(text);
-        }
-        function openTab(evt, tabName) {
-            $('.input-copy').text('')
-            $('.tab-content').hide()
-            $('.tab-button').removeClass('active')
-            $('#' + tabName).show()
-            $(evt.currentTarget).addClass('active')
-
-            let params = new URLSearchParams(window.location.search)
-            params.set('tab', tabName)
-            history.replaceState(null, '', '?' + params.toString())
-        }
-        $(document).ready(() => {
-            let params = new URLSearchParams(window.location.search)
-            let tabName = params.get('tab') || 'CategoryTab'
-            openTab({ currentTarget: `#tab-${tabName}` }, tabName)
-        })
-    </script>
+    <script src="/assets/js/site.js" defer></script>
+    <script src="./admin.js"></script>
+    <link rel="shortcut icon" href="/assets/img/favicon.ico" />
 </head>
 <body>
     <header class="navbar">
@@ -43,6 +25,7 @@
             <button id="tab-CategoryTab" class="tab-button active" onclick="openTab(event, 'CategoryTab')">Item Category</button>
             <button id="tab-QuestionTab" class="tab-button" onclick="openTab(event, 'QuestionTab')">Who is the Most</button>
             <button id="tab-ThingsTab" class="tab-button" onclick="openTab(event, 'ThingsTab')">Things Prompt</button>
+            <button id="tab-TabsTab" class="tab-button" onclick="openTab(event, 'TabsTab')">Tab Links</button>
         </div>
         
         <div id="CategoryTab" class="tab-content">
@@ -88,6 +71,34 @@
                 <input type="text" id="thing" name="thing" oninput="modifyDescription(this.value)" required>
                 <button type="submit">Submit Prompt</button>
             </form>
+        </div>
+
+        <div id="TabsTab" class="tab-content">
+            <div class="form">
+                <h3>Tabs Submission</h3>
+                <label for="tabUrl">Tab URL:</label>
+                <input type="text" id="tabUrl" name="link" oninput="document.getElementById('tabs-submit-btn').disabled=true">
+                <label for="tabTitle">Tab Title:</label>
+                <input type="text" id="tabTitle" name="title" oninput="checkTabsTitleLength(this.value)">
+                <div>
+                    <button type="button" onclick="fillTitle()" title="Fill 'Tab Title' with video's title.">Auto-Fill Title</button>
+                    <button type="button" onclick="checkTabsSubmission()" title="Check if entry is valid.">Check</button>
+                    &ensp;
+                    <label for="tabs-type" id="tabs-type-label">Type:</label>
+                    <select id="tabs-type">
+                        <option id="tabs-type-default" value="" selected></option>
+                        <option value="music">Music</option>
+                        <option value="effect">Sound Effect</option>
+                        <option value="other">General</option>
+                    </select>
+                </div>
+                <br>
+                <button type="submit" id="tabs-submit-btn" onclick="submitTabs()" disabled>Submit Tab</button>
+            </div>
+        </div>
+
+        <div id="youtubePlayers" style="display:none;">
+            <div id="player0"></div>
         </div>
     </div>
 </body>

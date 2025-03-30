@@ -41,6 +41,7 @@ h3 {
     margin-block: 0.5em;
 }
 
+.form,
 form {
     display: flex;
     flex-direction: column;
@@ -68,9 +69,14 @@ button[type="submit"] {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    &:disabled {
+        cursor: not-allowed;
+        background-color: #7da887;
+        color: lightgrey;
+    }
 }
 
-button[type="submit"]:hover {
+button[type="submit"]:hover:not(:disabled) {
     background-color: #218838;
 }
 
@@ -118,4 +124,10 @@ hr {
 
 .tab-content {
     display: none;
+}
+
+#tabs-submit-btn,
+#tabTitle,
+#tabUrl {
+    position: relative;
 }

@@ -1,4 +1,4 @@
-const VALID_GAMES = ['hypothetically', 'things']
+const VALID_GAMES = ['hypothetically', 'things', 'tenTabs']
 
 let submitted = false
 

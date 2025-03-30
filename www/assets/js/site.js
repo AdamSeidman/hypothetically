@@ -59,6 +59,16 @@ function makeRoom(isPublic) {
     return standardPOST('room', { isPublic })
 }
 
+function postTab(id, title, type) {
+    let fail = [id, title, type].find(x => typeof x !== 'string')
+    if (fail) {
+        console.error('Could not submit new tab!')
+        console.group({ id, title, type })
+        return
+    }
+    return standardPOST('tab', { video_id: id, title, type })
+}
+
 function getPublicGames() {
     return standardGET('publicGames')
 }
