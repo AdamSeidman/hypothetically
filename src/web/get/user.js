@@ -7,6 +7,10 @@ const { isAdmin, getDisplayName } = require('../../db/tables/users')
 require('dotenv').config()
 
 module.exports = function (req, res) {
+    if (!req.user?.id) {
+        res.send({})
+        return
+    }
     res.send({
         name: req.user.displayName,
         displayName: getDisplayName(req.user.id) || req.user.displayName,

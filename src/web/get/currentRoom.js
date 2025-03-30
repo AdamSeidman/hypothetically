@@ -8,7 +8,7 @@ const Games = require('../../game/gameManager')
 const { getDisplayName } = require('../../db/tables/users')
 
 module.exports = function (req, res) {
-    let code = Games.getGameCodeOf(req.user.id)
+    let code = Games.getGameCodeOf(req.user?.id)
     if (!code) {
         res.send({ none: true })
         return

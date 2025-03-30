@@ -93,7 +93,8 @@ app.use((req, res, next) => {
         if (req.isAuthenticated()) {
             return res.redirect('/')
         }
-    } else if (!req.path.includes('login') && (req.path.endsWith('.html') || !req.path.includes('.'))) {
+    } else if (!req.path.includes('login') && !req.path.startsWith('/privacy') && !req.path.startsWith('/tos') &&
+            (req.path.endsWith('.html') || !req.path.includes('.'))) {
         if (!req.session || !req.isAuthenticated()) {
             let returnTo = null
             if (req.path.startsWith('/join/') || req.path === '/lobby') {
@@ -127,7 +128,7 @@ app.get('/logout', (req, res) => {
 })
 
 // Dynamic routes (API endpoints)
-;['delete', 'get', 'post', 'put'].forEach(verb => {
+;['get', 'post', 'put'].forEach(verb => {
     fs.readdirSync(path.join(__dirname, verb)).forEach((file) => {
         if (path.extname(file) === '.js') {
             let ep = file.slice(0, file.indexOf('.'))
@@ -209,6 +210,7 @@ io.on('connection', (socket) => {
 
 // Not Found handling catch-all
 app.use((req, res) => {
+    console.warn(`Incoming 404: ${req.method} ${req.url}`)
     res.status(404).sendFile(path.join(__dirname, '../../www/404.html'))
 })
 

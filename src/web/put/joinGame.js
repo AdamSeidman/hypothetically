@@ -7,7 +7,7 @@ const Games = require('../../game/gameManager')
 const { getDisplayName } = require('../../db/tables/users')
 
 module.exports = async function (req, res) {
-    if (!req.body?.code) return 400
+    if (!req.body?.code || !req.user?.id) return 400
     let rooms = Games.getAllRooms()
     if (!Object.keys(rooms).includes(req.body.code)) {
         return 400
