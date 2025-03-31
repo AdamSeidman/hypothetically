@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /api/
+Disallow: /test/
+Disallow: /logout/
+Disallow: /join/
+Disallow: /auth/google/
+Allow: /

@@ -115,6 +115,9 @@ app.use((req, res, next) => {
 
 // Static files setup
 app.use(express.static(path.join(__dirname, '../../www')))
+app.get('favicon.ico', (req, res) => {
+    res.status(200).sendFile(path.join(__dirname, '../../www/assets/img/favicon.ico'))
+})
 
 // Logout route
 app.get('/logout', (req, res) => {
@@ -136,7 +139,7 @@ app.get('/logout', (req, res) => {
                 app.get(`/api/${ep}`, require(`./get/${ep}`))
             } else {
                 app[verb](`/api/${ep}`, jsonParser, async (req, res) => {
-                    if (!req.isAuthenticated()) {
+                    if (!req.isAuthenticated() || !req.user?.id) {
                         return res.status(403).json({})
                     } else {
                         let ret = await require(`./${verb}/${ep}`)(req, res)
