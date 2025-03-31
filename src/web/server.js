@@ -1,6 +1,7 @@
 const fs = require('fs')
 const cors = require('cors')
 const path = require('path')
+const helmet = require('helmet')
 const express = require('express')
 const nunjucks = require('nunjucks')
 const passport = require('passport')
@@ -14,6 +15,7 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy
 require('dotenv').config()
 
 let app = express()
+app.use(helmet())
 app.use(cors())
 
 // Body parser setup
