@@ -15,7 +15,7 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy
 require('dotenv').config()
 
 let app = express()
-app.use(helmet())
+app.use(helmet({ contentSecurityPolicy: false }))
 app.use(cors())
 
 // Body parser setup
@@ -117,7 +117,7 @@ app.use((req, res, next) => {
 
 // Static files setup
 app.use(express.static(path.join(__dirname, '../../www')))
-app.get('favicon.ico', (req, res) => {
+app.get('/favicon.ico', (req, res) => {
     res.status(200).sendFile(path.join(__dirname, '../../www/assets/img/favicon.ico'))
 })
 
