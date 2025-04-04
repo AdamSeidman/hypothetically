@@ -117,9 +117,7 @@ app.use((req, res, next) => {
 
 // Static files setup
 app.use(express.static(path.join(__dirname, '../../www')))
-app.get('/favicon.ico', (req, res) => {
-    res.status(200).sendFile(path.join(__dirname, '../../www/assets/img/favicon.ico'))
-})
+app.use(express.static(path.join(__dirname, '../../icons')))
 
 // Logout route
 app.get('/logout', (req, res) => {
