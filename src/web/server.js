@@ -118,6 +118,12 @@ app.use((req, res, next) => {
 // Static files setup
 app.use(express.static(path.join(__dirname, '../../www')))
 app.use(express.static(path.join(__dirname, '../../icons')))
+const shareDir = path.join(__dirname, '../../share')
+if (fs.existsSync(shareDir) && fs.lstatSync(shareDir).isDirectory()) {
+    console.log('Linking file share directory.')
+    const serveIndex = require('serve-index')
+    app.use('/share', express.static(shareDir), serveIndex(shareDir, { icons: true, hidden: false }))
+}
 
 // Logout route
 app.get('/logout', (req, res) => {

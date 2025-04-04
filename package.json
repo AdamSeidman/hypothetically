@@ -25,6 +25,7 @@
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "poop-sock": "^1.0.7",
+    "serve-index": "^1.9.1",
     "socket.io": "^4.8.1"
   }
 }
