@@ -1,9 +1,34 @@
+/* General Tools */
 .hidden {
     display: none !important;
 }
 
 .pointable {
     cursor: pointer;
+}
+
+@media (hover: hover) {
+    .requires-touch {
+        display: none;
+    }
+}
+
+@media (hover: none) {
+    .requires-mouse {
+        display: none;
+    }
+}
+
+@media only screen and (orientation: landscape) {
+    .portrait-only {
+        display: none;
+    }
+}
+
+@media only screen and (orientation: portrait) {
+    .landscape-only {
+        display: none;
+    }
 }
 
 /* 404 */
