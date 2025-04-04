@@ -191,13 +191,14 @@ function checkTabsTitleLength(title) {
 
 function submitTabs() {
     let type = $('#tabs-type').val()?.trim() || ""
-    if (type.length < 1) {
+    let userTitle = $('#tabTitle').val()?.trim() || ""
+    if (type.length < 1 || userTitle.length < 1) {
         $('#tabs-submit-btn').attr('disabled', true)
         return
     }
-    checkTabsSubmission(({ tag, title }) => {
-        if (!tag || !title) return
-        postTab(tag, title, type)
+    checkTabsSubmission(({ tag }) => {
+        if (!tag || !userTitle) return
+        postTab(tag, userTitle, type)
             .then(() => {
                 $('#tabUrl').val('')
                 $('#tabTitle').val('')
