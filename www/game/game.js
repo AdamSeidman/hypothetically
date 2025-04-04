@@ -149,6 +149,9 @@ function avatarSuccessEvent(data) {
         </p>
     `)
     updateAvatarDisplay()
+    if (typeof avatarSuccessCallback === 'function') {
+        avatarSuccessCallback(data.numAvatarsChosen, data.totalPlayers)
+    }
 }
 
 function newAvatarEvent(data) {
@@ -160,6 +163,9 @@ function newAvatarEvent(data) {
     sessionStorage.setItem('avatarData', JSON.stringify(data))
     updateAvatarDisplay()
     checkWaitStartText(data)
+    if (typeof newAvatarCallback === 'function') {
+        newAvatarCallback(data.numAvatarsChosen, data.totalPlayers)
+    }
 }
 
 function loadScript(scriptName, callback) {

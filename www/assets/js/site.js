@@ -81,6 +81,10 @@ function getGameResults() {
     return standardGET('gameResults')
 }
 
+function getTabs() {
+    return standardGET('tabs')
+}
+
 function joinGame(code) {
     return standardPUT('joinGame', { code })
 }

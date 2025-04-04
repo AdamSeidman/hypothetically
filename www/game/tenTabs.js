@@ -5,14 +5,8 @@ let players = []
 let tabIds = []
 let readyCount = 0
 
-$(document).ready(() => {
-    $('#app').append(`
-        <div id="players" style="adisplay:none;">
-            ${[...Array(10).keys()].map(id => `
-                <div id="player${id}"></div>
-            `).join('')}
-        </div>
-    `)
+function loadTabs() {
+    $('#player-display').toggleClass('hidden', true)
     getTabs()
         .then(({ ids }) => {
             if (!Array.isArray(ids) || ids.length < 10 || typeof ids[0] !== 'string') {
@@ -30,26 +24,38 @@ $(document).ready(() => {
             console.error('Error fetching tabs!', err)
             alert('Error fetching tabs!')
         })
-})
-
-function getTabs() {
-    // TODO This is a dummy version of a server call
-    return new Promise((resolve, reject) => {
-        resolve({
-            ids: ['f8mL0_4GeV0', 'f8mL0_4GeV0', 'f8mL0_4GeV0', 'f8mL0_4GeV0', 'f8mL0_4GeV0',
-                'f8mL0_4GeV0', 'f8mL0_4GeV0', 'f8mL0_4GeV0', 'f8mL0_4GeV0', 'f8mL0_4GeV0', 'f8mL0_4GeV0']
-        })
-    })
 }
+
+function newAvatarCallback(numChosen, totalPlayers) {
+    if (numChosen === totalPlayers) {
+        setTimeout(loadTabs, 100)
+    }
+}
+function avatarSuccessCallback(numChosen, totalPlayers) {
+    if (numChosen === totalPlayers) {
+        setTimeout(loadTabs, 100)
+    }
+}
+
+$(document).ready(() => {
+    $('#app').append(`
+        <div id="players" style="display:none;">
+            ${[...Array(10).keys()].map(id => `
+                <div id="player${id}"></div>
+            `).join('')}
+        </div>
+    `)
+})
 
 function onPlayerStateChange(event) {
     if (event.data === 0) {
         event.target.playVideo()
+        event.target.mute()
     }
 }
 
 function onPlayerReady(event) {
-    event.target.seekTo(event.target.getDuration() / 2)
+    event.target.seekTo(Math.floor(event.target.getDuration() * Math.random()))
     if (++readyCount === 10) {
         allTabsLoaded()
     }
@@ -64,7 +70,10 @@ function allTabsLoaded() {
 
 function onStartTabs() {
     setTimeout(() => {
-        players.forEach(player => player.playVideo())
+        players.forEach(player => {
+            player.playVideo()
+            player.mute()
+        })
     }, 1000)
 }
 

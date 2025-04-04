@@ -1,3 +1,36 @@
-<div>
-    Ten Tabs!
+<div id="tabs-container">
+    <h1>Ten Tabs</h1>
+    <hr>
+    <div id="ten-tabs-results">
+        <div id="tab-number-line" class="tab-results">
+            <div class="player-avatar">
+                <img src="{{ transparentAsset }}">
+            </div>
+            {% for i in range(10) %}
+                <div class="result-image-pane">
+                    <img class="tab-result-image" src="{{ numberAssets[i] }}">
+                </div>
+            {% endfor %}
+        </div>
+        {% for player in players %}
+            <div id="tab-result-{{ player.id }}" class="tab-results">
+                <div class="player-avatar" data-playerid="{{ player.id }}" data-playername="{{ player.name }}">
+                    <img class="player-bkg-image" src="{{ player.backgroundAsset }}">
+                    <img class="player-character-image" src="{{ player.characterAsset }}">
+                    <img id="player-cover-{{ player.id }}" class="player-cover-image" src="{{ player.coverAsset }}">
+                    <div class="player-name">{{ player.name }}</div>
+                </div>
+                {% for i in range(10) %}
+                    <div class="result-image-pane">
+                        <img class="tab-result-image result-bkg-red" src="{{ backgroundAsset }}">
+                        <img class="tab-result-image" id="result-{{ player.id }}-{{ i }}" src="{{ unguessedAsset }}">
+                    </div>
+                {% endfor %}
+            </div>
+            <br>
+        {% endfor %}
+    </div>
+    <hr>
+    <h4>Make a Guess!</h4>
+    <input type="text" id="tab-game-input">
 </div>
