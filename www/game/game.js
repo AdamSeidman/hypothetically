@@ -168,6 +168,41 @@ function newAvatarEvent(data) {
     }
 }
 
+function sendChatMessage(message) {
+    let name = sessionStorage.getItem('myName')
+    updateChatWindow(`${name} (me): ${message}`)
+    sendChat(message)
+}
+
+function sendMessage(event) {
+    if (event.key === 'Enter') {
+        const message = document.getElementById('chat-input').value;
+        if (message.trim()) {
+            sendChatMessage(message)
+            document.getElementById('chat-input').value = ''
+        }
+    }
+}
+
+function updateChatWindow(message, id) {
+    const chatWindow = document.getElementById('chat-window')
+    const isAtBottom = chatWindow.scrollHeight - chatWindow.scrollTop <= chatWindow.clientHeight + 5
+    const messageElement = document.createElement('div')
+    messageElement.textContent = message
+    chatWindow.appendChild(messageElement)
+    if (isAtBottom) {
+        chatWindow.scrollTop = chatWindow.scrollHeight
+    }
+}
+
+function newChatEvent(data) {
+    if (data.displayName) {
+        updateChatWindow(`${data.displayName}: ${data.message}`, data.id)
+    } else {
+        updateChatWindow(data.message, -1)
+    }
+}
+
 function loadScript(scriptName, callback) {
     $.getScript(`./${scriptName.trim().toLowerCase()}.js`)
         .done(() => {
@@ -216,6 +251,14 @@ $(document).ready(() => {
                 sessionStorage.setItem('playerMap', JSON.stringify(room.players))
                 $('#things-total-rounds').text(room?.numRounds)
 
+                updateChatWindow('(Room Created)', 0)
+                room.chatHistory.forEach(msg => {
+                    if (msg.id == sessionStorage.getItem('myId')) {
+                        msg.displayName += ' (me)'
+                    }
+                    newChatEvent(msg)
+                })
+
                 if (typeof room.currentPage === 'string') {
                     loadScript(room.gameType, () => {
                         $('.score-text').text('Score: ')
@@ -230,6 +273,9 @@ $(document).ready(() => {
                                 roundNumberEvent(room.roundNumber)
                             } else if (room.gameType?.trim().toLowerCase() === 'things') {
                                 $('#things-number-header').toggleClass('hidden', false)
+                            }
+                            if (room.videoIds && typeof loadTabs === 'function') {
+                                loadTabs(room.videoIds)
                             }
                         }, 100)
                     })

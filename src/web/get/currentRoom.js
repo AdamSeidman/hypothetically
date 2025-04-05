@@ -33,6 +33,8 @@ module.exports = function (req, res) {
             ret.readerOrder = room.gameObj.readerMap
             ret.scoreMap = room.gameObj.scoreMap
             ret.roundNumber = room.gameObj.round
+            ret.videoIds = room.gameObj.videoIds
+            ret.startTimestamp = room.gameObj.timestamp
         }
     }
     ret.isHost = ret.host == req.user.id

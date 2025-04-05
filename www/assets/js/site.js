@@ -81,7 +81,10 @@ function getGameResults() {
     return standardGET('gameResults')
 }
 
-function getTabs() {
+function getTabs(tabs) {
+    if (tabs && Array.isArray(tabs) && tabs.length === 10) {
+        return Promise.resolve({ ids: tabs })
+    }
     return standardGET('tabs')
 }
 

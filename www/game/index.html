@@ -24,6 +24,11 @@
         <h1 class="hidden" id="things-number-header">Round Number 
             <span id="things-round-number">1</span> of <span id="things-total-rounds">1</span>
         </h1>
+        <div class="hidden landscape-only" id="chat-pane">
+            <h2>Chat</h2>
+            <div class="chat-window" id="chat-window"></div>
+            <input type="text" id="chat-input" placeholder="Type a message..." onkeypress="sendMessage(event)" maxlength="128">
+        </div>
         <div class="card" id="partial-content">
             <div id="character-selection" class="hidden">
                 <h2>Choose Your Avatar</h2>

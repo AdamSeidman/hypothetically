@@ -201,6 +201,53 @@ div.tab-results {
     }
 }
 
-div.tab-number-line > div.player-avatar {
+div.tab-number-line > div {
     margin-top: 10px;
+}
+
+div.tab-results div.player-name {
+    margin-top: 88px;
+}
+
+#chat-window {
+    height: 75vh;
+    width: 20vw;
+    background: #f9f9f9;
+    padding: 10px;
+    border: 1px solid #ddd;
+    overflow-y: scroll;
+    margin-bottom: 30px;
+}
+
+input#chat-input {
+    width: 85%;
+}
+
+#chat-pane {
+    position: fixed;
+    left: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+div.card.moved {
+    margin-left: 15vw;
+    margin-block: 50px;
+}
+
+#ten-tabs-results {
+    overflow-y: scroll;
+}
+
+#chat-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+#chat-input:focus {
+    outline: none;
 }
