@@ -116,8 +116,23 @@ app.use((req, res, next) => {
 })
 
 // Static files setup
-app.use(express.static(path.join(__dirname, '../../www')))
+const publicDir = path.join(__dirname, '../../www')
+app.use(express.static(publicDir))
+fs.readdirSync(publicDir).forEach((subDir) => {
+    // Look for index.html's in subdirectories
+    const fullPath = path.join(publicDir, subDir)
+    if (fs.statSync(fullPath).isDirectory()) {
+        const indexFile = path.join(fullPath, 'index.html')
+        if (fs.existsSync(indexFile)) {
+            app.get(`/${subDir}.html`, (req, res) => {
+                res.sendFile(indexFile)
+            })
+        }
+    }
+})
+// Page icons
 app.use(express.static(path.join(__dirname, '../../icons')))
+// Optional share folder
 const shareDir = path.join(__dirname, '../../share')
 if (fs.existsSync(shareDir) && fs.lstatSync(shareDir).isDirectory()) {
     console.log('Linking file share directory.')
@@ -137,32 +152,34 @@ app.get('/logout', (req, res) => {
 })
 
 // Dynamic routes (API endpoints)
-;['get', 'post', 'put'].forEach(verb => {
+const epHandlers = {}
+;['get', 'post', 'put'].forEach((verb) => {
     fs.readdirSync(path.join(__dirname, verb)).forEach((file) => {
         if (path.extname(file) === '.js') {
-            let ep = file.slice(0, file.indexOf('.'))
-            if (verb === 'get') {
-                app.get(`/api/${ep}`, require(`./get/${ep}`))
-            } else {
-                app[verb](`/api/${ep}`, jsonParser, async (req, res) => {
-                    if (!req.isAuthenticated() || !req.user?.id) {
-                        return res.status(403).json({})
-                    } else {
-                        let ret = await require(`./${verb}/${ep}`)(req, res)
-                        if (typeof ret === 'number') {
-                            res.status(ret).json({})
-                        } else if (ret) {
-                            let code = ret.code
-                            if (typeof code !== 'number') {
-                                code = 200
-                            }
-                            res.status(code).json(ret)
-                        }
-                    }
-                })
-            }
+            const handle = `./${verb}/${file.slice(0, file.indexOf('.'))}`
+            epHandlers[handle] = require(handle)
         }
     })
+})
+app.use('/api/:ep', jsonParser, (req, res, next) => {
+    if (req.method.toLowerCase() !== 'get' && (!req.isAuthenticated() || !req.user?.id)) {
+        return res.status(403).json({})
+    }
+    const handle = `./${req.method.toLowerCase()}/${req.params?.ep || '_'}`
+    if (epHandlers[handle]) {
+        let ret = epHandlers[handle](req, res)
+        if (typeof ret === 'number') {
+            res.status(ret).json({})
+        } else if (ret) {
+            let code = ret.code
+            if (typeof code !== 'number') {
+                code = 200
+            }
+            res.status(code).json(ret)
+        }
+    } else {
+        next()
+    }
 })
 
 const joinGame = require('./put/joinGame')
@@ -219,7 +236,12 @@ io.on('connection', (socket) => {
 
 // Not Found handling catch-all
 app.use((req, res) => {
-    console.warn(`Incoming 404: ${req.method} ${req.url}`)
+    const printExclusions = [
+        '/assets/js/lib/socket.io.min.js.map'
+    ]
+    if (!printExclusions.includes(req.url)) {
+        console.warn(`Incoming 404: ${req.method} ${req.url}`)
+    }
     res.status(404).sendFile(path.join(__dirname, '../../www/404.html'))
 })
 
