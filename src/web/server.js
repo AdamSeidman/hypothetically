@@ -70,7 +70,6 @@ passport.use(new GoogleStrategy({
 }))
 
 passport.serializeUser((user, done) => done(null, user))
-
 passport.deserializeUser((obj, done) => done(null, obj))
 
 // Google OAuth routes
@@ -115,7 +114,7 @@ app.use((req, res, next) => {
     next()
 })
 
-// Static files setup
+// Static public files
 const publicDir = path.join(__dirname, '../../www')
 app.use(express.static(publicDir))
 fs.readdirSync(publicDir).forEach((subDir) => {
@@ -130,9 +129,11 @@ fs.readdirSync(publicDir).forEach((subDir) => {
         }
     }
 })
-// Page icons
+
+// Static page icons
 app.use(express.static(path.join(__dirname, '../../icons')))
-// Optional share folder
+
+// Optional static share folder
 const shareDir = path.join(__dirname, '../../share')
 if (fs.existsSync(shareDir) && fs.lstatSync(shareDir).isDirectory()) {
     console.log('Linking file share directory.')
@@ -165,7 +166,7 @@ app.use('/api/:ep', jsonParser, (req, res, next) => {
     if (req.method.toLowerCase() !== 'get' && (!req.isAuthenticated() || !req.user?.id)) {
         return res.status(403).json({})
     }
-    const handle = `./${req.method.toLowerCase()}/${req.params?.ep || '_'}`
+    const handle = `./${req.method.toLowerCase()}/${req.params?.ep || ''}`
     if (epHandlers[handle]) {
         let ret = epHandlers[handle](req, res)
         if (typeof ret === 'number') {
@@ -182,6 +183,7 @@ app.use('/api/:ep', jsonParser, (req, res, next) => {
     }
 })
 
+// Custom lobby join links
 const joinGame = require('./put/joinGame')
 app.get('/join/:code', async (req, res) => {
     if (!req.body) {
