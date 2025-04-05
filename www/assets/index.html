@@ -3,9 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>All Assets</title>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="stylesheet" href="/assets/css/site.css">
+    <script src="/assets/js/lib/jquery.min.js"></script>
+    <script src="/assets/img/characters.js"></script>
+    <script src="/assets/img/results.js"></script>
+    <style>
+        #image-pane {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        img {
+            border: 1px dashed black;
+        }
+        * {
+            font-size: 32px;
+        }
+        hr {
+            color: black;
+            width: 80vw;
+        }
+    </style>
 </head>
 <body>
-    <!-- TODO: Add all assets for display -->
+    <div id="image-pane">
+        <h1>All Assets</h1>
+        <hr>
+    </div>
+    <script>
+        const assets = [
+            characterAssetsBase64,
+            backgroundAssetsBase64,
+            unknownAssetBase64,
+            transparentAssetBase64,
+            selectedAssetBase64,
+            eliminatedAssetBase64,
+            resultAssetsBase64,
+            numberAssetsBase64,
+            mainBackgroundAssetBase64
+        ]
+        $(document).ready(() => {
+            const pane = $('#image-pane')
+            function addImage(src, prepend='<br>') {
+                pane.append(`${prepend}<img src="${src}">`)
+            }
+            assets.forEach((asset) => {
+                if (typeof asset === 'string') {
+                    addImage(asset)
+                } else if (Array.isArray(asset)) {
+                    asset.forEach(x => addImage(x))
+                } else {
+                    Object.entries(asset).forEach(([key, src]) => {
+                        addImage(src, `<p>${key}</p>`)
+                    })
+                }
+            })
+        })
+    </script>
 </body>
 </html>
