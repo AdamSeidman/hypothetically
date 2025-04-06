@@ -265,14 +265,6 @@ class Game {
         })
         return ret
     }
-
-    stallEvent(id) {
-
-    }
-
-    inactiveEvent(id) {
-
-    }
 }
 
 function make(game) {

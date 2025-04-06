@@ -383,39 +383,6 @@ function moveToGame(codeOrId) {
     }, GAME_START_WAIT)
 }
 
-function stallEvent(id) {
-    let room = rooms[playerMap[id]]
-    if (!room?.running && !room?.gameObj) return
-    return room.gameObj.stallEvent(id)
-}
-
-function inactiveEvent(id) {
-    let room = rooms[playerMap[id]]
-    if (!room || room.host === id) return
-    let canKick = true
-    if (room.running) {
-        if (room.gameObj) {
-            canKick = room.gameObj.inactiveEvent(id)
-        } else if (room.players.length > 2) {
-            canKick = true
-            let numAvatarsChosen = Object.keys(room.avatarMap).length
-            if (room.avatarMap[id]) {
-                numAvatarsChosen -= 1
-            }
-            if (numAvatarsChosen >= room.player.length - 1) {
-                // TODO avatar selection is done. Inform the players
-            }
-        } else {
-            canKick = false
-        }
-    }
-    if (canKick) {
-        room.removePlayer(id)
-        room.addChatMessage({ message: `${getDisplayName(id)} left the room due to inactivity` })
-        // TODO Inform the players that this player left
-    }
-}
-
 function getResultsOf(code) {
     let room = rooms[code]
     if (!room) return
@@ -458,7 +425,5 @@ module.exports = {
     getAvatarInfo,
     getRoomByPlayerId,
     moveToGame,
-    stallEvent,
-    inactiveEvent,
     getResultsOf
 }

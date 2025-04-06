@@ -72,14 +72,6 @@ class Game {
             }
         }
     }
-
-    stallEvent(id) {
-
-    }
-
-    inactiveEvent(id) {
-        
-    }
 }
 
 function make(game) {
