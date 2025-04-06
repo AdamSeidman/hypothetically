@@ -60,7 +60,8 @@ CREATE TABLE users (
     email VARCHAR NOT NULL UNIQUE,
     name VARCHAR,
     profile_picture VARCHAR,
-    display_name VARCHAR
+    display_name VARCHAR,
+    default_avatar TEXT
 );
 ```
 

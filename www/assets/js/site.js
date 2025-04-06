@@ -59,6 +59,18 @@ function makeRoom(isPublic) {
     return standardPOST('room', { isPublic })
 }
 
+async function setDefaultAvatar(avatar) {
+    return new Promise((resolve) => {
+        standardPOST('defaultAvatar', { avatar })
+            .then(() => {
+                resolve(true)
+            })
+            .catch(() => {
+                resolve(false)
+            })
+    })
+}
+
 function postTab(id, title, type) {
     let fail = [id, title, type].find(x => typeof x !== 'string')
     if (fail) {
