@@ -128,6 +128,12 @@ socket.on('answerAccepted', (data) => {
     }
 })
 
+socket.on('playTabs', (data) => {
+    if (typeof playTabsEvent === 'function') {
+        playTabsEvent(data)
+    }
+})
+
 socket.on('answerRejected', () => {
     alert('Error submitting answer!')
 })
@@ -203,3 +209,6 @@ function emitNextThings() {
     socket.emit('thingsNext', {})
 }
 
+function emitTabsLoaded() {
+    socket.emit('tabsLoaded', {})
+}

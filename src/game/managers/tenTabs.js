@@ -22,6 +22,12 @@ class Game {
         }
         this.game = game
         this.code = game.code
+        this.timestamp = null
+        this.loadedMap = {}
+        this.game.players.forEach((id) => {
+            this.loadedMap[id] = false
+        })
+        this.numPlayersLoaded = 0
         this._ids = []
         async function loadGame(game) {
             let all = await database.tabs.getAll()
@@ -34,9 +40,37 @@ class Game {
         }
         loadGame(this)
     }
+    
+    get currentState() {
+        return states[this.#stateKey || '0']
+    }
+
+    nextState() {
+        this.#stateKey += 1
+        if (this.#stateKey >= numStates) {
+            this.#stateKey = 0
+        }
+        return this.currentState
+    }
 
     get videoIds() {
         return JSON.parse(JSON.stringify(this._ids))
+    }
+
+    tabsLoaded(id='.') {
+        if (!this.game.players.includes(id)) return
+        if (!this.loadedMap[id]) {
+            this.numPlayersLoaded += 1
+        }
+        this.loadedMap[id] = true
+        if (this.numPlayersLoaded >= this.game.players.length) {
+            return {
+                id,
+                code: this.code,
+                map: this.loadedMap,
+                timestamp: this.timestamp
+            }
+        }
     }
 
     stallEvent(id) {

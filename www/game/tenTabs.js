@@ -4,16 +4,21 @@ let apiLoaded = false
 let players = []
 let tabIds = []
 let readyCount = 0
+let started = false
 
-function loadTabs() {
+function loadTabs(preloadedTabs) {
     $('#player-display').toggleClass('hidden', true)
-    getTabs()
+    $('#chat-pane').toggleClass('hidden', false)
+    $('div.card').toggleClass('moved', true)
+    getTabs(preloadedTabs)
         .then(({ ids }) => {
             if (!Array.isArray(ids) || ids.length < 10 || typeof ids[0] !== 'string') {
                 alert('Bad game issued from server!')
                 return
             }
             tabIds = ids
+
+            if (apiLoaded && players.length) return
 
             var tag = document.createElement('script')
             tag.src = 'https://youtube.com/iframe_api'
@@ -28,12 +33,12 @@ function loadTabs() {
 
 function newAvatarCallback(numChosen, totalPlayers) {
     if (numChosen === totalPlayers) {
-        setTimeout(loadTabs, 100)
+        setTimeout(() => loadTabs(), 100)
     }
 }
 function avatarSuccessCallback(numChosen, totalPlayers) {
     if (numChosen === totalPlayers) {
-        setTimeout(loadTabs, 100)
+        setTimeout(() => loadTabs(), 100)
     }
 }
 
@@ -50,7 +55,9 @@ $(document).ready(() => {
 function onPlayerStateChange(event) {
     if (event.data === 0) {
         event.target.playVideo()
-        event.target.mute()
+        if (!started) {
+            event.target.mute()
+        }
     }
 }
 
@@ -61,20 +68,24 @@ function onPlayerReady(event) {
     }
 }
 
-function allTabsLoaded() {
-    // TODO This is a dummy version of two socket calls
-    setTimeout(() => {
-        onStartTabs()
-    }, 1000)
+function onPlayerError(err) {
+    console.error('Player Error', err)
 }
 
-function onStartTabs() {
-    setTimeout(() => {
-        players.forEach(player => {
-            player.playVideo()
-            player.mute()
-        })
-    }, 1000)
+function allTabsLoaded() {
+    players.forEach(player => {
+        player.playVideo()
+        player.mute()
+    })
+    setTimeout(emitTabsLoaded, 100)
+}
+
+function playTabsEvent() {
+    started = true
+    players.forEach((player) => {
+        player.unMute()
+    })
+    $('#tab-game-input').attr('disabled', false)
 }
 
 function onYouTubeIframeAPIReady() {
@@ -83,12 +94,17 @@ function onYouTubeIframeAPIReady() {
         return
     }
     apiLoaded = true
+
     while (players.length < 10) {
         players.push(new YT.Player(`player${players.length}`, {
             videoId: tabIds[players.length],
+            playerVars: {
+                playsInline: 1
+            },
             events: {
                 onStateChange: onPlayerStateChange,
-                onReady: onPlayerReady
+                onReady: onPlayerReady,
+                onError: onPlayerError
             }
         }))
     }
