@@ -212,3 +212,27 @@ function emitNextThings() {
 function emitTabsLoaded() {
     socket.emit('tabsLoaded', {})
 }
+
+socket.on('disconnect', () => {
+    document.title = `Inactive | ${document.title}`
+    const favicon = document.querySelector("link[rel~='icon']")
+    if (favicon) {
+        favicon.href = '/staleFavicon.ico'
+    }
+    const overlay = document.createElement('div')
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: none;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        pointer-events: all;
+    `
+    document.body.appendChild(overlay)
+    setTimeout(() => {
+        alert('The sever has disconnected from this page!')
+    }, 100)
+})
