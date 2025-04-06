@@ -2,7 +2,6 @@
  * Start the game with WebSockets
  */
 
-const pingManager = require('../pingManager')
 const Games = require('../../game/gameManager')
 const Avatars = require('../../../www/assets/img/characters')
 
@@ -25,9 +24,9 @@ function handle(message, socket, id) {
         socket.emit('avatarSubmissionFailed', {})
         return
     }
+    
     let ret = Games.submitAvatar(id, message.avatar.trim())
     if (ret) {
-        pingManager.clearPings(id)
         socket.emit('avatarSubmissionSuccess', ret)
         Sockets.sendToRoom(socket, 'newAvatar', ret)
         if (ret.totalPlayers && ret.totalPlayers === ret.numAvatarsChosen) {

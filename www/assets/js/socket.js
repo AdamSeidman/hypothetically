@@ -203,8 +203,3 @@ function emitNextThings() {
     socket.emit('thingsNext', {})
 }
 
-setInterval(() => {
-    socket.emit('ping', {
-        page: window.location.href
-    })
-}, (1000 * 5))

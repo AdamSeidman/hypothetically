@@ -13,7 +13,6 @@ $(document).ready(() => {
                 alertAndNavigate('Could not find game/results!', '/lobbies')
             }
             if (data.gameRunning) {
-                alert(1)
                 window.location.href = '/game'
             }
             return getGameResults()

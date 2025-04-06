@@ -3,7 +3,6 @@
  */
 
 const { generateRoomCode } = require('./utils')
-const pingManager = require('../web/pingManager')
 const { getDisplayName } = require('../db/tables/users')
 
 let rooms = {}
@@ -55,7 +54,6 @@ class GameRoom {
         }
         this.players.push(id)
         playerMap[id] = this.code
-        pingManager.setStallCheck(id, false)
         return {
             id,
             pass: true,
