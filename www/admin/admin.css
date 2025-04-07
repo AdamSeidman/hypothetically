@@ -131,3 +131,12 @@ hr {
 #tabUrl {
     position: relative;
 }
+
+.small-text {
+    font-size: 10px;
+    font-weight: normal;
+}
+
+#tabs-tab p {
+    margin-block: 0 5px;
+}

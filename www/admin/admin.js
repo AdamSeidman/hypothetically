@@ -2,6 +2,8 @@ let youtubeLoaded = false
 let currentTabValid = false
 let youtubePlayer = undefined
 
+const SIMILARITY_DIFFICULTY = 0.5
+
 function modifyDescription(text) {
     $('.input-copy').text(text)
 }
@@ -21,6 +23,7 @@ function openTab(evt, tabName) {
         youtubeLoaded = true
         loadYoutubeApi()
     }
+    $('#tabs-test-result').text('Fail')
 }
 
 function loadYoutubeApi() {
@@ -226,4 +229,23 @@ $(document).ready(() => {
             $('#tabs-type-default').remove()
         }
     })
+    $('#tabs-test-input').on('input', () => {
+        let title = $('#tabTitle').val().trim()
+        let guess = $('#tabs-test-input').val().trim()
+        let type = $('#tabs-type').val()
+        $('#tabs-test-result').text('Fail')
+        if (title.length < 1 || guess.length < 1) return
+        if (isSimilarEnough(title, guess)) {
+            $('#tabs-test-result').text('Pass')
+        } else if (type.trim().toLowerCase() === 'music' && title.includes('-')) {
+            let songTitle = title.split('-')[1].trim().toLowerCase()
+            if (songTitle === guess.toLowerCase()) {
+                $('#tabs-test-result').text('Pass')
+            }
+        }
+    })
 })
+
+function isSimilarEnough(phrase1, phrase2) {
+    return (getSimilarity(phrase1, phrase2) >= SIMILARITY_DIFFICULTY)
+}
