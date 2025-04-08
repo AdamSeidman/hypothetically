@@ -1,0 +1,15 @@
+<div id="player-display">
+    {% for player in players %}
+        <div class="player-avatar" id="score-avatar-{{ player.id }}" data-playerid="{{ player.id }}" data-playername="{{ player.name }}">
+            <img class="player-bkg-image" src="{{ player.backgroundAsset }}">
+            <img class="player-character-image" src="{{ player.characterAsset }}">
+            <img class="player-cover-image" id="cover-image{{ player.id }}" src="{{ player.coverAsset }}">
+            <div class="player-info">
+                <p class="player=name">{{ player.name }}</p>
+                <p class="player-score">
+                    <span class="score-text">{{ scoreText }}</span><span class="score" id="score-{{ player.id }}">{{ player.score }}</span>
+                </p>
+            </div>
+        </div>
+    {% endfor %}
+</div>

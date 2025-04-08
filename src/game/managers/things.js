@@ -332,6 +332,22 @@ class Game {
             }
         }
     }
+
+    get playerScoreArray() {
+        let ids = JSON.parse(JSON.stringify(this.#readers))
+        ids = ids.filter(x => this.game.players.includes(x))
+        ids = ids.map((id) => {
+            let ret = {
+                id,
+                name: getDisplayName(id),
+                backgroundAsset: 'test', // TODO
+                coverAsset: 'test',
+                characterAsset: 'test',
+                score: this.scoreMap[id] || 0
+            }
+            return ret
+        })
+    }
 }
 
 function make(game) {

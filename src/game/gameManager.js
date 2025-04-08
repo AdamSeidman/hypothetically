@@ -15,7 +15,8 @@ const GAMES = {
     things: {
         default: true,
         name: 'Stuff',
-        joinableMidGame: true
+        joinableMidGame: true,
+        scoreBoard: true
     },
     tenTabs: {
         name: 'Ten Tabs',
@@ -234,6 +235,10 @@ class GameRoom {
 
     get running() {
         return this.inGame
+    }
+
+    get usesScoreBoard() {
+        return !!GAMES[this.gameType]?.scoreBoard
     }
 }
 
