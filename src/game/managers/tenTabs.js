@@ -72,6 +72,14 @@ class Game {
             }
         }
     }
+
+    joinMidGame(id) {
+        
+    }
+
+    leaveMidGame(id) {
+
+    }
 }
 
 function make(game) {

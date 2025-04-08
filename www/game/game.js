@@ -108,7 +108,7 @@ function updateAvatarDisplay() {
         avatarData.map[myId] = myAvatar
     }
     $('#player-display').html(players.map(({ id, displayName }) => `
-        <div class="player-avatar" data-playerid="${id}" data-playername="${displayName}">
+        <div class="player-avatar" id="score-avatar-${id}" data-playerid="${id}" data-playername="${displayName}">
             <img class="player-bkg-image" src="${
                 avatarData.map[id]? backgroundAssetsBase64[avatarData.map[id].split('|')[1]] : unknownAssetBase64}">
             <img class="player-character-image" src="${
@@ -291,9 +291,9 @@ $(document).ready(() => {
                         let data = room.avatarData.map[room.id].split('|')
                         character = data[0]
                         color = data[1]
-                    } else if (sessionStorage.getItem('cachedAvatar') === 'set') {
-                        character = sessionStorage.getItem('cachedCharacter')
-                        color = sessionStorage.getItem('cachedColor')
+                    } else if (sessionStorage.getItem('cachedAvatar') === 'set' || room.yourDefaultAvatar) {
+                        character = room?.yourDefaultAvatar.character || sessionStorage.getItem('cachedCharacter')
+                        color = room?.yourDefaultAvatar.color || sessionStorage.getItem('cachedColor')
                     }
 
                     $('#character-image').attr('src', characterAssetsBase64[character])
