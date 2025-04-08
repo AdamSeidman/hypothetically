@@ -145,6 +145,20 @@ socket.on('thingSubmitted', (data) => {
     }
 })
 
+socket.on('leftMidGame', (data) => {
+    if (!data?.id) return
+    if (typeof leftMidGameEvent === 'function') {
+        leftMidGameEvent(data.id)
+    }
+})
+
+socket.on('midGameJoin', (data) => {
+    if (!data?.id) return
+    if (typeof midGameJoinEvent === 'function') {
+        midGameJoinEvent(data)
+    }
+})
+
 function joinRoom(code) {
     if (!code) return
     socket.emit('joinGame', { code })
@@ -213,12 +227,7 @@ function emitTabsLoaded() {
     socket.emit('tabsLoaded', {})
 }
 
-socket.on('disconnect', () => {
-    document.title = `Inactive | ${document.title}`
-    const favicon = document.querySelector("link[rel~='icon']")
-    if (favicon) {
-        favicon.href = '/staleFavicon.ico'
-    }
+function disconnectRoutine() {
     const overlay = document.createElement('div')
     overlay.style.cssText = `
         position: fixed;
@@ -235,4 +244,13 @@ socket.on('disconnect', () => {
     setTimeout(() => {
         alert('The sever has disconnected from this page!')
     }, 100)
+}
+
+socket.on('disconnect', () => {
+    document.title = `Inactive | ${document.title}`
+    const favicon = document.querySelector("link[rel~='icon']")
+    if (favicon) {
+        favicon.href = '/staleFavicon.ico'
+    }
+    setTimeout(disconnectRoutine, 1000)
 })

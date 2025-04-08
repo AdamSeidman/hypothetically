@@ -2,15 +2,30 @@
  * Create and handle games
  */
 
-const { generateRoomCode } = require('./utils')
-const { getDisplayName } = require('../db/tables/users')
+const { generateRoomCode, shuffleArray } = require('./utils')
+const { getDisplayName, getDefaultAvatar } = require('../db/tables/users')
+const Assets = require('../../www/assets/img/characters')
 
 let rooms = {}
 let playerMap = {}
 let gameMap = {}
 let Sockets = undefined
 
-const DEFAULT_GAME_TYPE = 'things'
+const GAMES = {
+    things: {
+        default: true,
+        name: 'Stuff',
+        joinableMidGame: true
+    },
+    tenTabs: {
+        name: 'Ten Tabs',
+    },
+    hypothetically: {
+        name: 'Hypothetically...'
+    }
+}
+
+const DEFAULT_GAME_TYPE = Object.keys(GAMES).find(x => GAMES[x].default) || 'things'
 const DEFAULT_NUM_ROUNDS = 5
 const GAME_START_WAIT = 2 * 1000
 const ROOM_MAX_PLAYERS = 12
@@ -35,7 +50,6 @@ class GameRoom {
         this.active = true
         this.joinable = true
         this.gameObj = null
-        this.running = false
         this.inGame = false
         this.isPublic = !!isPublic
         this.avatarMap = {}
@@ -47,18 +61,42 @@ class GameRoom {
         if (this.players.includes(id)) return { failReason: 'You are already in this room!' }
         if (this.kickedPlayers.includes(id)) return { failReason: 'You are not allowed to join this room!' }
         if (this.players.length >= ROOM_MAX_PLAYERS) return { failReason: 'This room is full!' }
-        if (this.running || this.inGame) return { failReason: 'This game is in progress!' }
+        if (this.inGame && !GAMES[this.gameType.trim()].joinableMidGame) return { failReason: 'This game is in progress!' }
         if (playerMap[id]) {
             console.warn(`Removed player ${id} from ${playerMap[id]} to add to ${this.code}!`)
             rooms[playerMap[id]].removePlayer(id)
         }
         this.players.push(id)
         playerMap[id] = this.code
-        return {
+        let ret = {
             id,
             pass: true,
-            code: this.code
+            code: this.code,
+            midGame: false
         }
+        if (this.inGame) {
+            ret.midGame = true
+            let avatar = getDefaultAvatar(id)
+            if (avatar.none) {
+                const characters = shuffleArray(Object.keys(Assets.characterAssetsBase64))
+                const colors = shuffleArray(Object.keys(Assets.backgroundAssetsBase64))
+                while (characters.length > 0 && Object.values(this.avatarMap).find(x => x.split('|')[0] === characters[0])) {
+                    characters.shift()
+                }
+                const character = characters[0] || shuffleArray(Object.keys(Assets.characterAssetsBase64))[0]
+                while (colors.length > 0 && Object.values(this.avatarMap).find(x => x.split('|')[1] === colors[0])) {
+                    colors.shift()
+                }
+                const color = colors[0] || shuffleArray(Object.keys(Assets.backgroundAssetsBase64))[0]
+                avatar = `${character}|${color}`
+            } else {
+                avatar = `${avatar.character}|${avatar.color}`
+            }
+            this.gameObj?.joinMidGame(id)
+            this.avatarMap[id] = avatar
+            ret.avatar = avatar
+        }
+        return ret
     }
 
     removePlayer(id) {
@@ -119,11 +157,11 @@ class GameRoom {
         }
     }
 
-    kickPlayer(id) {
+    kickPlayer(id, temporary) {
         if (!id || !this.players.includes(id)) return
         if (this.host === id) return
         let ret = this.removePlayer(id)
-        if (ret) {
+        if (ret && !temporary) {
             this.kickedPlayers.push(id)
         }
         return ret
@@ -165,6 +203,7 @@ class GameRoom {
             gameMap[this.gameType] = require(`./managers/${this.gameType.trim().toLowerCase()}`)
         }
         this.gameObj = gameMap[this.gameType].make(this)
+        this.addChatMessage({ message: `Started a game of ${GAMES[this.gameType.trim()]?.name}.` })
         return this
     }
 
@@ -191,6 +230,10 @@ class GameRoom {
             code: this.code,
             map: this.avatarMap
         }
+    }
+
+    get running() {
+        return this.inGame
     }
 }
 
@@ -248,15 +291,29 @@ function addToRoom(id, code) {
 }
 
 function removeFromRoom(id) {
+    if (!Sockets) {
+        Sockets = require('../web/sockets')
+    }
     let code = playerMap[id]
     let room = rooms[code]
     if (!room) return
-    if (room.host == id) {
+    const hostId = room.host
+    if (hostId != id || room.inGame) {
+        room.addChatMessage({ message: `${getDisplayName(id)} left the room` })
+        if (room.inGame) {
+            room.gameObj?.leaveMidGame(id)
+            Sockets.sendToRoomByCode(code, 'leftMidGame', { id, code })
+            if (room.players.length <= 2) {
+                room.conclude()
+            }
+        }
+        room.removePlayer(id)
+        if (room.host !== hostId) {
+            room.addChatMessage({ message: `${getDisplayName(room.host)} is the new host` })
+        }
+    } else {
         room.conclude()
         return code
-    } else {
-        room.addChatMessage({ message: `${getDisplayName(id)} left the room` })
-        room.removePlayer(id)
     }
 }
 
@@ -301,24 +358,24 @@ function getPublicGames() {
 function setGameType(type, id) {
     if (typeof type !== 'string') return
     let room = rooms[playerMap[id]]
-    if (!room || room.running) return
+    if (!room || room.gameRunning) return
     return room.setGameType(type, id)
 }
 
 function setNumRounds(numRounds, id) {
     if (isNaN(numRounds) || !id) return
     let room = rooms[playerMap[id]]
-    if (!room || room.running) return
+    if (!room || room.gameRunning) return
     return room.setNumRounds(numRounds, id)
 }
 
-function kickPlayer(hostId, kickId, code) {
+function kickPlayer(hostId, kickId, code, temporary) {
     if (hostId === kickId) return
     if (!hostId || !kickId || !code) return
     if (playerMap[hostId] !== code || playerMap[kickId] !== code) return
     let room = rooms[code]
     room.addChatMessage({ message: `${getDisplayName(kickId)} left the room` })
-    return room.kickPlayer(kickId)
+    return room.kickPlayer(kickId, temporary)
 }
 
 function startGame(hostId, code) {

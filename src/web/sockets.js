@@ -7,8 +7,11 @@ const Game = require('../game/gameManager')
 const { getDisplayName } = require('../db/tables/users')
 const { randomUUID } = require('crypto')
 
+const REJOIN_GRACE_TIME = 10 * 1000
+
 const sockets = {}
 const handlers = []
+const rejoinList = {}
 const eventHandlers = {}
 
 fs.readdirSync(path.join(__dirname, 'socket')).forEach((file) => {
@@ -53,6 +56,15 @@ function openSocket(id, socket) {
     socket.on('disconnect', () => {
         if (sockets[id] && sockets[id].uuid === socket.uuid) {
             delete sockets[id]
+            let code = Game.getGameCodeOf(id)
+            if (!code) return
+            rejoinList[id] = code
+            setTimeout(() => {
+                delete rejoinList[id]
+                if (!sockets[id]) {
+                    Game.removeFromRoom(id)
+                }
+            }, REJOIN_GRACE_TIME)
         } else {
             console.warn('Socket was stale or missing!', id)
         }

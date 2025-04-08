@@ -192,7 +192,9 @@ app.get('/join/:code', async (req, res) => {
     req.body.code = req.params?.code?.trim() || "."
 
     let ret = await joinGame(req)
-    if (ret === 200) {
+    if (ret === 503) {
+        res.status(200).redirect('/game')
+    } else if (ret === 200) {
         res.status(200).redirect('/lobby')
     } else if (ret?.err) {
         res.status(400).redirect('/lobbies')
