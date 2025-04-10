@@ -39,11 +39,13 @@ function gameRenderEvent(data) {
             $(this).text('0')
         }
     })
+
+    updateAvatarDisplay() // TODO Check, and also replace?
 }
 
 function gameEndedEvent(data) {
     alert('Game Ended')
-    // TODO Need a proper way to end the game.
+    // TODO Need a proper way to end the game.  (Is this done?)
     console.warn(data)
 }
 
@@ -96,6 +98,10 @@ function submitAvatar() {
 }
 
 function updateAvatarDisplay() {
+    setTimeout(updateAvatarPartial, 1)
+    return // TODO
+
+
     let playerMap = JSON.parse(sessionStorage.getItem('playerMap') || '{}')
     let players = Object.entries(playerMap).map(([id, displayName]) => {
         return { id, displayName }
@@ -166,6 +172,10 @@ function newAvatarEvent(data) {
     if (typeof newAvatarCallback === 'function') {
         newAvatarCallback(data.numAvatarsChosen, data.totalPlayers)
     }
+}
+
+function updateAvatarPartial() { // TODO
+    renderPartial('avatarBoard', 'player-display')
 }
 
 function sendChatMessage(message) {
