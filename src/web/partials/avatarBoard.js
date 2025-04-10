@@ -6,17 +6,18 @@ const Games = require('../../game/gameManager')
 
 function get(req) {
     let room = Games.getRoomByPlayerId(req?.user?.id)
-    if (!room?.inGame || !room.game?.playerScoreArray || !room.usesScoreBoard) {
-        return {
-            players: [],
-            scoreText: '&nbsp;' // TODO check
-        }
+    let ret = {
+        players: [],
+        scoreText: '&nbsp;' // TODO check
     }
-    let players = room.game.playerScoreArray
-    return {
-        players,
-        scoreText: 'Score: '
+    if (!room?.avatarMap) return ret
+    if (!room.inGame || !room.game?.playerScoreArray || !room.usesScoreBoard) {
+        ret.players = room.playerAvatarArray || []
+    } else {
+        ret.players = room.game.playerScoreArray || []
+        ret.scoreText = 'Score: '
     }
+    return ret
 }
 
 module.exports = { get }

@@ -240,6 +240,28 @@ class GameRoom {
     get usesScoreBoard() {
         return !!GAMES[this.gameType]?.scoreBoard
     }
+
+    get playerAvatarArray() {
+        let ids = JSON.parse(JSON.stringify(this.players))
+        return ids.map((id) => {
+            let ret = {
+                id,
+                name: getDisplayName(id),
+                backgroundAsset: Avatars.unknownAssetBase64,
+                coverAsset: Avatars.transparentAssetBase64,
+                characterAsset: Avatars.transparentAssetBase64,
+                score: ''
+            }
+            if (typeof this.avatarMap[id] === 'string') {
+                let avatarItems = this.avatarMap[id].split('|').map(x => x.trim())
+                if (avatarItems.length === 2) {
+                    ret.backgroundAsset = Assets.backgroundAssetsBase64[avatarItems[1]]
+                    ret.characterAsset = Assets.characterAssetsBase64[avatarItems[0]]
+                }
+            }
+            return ret
+        })
+    }
 }
 
 function makeRoom(hostId, isPublic) {
