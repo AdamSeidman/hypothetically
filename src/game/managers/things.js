@@ -336,14 +336,31 @@ class Game {
     get playerScoreArray() {
         let ids = JSON.parse(JSON.stringify(this.#readers))
         ids = ids.filter(x => this.game.players.includes(x))
-        ids = ids.map((id) => {
+        return ids.map((id) => {
             let ret = {
                 id,
                 name: getDisplayName(id),
-                backgroundAsset: 'test', // TODO
-                coverAsset: 'test',
-                characterAsset: 'test',
+                backgroundAsset: Avatars.unknownAssetBase64,
+                coverAsset: Avatars.transparentAssetBase64,
+                characterAsset: Avatars.transparentAssetBase64,
                 score: this.scoreMap[id] || 0
+            }
+            if (this.game.avatarMap[id]) {
+                let avatarItems = this.game.avatarMap[id].split('|')?.map(x => x.trim())
+                if (avatarItems) {
+                    ret.backgroundAsset = Avatars.backgroundAssetsBase64[avatarItems[1]]
+                    ret.characterAsset = Avatars.characterAssetsBase64[avatarItems[0]]
+                }
+            }
+            const state = states[this.#stateKey || 0].toLowerCase()
+            if (state.includes('start')) {
+                if (typeof this.answerMap[id] === 'string') {
+                    ret.coverAsset = Avatars.selectedAssetBase64
+                }
+            } else if (!state.includes('read')) {
+                if (!this.#guessesLeft.includes(id)) {
+                    ret.coverAsset = Avatars.eliminatedAssetBase64
+                }
             }
             return ret
         })

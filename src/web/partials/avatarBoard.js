@@ -3,7 +3,6 @@
  */
 
 const Games = require('../../game/gameManager')
-const { getDisplayName } = require('../../db/tables/users')
 
 function get(req) {
     let room = Games.getRoomByPlayerId(req?.user?.id)
