@@ -247,9 +247,9 @@ class GameRoom {
             let ret = {
                 id,
                 name: getDisplayName(id),
-                backgroundAsset: Avatars.unknownAssetBase64,
-                coverAsset: Avatars.transparentAssetBase64,
-                characterAsset: Avatars.transparentAssetBase64,
+                backgroundAsset: Assets.unknownAssetBase64,
+                coverAsset: Assets.transparentAssetBase64,
+                characterAsset: Assets.transparentAssetBase64,
                 score: ''
             }
             if (typeof this.avatarMap[id] === 'string') {

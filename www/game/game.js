@@ -97,37 +97,6 @@ function submitAvatar() {
     }
 }
 
-function updateAvatarDisplay() {
-    setTimeout(updateAvatarPartial, 1)
-    return // TODO
-
-
-    let playerMap = JSON.parse(sessionStorage.getItem('playerMap') || '{}')
-    let players = Object.entries(playerMap).map(([id, displayName]) => {
-        return { id, displayName }
-    })
-    let avatarData = sessionStorage.getItem('avatarData') || '{}'
-    avatarData = JSON.parse(avatarData)
-    let myAvatar = sessionStorage.getItem('myAvatar')
-    let myId = sessionStorage.getItem('myId')
-    if (myAvatar && myId && !avatarData.map[myId]) {
-        avatarData.map[myId] = myAvatar
-    }
-    $('#player-display').html(players.map(({ id, displayName }) => `
-        <div class="player-avatar" id="score-avatar-${id}" data-playerid="${id}" data-playername="${displayName}">
-            <img class="player-bkg-image" src="${
-                avatarData.map[id]? backgroundAssetsBase64[avatarData.map[id].split('|')[1]] : unknownAssetBase64}">
-            <img class="player-character-image" src="${
-                avatarData.map[id]? characterAssetsBase64[avatarData.map[id].split('|')[0]] : unknownAssetBase64}">
-            <img class="player-cover-image" id="cover-image-${id}" src="${transparentAssetBase64}">
-            <div class="player-info">
-                <p class="player-name">${displayName}</p>
-                <p class="player-score"><span class="score-text">&nbsp;</span><span class="score" id="score-${id}"></span></p>
-            </div>
-        </div>
-    `).join(''))
-}
-
 function thingSubmittedEvent(id) {
     if (id) {
         $(`#cover-image-${id}`).attr('src', selectedAssetBase64)
@@ -174,8 +143,10 @@ function newAvatarEvent(data) {
     }
 }
 
-function updateAvatarPartial() { // TODO
-    renderPartial('avatarBoard', 'player-display')
+function updateAvatarDisplay() {
+    setTimeout(() => {
+        renderPartial('avatarBoard', 'player-display')
+    }, 1)
 }
 
 function sendChatMessage(message) {

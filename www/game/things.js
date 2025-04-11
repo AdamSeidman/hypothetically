@@ -114,3 +114,7 @@ function roundNumberEvent(data) {
     }
     $('#things-number-header').toggleClass('hidden', false)
 }
+
+if (typeof updateAvatarDisplay === 'function') {
+    setInterval(updateAvatarDisplay, 5000) // TODO ?
+}

@@ -355,7 +355,7 @@ class Game {
             const state = states[this.#stateKey || 0].toLowerCase()
             if (state.includes('start')) {
                 if (typeof this.answerMap[id] === 'string') {
-                    ret.coverAsset = Avatars.selectedAssetBase64
+                    ret.coverAsset = Avatars.selectedAssetBase64 // TODO not seeing this
                 }
             } else if (!state.includes('read')) {
                 if (!this.#guessesLeft.includes(id)) {

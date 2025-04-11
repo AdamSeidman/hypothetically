@@ -8,7 +8,7 @@ function get(req) {
     let room = Games.getRoomByPlayerId(req?.user?.id)
     let ret = {
         players: [],
-        scoreText: '&nbsp;' // TODO check
+        scoreText: ' ' // TODO Not showing up at right location
     }
     if (!room?.avatarMap) return ret
     if (!room.inGame || !room.game?.playerScoreArray || !room.usesScoreBoard) {
