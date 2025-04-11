@@ -243,7 +243,7 @@ function disconnectRoutine() {
     document.body.appendChild(overlay)
     setTimeout(() => {
         alert('The sever has disconnected from this page!')
-    }, 100)
+    }, 150)
 }
 
 socket.on('disconnect', () => {
