@@ -65,8 +65,6 @@ function openSocket(id, socket) {
                     Game.removeFromRoom(id)
                 }
             }, REJOIN_GRACE_TIME)
-        } else {
-            console.warn('Socket was stale or missing!', id)
         }
     })
 }

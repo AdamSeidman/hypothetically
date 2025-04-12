@@ -471,7 +471,8 @@ function getResultsOf(code) {
     let room = rooms[code]
     if (!room) return
     let ret = {}
-    room.players.forEach((playerId) => {
+    let playerIds = [...room.players, ...(Object.keys(room.gameObj?.scoreMap)?.filter(x => room.gameObj?.scoreMap[x] > 0) || [])]
+    ;[...new Set(playerIds)].forEach((playerId) => {
         if (!playerId) return
         ret[playerId] = {
             avatar: room.avatarMap[playerId],

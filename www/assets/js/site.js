@@ -122,11 +122,14 @@ async function alertAndNavigate(text, url) {
     await callbackAndNavigate(() => alert(text), url)
 }
 
-function renderPartial(partial, contentId='partial-content') {
+function renderPartial(partial, contentId='partial-content', cb) {
     fetch(`/partials/${partial}`)
         .then(response => response.text())
         .then(data => {
             document.getElementById(contentId).innerHTML = data
+            if (typeof cb === 'function') {
+                cb()
+            }
         })
         .catch(err => {
             console.error('Failed to render partial!', err)

@@ -1,37 +1,50 @@
 const socket = io()
 
+function onAny() {
+    if (typeof onAnyEventHandler === 'function') {
+        onAnyEventHandler()
+    }
+}
+
 socket.on('newChat', (data) => {
     if (typeof newChatEvent === 'function') {
         newChatEvent(data)
     }
+    onAny()
 })
 
 socket.on('joinRoom', (data) => {
     if (typeof joinRoomEvent === 'function') {
         joinRoomEvent(data)
     }
+    onAny()
 })
 
 socket.on('leaveRoom', (data) => {
     if (typeof leaveRoomEvent === 'function') {
         leaveRoomEvent(data)
     }
+    onAny()
 })
 
 socket.on('roomJoined', (data) => {
     console.log('room joined', data)
+    onAny()
 })
 
 socket.on('roomJoinFailed', (data) => {
     console.log('room join failed', data)
+    onAny()
 })
 
 socket.on('chatSendFailure', (data) => {
     console.warn('chat send failure', data)
+    onAny()
 })
 
 socket.on('roomLeaveFailed', (data) => {
     console.error('room leave failed', data)
+    onAny()
 })
 
 socket.on('roomLeft', (data) => {
@@ -56,42 +69,49 @@ socket.on('gameTypeChanged', (data) => {
     if (typeof gameTypeChangedEvent === 'function') {
         gameTypeChangedEvent(data)
     }
+    onAny()
 })
 
 socket.on('numRoundsChanged', (data) => {
     if (typeof numRoundsChangedEvent === 'function') {
         numRoundsChangedEvent(data)
     }
+    onAny()
 })
 
 socket.on('kicked', (data) => {
     if (typeof kickedEvent === 'function') {
         kickedEvent(data)
     }
+    onAny()
 })
 
 socket.on('gameEnded', (data) => {
     if (typeof gameEndedEvent === 'function') {
         gameEndedEvent(data)
     }
+    onAny()
 })
 
 socket.on('gameRender', (data) => {
     if (typeof gameRenderEvent === 'function') {
         gameRenderEvent(data)
     }
+    onAny()
 })
 
 socket.on('startGameFailed', (data) => {
     if (typeof startGameFailedEvent === 'function') {
         startGameFailedEvent(data)
     }
+    onAny()
 })
 
 socket.on('gameStarted', (data) => {
     if (typeof gameStartedEvent === 'function') {
         gameStartedEvent(data)
     }
+    onAny()
 })
 
 socket.on('goToResults', (data) => {
@@ -108,34 +128,40 @@ socket.on('goToResults', (data) => {
 
 socket.on('avatarSubmissionFailed', () => {
     alert('Error submitting avatar!')
+    onAny()
 })
 
 socket.on('newAvatar', (data) => {
     if (typeof newAvatarEvent === 'function') {
         newAvatarEvent(data)
     }
+    onAny()
 })
 
 socket.on('avatarSubmissionSuccess', (data) => {
     if (typeof avatarSuccessEvent === 'function') {
         avatarSuccessEvent(data)
     }
+    onAny()
 })
 
 socket.on('answerAccepted', (data) => {
     if (typeof answerAcceptedEvent === 'function') {
         answerAcceptedEvent(data)
     }
+    onAny()
 })
 
 socket.on('playTabs', (data) => {
     if (typeof playTabsEvent === 'function') {
         playTabsEvent(data)
     }
+    onAny()
 })
 
 socket.on('answerRejected', () => {
     alert('Error submitting answer!')
+    onAny()
 })
 
 socket.on('thingSubmitted', (data) => {
@@ -143,6 +169,7 @@ socket.on('thingSubmitted', (data) => {
     if (typeof thingSubmittedEvent === 'function') {
         thingSubmittedEvent(data.id)
     }
+    onAny()
 })
 
 socket.on('leftMidGame', (data) => {
@@ -150,6 +177,7 @@ socket.on('leftMidGame', (data) => {
     if (typeof leftMidGameEvent === 'function') {
         leftMidGameEvent(data.id)
     }
+    onAny()
 })
 
 socket.on('midGameJoin', (data) => {
@@ -157,6 +185,7 @@ socket.on('midGameJoin', (data) => {
     if (typeof midGameJoinEvent === 'function') {
         midGameJoinEvent(data)
     }
+    onAny()
 })
 
 function joinRoom(code) {

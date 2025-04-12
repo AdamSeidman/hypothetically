@@ -336,7 +336,8 @@ class Game {
     get playerScoreArray() {
         let ids = JSON.parse(JSON.stringify(this.#readers))
         ids = ids.filter(x => this.game.players.includes(x))
-        return ids.map((id) => {
+        const state = states[this.#stateKey || 0].toLowerCase()
+        let abc =  ids.map((id) => {
             let ret = {
                 id,
                 name: getDisplayName(id),
@@ -352,10 +353,9 @@ class Game {
                     ret.characterAsset = Avatars.characterAssetsBase64[avatarItems[0]]
                 }
             }
-            const state = states[this.#stateKey || 0].toLowerCase()
             if (state.includes('start')) {
                 if (typeof this.answerMap[id] === 'string') {
-                    ret.coverAsset = Avatars.selectedAssetBase64 // TODO not seeing this
+                    ret.coverAsset = Avatars.selectedAssetBase64
                 }
             } else if (!state.includes('read')) {
                 if (!this.#guessesLeft.includes(id)) {
@@ -364,6 +364,7 @@ class Game {
             }
             return ret
         })
+        return abc
     }
 }
 

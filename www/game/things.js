@@ -46,29 +46,29 @@ function leftMidGameEvent(id) {
 }
 
 function midGameJoinEvent(data) {
-    if (!data) return
-    if ($('#score-avatar-' + data.id).length) {
-        let el = $('#score-avatar-' + data.id)
-        el.appendTo(el.parent())
-        el.toggleClass('hidden', false)
-        return
-    }
-    if (typeof data.avatar !== 'string' || !data.includes('|')) {
-        data.avatar = 'DSF|Purple'
-    }
-    let color = data.avatar.split('|')[1].trim()
-    let character = data.avatar.split('|')[0].trim()
-    $('#player-display').append(`
-        <div class="player-avatar" id="score-avatar-${data.id}" data-playerid="${data.id}" data-playername="${data.displayName}">
-            <img class="player-bkg-image" src="${backgroundAssetsBase64[color]}">
-            <img class="player-character-image" src="${characterAssetsBase64[character]}">
-            <img class="player-cover-image" id="cover-image-${data.id}" src="${transparentAssetBase64}">
-            <div class="player-info">
-                <p class="player-name">${data.displayName}</p>
-                <p class="player-score"><span class="score-text">&nbsp;</span><span class="score" id="score-${data.id}">0</span></p>
-            </div>
-        </div>
-    `)
+    // if (!data) return
+    // if ($('#score-avatar-' + data.id).length) {
+    //     let el = $('#score-avatar-' + data.id)
+    //     el.appendTo(el.parent())
+    //     el.toggleClass('hidden', false)
+    //     return
+    // }
+    // if (typeof data.avatar !== 'string' || !data.includes('|')) {
+    //     data.avatar = 'DSF|Purple'
+    // }
+    // let color = data.avatar.split('|')[1].trim()
+    // let character = data.avatar.split('|')[0].trim()
+    // $('#player-display').append(`
+    //     <div class="player-avatar" id="score-avatar-${data.id}" data-playerid="${data.id}" data-playername="${data.displayName}">
+    //         <img class="player-bkg-image" src="${backgroundAssetsBase64[color]}">
+    //         <img class="player-character-image" src="${characterAssetsBase64[character]}">
+    //         <img class="player-cover-image" id="cover-image-${data.id}" src="${transparentAssetBase64}">
+    //         <div class="player-info">
+    //             <p class="player-name">${data.displayName}</p>
+    //             <p class="player-score"><span class="score-text">&nbsp;</span><span class="score" id="score-${data.id}">0</span></p>
+    //         </div>
+    //     </div>
+    // `)
 }
 
 function scoreUpdateEvent(data) {
@@ -115,6 +115,6 @@ function roundNumberEvent(data) {
     $('#things-number-header').toggleClass('hidden', false)
 }
 
-if (typeof updateAvatarDisplay === 'function') {
-    setInterval(updateAvatarDisplay, 5000) // TODO ?
+function onAnyEventHandler() {
+    updateAvatarDisplay()
 }

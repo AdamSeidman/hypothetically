@@ -39,13 +39,11 @@ function gameRenderEvent(data) {
             $(this).text('0')
         }
     })
-
-    updateAvatarDisplay() // TODO Check, and also replace?
+    updateAvatarDisplay()
 }
 
 function gameEndedEvent(data) {
     alert('Game Ended')
-    // TODO Need a proper way to end the game.  (Is this done?)
     console.warn(data)
 }
 
@@ -145,7 +143,13 @@ function newAvatarEvent(data) {
 
 function updateAvatarDisplay() {
     setTimeout(() => {
-        renderPartial('avatarBoard', 'player-display')
+        renderPartial('avatarBoard', 'player-display', () => {
+            let el = $('#player-display span.score-text:first')
+            if (el.length && !el.text().toLowerCase().includes('score')) {
+                $('span.score-text').html('&nbsp;')
+                $('span.score').html('&nbsp;')
+            }
+        })
     }, 1)
 }
 
