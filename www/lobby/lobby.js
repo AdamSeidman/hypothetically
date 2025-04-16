@@ -14,7 +14,7 @@ function sendMessage(event) {
 function sendChatMessage(message) {
     let name = sessionStorage.getItem('myName')
     updateChatWindow(`${name} (me): ${message}`)
-    sendChat(message)
+    sendChat(message.trim())
 }
 
 function updateChatWindow(message, id) {
@@ -166,13 +166,25 @@ $(document).ready(() => {
                     gameModeSelect.attr('disabled', false)
                     gameModeSelect.change(() => {
                         let val = gameModeSelect.val()
+                        if (val) {
+                            val = val.trim()
+                        }
                         setGameType(val)
                         numRoundsSelect.toggleClass('hidden', !val.toLowerCase().includes('things'))
                         $('#num-rounds-label').toggleClass('hidden', !val.toLowerCase().includes('things'))
                     })
                     numRoundsSelect.attr('disabled', false)
                     numRoundsSelect.change(() => {
-                        setNumRounds(numRoundsSelect.val())
+                        let numRounds = numRoundsSelect.val() || '_'
+                        if (isNaN(numRounds)) {
+                            try {
+                                numRounds = parseInt(`${numRounds}`.trim())
+                            } catch (err) {
+                                console.warn('Could not parse int!', err)
+                                return
+                            }
+                        }
+                        setNumRounds(numRounds)
                     })
                     $('.action-buttons button').attr('disabled', (Object.keys(room.players).length <= 1))
                 }

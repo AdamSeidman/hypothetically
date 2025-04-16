@@ -127,9 +127,7 @@ function renderPartial(partial, contentId='partial-content', cb) {
         .then(response => response.text())
         .then(data => {
             document.getElementById(contentId).innerHTML = data
-            if (typeof cb === 'function') {
-                cb()
-            }
+            callIfFn(cb)
         })
         .catch(err => {
             console.error('Failed to render partial!', err)
@@ -149,4 +147,12 @@ function keyWrapper(evt, fn) {
         return false
     }
     return true
+}
+
+function callIfFn(fn, ...args) {
+    let isFn = (typeof fn === 'function')
+    if (isFn) {
+        fn(...args)
+    }
+    return isFn
 }

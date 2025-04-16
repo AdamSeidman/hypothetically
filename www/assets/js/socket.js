@@ -1,285 +1,197 @@
+if (typeof io !== 'function') {
+    console.error(io)
+    alert('Error! Socket library not available!')
+}
+
 const socket = io()
 
-function onAny() {
-    if (typeof onAnyEventHandler === 'function') {
-        onAnyEventHandler()
-    }
+if (!socket) {
+    console.error('Could not make socket!', socket)
+    alert('Error connecting to server!')
 }
 
-socket.on('newChat', (data) => {
-    if (typeof newChatEvent === 'function') {
-        newChatEvent(data)
-    }
-    onAny()
-})
-
-socket.on('joinRoom', (data) => {
-    if (typeof joinRoomEvent === 'function') {
-        joinRoomEvent(data)
-    }
-    onAny()
-})
-
-socket.on('leaveRoom', (data) => {
-    if (typeof leaveRoomEvent === 'function') {
-        leaveRoomEvent(data)
-    }
-    onAny()
-})
-
-socket.on('roomJoined', (data) => {
-    console.log('room joined', data)
-    onAny()
-})
-
-socket.on('roomJoinFailed', (data) => {
-    console.log('room join failed', data)
-    onAny()
-})
-
-socket.on('chatSendFailure', (data) => {
-    console.warn('chat send failure', data)
-    onAny()
-})
-
-socket.on('roomLeaveFailed', (data) => {
-    console.error('room leave failed', data)
-    onAny()
-})
-
-socket.on('roomLeft', (data) => {
-    sessionStorage.setItem('valid', false)
-    window.location.href = "/lobbies"
-})
-
-socket.on('roomDisbanded', (data) => {
-    sessionStorage.setItem('valid', false)
-    alert('Host has left the room!')
-    setTimeout(() => {
+// Boolean value is check for 'id' param
+// Return is whether to continue after function
+const socketHandlers = {
+    newChat: false,
+    joinRoom: false,
+    leaveRoom: false,
+    gameTypeChanged: false,
+    numRoundsChanged: false,
+    kicked: false,
+    gameEnded: false,
+    gameRender: false,
+    startGameFailed: false,
+    gameStarted: false,
+    newAvatar: false,
+    avatarSubmissionSuccess: false,
+    answerAccepted: false,
+    playTabs: false,
+    thingSubmitted: true,
+    leftMidGame: true,
+    midGameJoin: true,
+    roomLeft: () => {
+        sessionStorage.setItem('valid', false)
         window.location.href = "/lobbies"
-    }, 100)
-})
-
-socket.on('loginLocationChanged', (data) => {
-    alert('You have logged in from a different location!')
-    window.location.href = '/'
-})
-
-socket.on('gameTypeChanged', (data) => {
-    if (typeof gameTypeChangedEvent === 'function') {
-        gameTypeChangedEvent(data)
+    },
+    roomDisbanded: () => {
+        sessionStorage.setItem('valid', false)
+        alert('Host has left the room!')
+        setTimeout(() => {
+            window.location.href = "/lobbies"
+        }, 100)
+    },
+    loginLocationChanged: () => {
+        alert('You have logged in from a different location!')
+        window.location.href = '/'
+    },
+    goToResults: (data) => {
+        sessionStorage.removeItem('myAvatar')
+        sessionStorage.removeItem('avatarData')
+        let timeout = data?.timeout
+        if (isNaN(timeout) || timeout < 1) {
+            timeout = 1
+        }
+        setTimeout(() => {
+            window.location.href = '/results'
+        }, timeout)
+    },
+    avatarSubmissionFailed: () => {
+        alert('Error submitting avatar!')
+        return true
+    },
+    answerRejected: () => {
+        alert('Error submitting answer!')
+        return true
+    },
+    disconnect: () => {
+        document.title = `Inactive | ${document.title}`
+        const favicon = document.querySelector("link[rel~='icon']")
+        if (favicon) {
+            favicon.href = '/staleFavicon.ico'
+        }
+        setTimeout(() => {
+            const overlay = document.createElement('div')
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                overflow: none;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 9999;
+                pointer-events: all;
+            `
+            document.body.appendChild(overlay)
+            setTimeout(() => {
+                alert('The sever has disconnected from this page!')
+            }, 150)
+        }, 1000)
     }
-    onAny()
-})
-
-socket.on('numRoundsChanged', (data) => {
-    if (typeof numRoundsChangedEvent === 'function') {
-        numRoundsChangedEvent(data)
-    }
-    onAny()
-})
-
-socket.on('kicked', (data) => {
-    if (typeof kickedEvent === 'function') {
-        kickedEvent(data)
-    }
-    onAny()
-})
-
-socket.on('gameEnded', (data) => {
-    if (typeof gameEndedEvent === 'function') {
-        gameEndedEvent(data)
-    }
-    onAny()
-})
-
-socket.on('gameRender', (data) => {
-    if (typeof gameRenderEvent === 'function') {
-        gameRenderEvent(data)
-    }
-    onAny()
-})
-
-socket.on('startGameFailed', (data) => {
-    if (typeof startGameFailedEvent === 'function') {
-        startGameFailedEvent(data)
-    }
-    onAny()
-})
-
-socket.on('gameStarted', (data) => {
-    if (typeof gameStartedEvent === 'function') {
-        gameStartedEvent(data)
-    }
-    onAny()
-})
-
-socket.on('goToResults', (data) => {
-    sessionStorage.removeItem('myAvatar')
-    sessionStorage.removeItem('avatarData')
-    let timeout = data?.timeout
-    if (isNaN(timeout) || timeout < 1) {
-        timeout = 1
-    }
-    setTimeout(() => {
-        window.location.href = '/results'
-    }, timeout)
-})
-
-socket.on('avatarSubmissionFailed', () => {
-    alert('Error submitting avatar!')
-    onAny()
-})
-
-socket.on('newAvatar', (data) => {
-    if (typeof newAvatarEvent === 'function') {
-        newAvatarEvent(data)
-    }
-    onAny()
-})
-
-socket.on('avatarSubmissionSuccess', (data) => {
-    if (typeof avatarSuccessEvent === 'function') {
-        avatarSuccessEvent(data)
-    }
-    onAny()
-})
-
-socket.on('answerAccepted', (data) => {
-    if (typeof answerAcceptedEvent === 'function') {
-        answerAcceptedEvent(data)
-    }
-    onAny()
-})
-
-socket.on('playTabs', (data) => {
-    if (typeof playTabsEvent === 'function') {
-        playTabsEvent(data)
-    }
-    onAny()
-})
-
-socket.on('answerRejected', () => {
-    alert('Error submitting answer!')
-    onAny()
-})
-
-socket.on('thingSubmitted', (data) => {
-    if (!data?.id) return
-    if (typeof thingSubmittedEvent === 'function') {
-        thingSubmittedEvent(data.id)
-    }
-    onAny()
-})
-
-socket.on('leftMidGame', (data) => {
-    if (!data?.id) return
-    if (typeof leftMidGameEvent === 'function') {
-        leftMidGameEvent(data.id)
-    }
-    onAny()
-})
-
-socket.on('midGameJoin', (data) => {
-    if (!data?.id) return
-    if (typeof midGameJoinEvent === 'function') {
-        midGameJoinEvent(data)
-    }
-    onAny()
-})
-
-function joinRoom(code) {
-    if (!code) return
-    socket.emit('joinGame', { code })
 }
 
-function leaveRoom() {
-    socket.emit('leaveGame', {})
-    sessionStorage.setItem('valid', false)
-    setTimeout(() => {
-        window.location.href = '/lobby'
-    }, 100)
+function onSocketAny(data) {
+    if (!callIfFn(onAnyEventHandler) && Array.isArray(onAnyEventHandler)) {
+        onAnyEventHandler.forEach(fn => fn(data))
+    }
 }
 
-function sendChat(message) {
-    if (typeof message !== 'string' || message.trim().length < 1) return
-    message = message.trim()
-    socket.emit('chat', { message })
-}
-
-function setGameType(type) {
-    if (typeof type !== 'string' || type.trim().length < 1) return
-    type = type.trim()
-    socket.emit('setGameType', { type })
-}
-
-function setNumRounds(numRounds = '_') {
-    if (isNaN(numRounds)) {
-        try {
-            numRounds = parseInt(`${numRounds}`.trim())
-        } catch (err) {
-            console.warn('Could not parse int!', err)
+Object.entries(socketHandlers).forEach(([event, handler]) => {
+    socket.on(event, function (data) {
+        let doOnAny = true
+        if (typeof handler === 'function') {
+            doOnAny = handler(data)
+        } else if (handler && !data?.id) {
             return
         }
+        const handlerHook = window[`${event}Event`]
+        callIfFn(handlerHook, data)
+        if (doOnAny) {
+            onSocketAny(data)
+        }
+    })
+})
+
+// Event is emitted
+// Params are keys in sent object
+// Validator kills fn if failure
+// CB called after emit
+const socketHelpers = {
+    emitNextThings: { event: 'thingsNext' },
+    emitTabsLoaded: { event: 'tabsLoaded' },
+    stopReading: { event: 'doneReading' },
+    submitThingsAnswer: {
+        event: 'submitThing',
+        params: ['answer']
+    },
+    makeThingsGuess: {
+        event: 'guessThing',
+        params: ['characterId', 'answerText']
+    },
+    emitStartGame: {
+        event: 'startGame',
+        params: ['code']
+    },
+    sendChat: {
+        event: 'chat',
+        params: ['message'],
+        validator: (message) => {
+            return (typeof message === 'string' && message.trim().length >= 1)
+        }
+    },
+    setGameType: {
+        event: 'setGameType',
+        params: ['type'],
+        validator: (type) => {
+            return (typeof type === 'string' && type.trim().length >= 1)
+        }
+    },
+    joinRoom: {
+        event: 'joinGame',
+        params: ['code'],
+        validator: (code) => {
+            return (typeof code !== 'undefined')
+        }
+    },
+    leaveRoom: {
+        event: 'leaveGame',
+        cb: () => {
+            sessionStorage.setItem('valid', false)
+            setTimeout(() => {
+                window.location.href = '/lobby'
+            }, 100)
+        }
+    },
+    emitSubmitAvatar: {
+        event: 'submitAvatar',
+        params: ['avatar'],
+        validator: (avatar) => {
+            return (typeof avatar === 'string' && avatar.split('|').length === 2)
+        }
+    },
+    setNumRounds: {
+        event: 'setNumRounds',
+        params: ['numRounds'],
+        validator: (numRounds) => {
+            return (!isNaN(numRounds) && numRounds >= 1 && numRounds <= 20)
+        }
     }
-    if (isNaN(numRounds) || numRounds < 1 || numRounds > 20) return
-    socket.emit('setNumRounds', { numRounds })
 }
 
-function emitStartGame(code) {
-    socket.emit('startGame', { code })
-}
-
-function emitSubmitAvatar(character, color) {
-    let avatar = `${character.trim()}|${color.trim()}`
-    socket.emit('submitAvatar', { avatar })
-    return avatar
-}
-
-function submitThingsAnswer(answer) {
-    socket.emit('submitThing', { answer })
-}
-
-function stopReading() {
-    socket.emit('doneReading', {})
-}
-
-function makeThingsGuess(characterId, answerText) {
-    socket.emit('guessThing', { characterId, answerText })
-}
-
-function emitNextThings() {
-    socket.emit('thingsNext', {})
-}
-
-function emitTabsLoaded() {
-    socket.emit('tabsLoaded', {})
-}
-
-function disconnectRoutine() {
-    const overlay = document.createElement('div')
-    overlay.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        overflow: none;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 9999;
-        pointer-events: all;
-    `
-    document.body.appendChild(overlay)
-    setTimeout(() => {
-        alert('The sever has disconnected from this page!')
-    }, 150)
-}
-
-socket.on('disconnect', () => {
-    document.title = `Inactive | ${document.title}`
-    const favicon = document.querySelector("link[rel~='icon']")
-    if (favicon) {
-        favicon.href = '/staleFavicon.ico'
+Object.entries(socketHelpers).forEach(([fnName, fnValues]) => {
+    window[fnName] = function(...args) {
+        if (typeof fnValues.validator === 'function' && !fnValues.validator(...args)) {
+            return
+        }
+        const data = {}
+        if (!Array.isArray(fnValues.params)) {
+            fnValues.params = []
+        }
+        fnValues.params.forEach((param, i) => {
+            data[param] = args[i]
+        })
+        socket.emit(fnValues.event, data)
+        callIfFn(fnValues.cb)
     }
-    setTimeout(disconnectRoutine, 1000)
 })

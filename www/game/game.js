@@ -9,23 +9,15 @@ function gameRenderEvent(data) {
         return
     }
     if ($(`img.player-cover-image[src="${selectedAssetBase64}"]`).length > 0) {
-        clearSelectionCovers() // TODO Need to determine when we need to actually add covers, too
+        clearSelectionCovers()
     }
-    if (data.scoreUpdate && typeof scoreUpdateEvent === 'function') {
-        scoreUpdateEvent(data.scoreUpdate)
+    data.scoreUpdate && callIfFn(scoreUpdateEvent, data.scoreUpdate)
+    data.iconChange && callIfFn(iconChangeEvent, data.iconChange)
+    data.readerOrder && callIfFn(readerOrderEvent, data.readerOrder)
+    if (data.currentGamePage.toLowerCase().includes('reveal')) {
+        callIfFn(revealEvent)
     }
-    if (data.iconChange && typeof iconChangeEvent === 'function') {
-        iconChangeEvent(data.iconChange)
-    }
-    if (data.readerOrder && typeof readerOrderEvent === 'function') {
-        readerOrderEvent(data.readerOrder)
-    }
-    if (data.currentGamePage.toLowerCase().includes('reveal') && typeof revealEvent === 'function') {
-        revealEvent()
-    }
-    if (data.roundNumber && typeof roundNumberEvent === 'function') {
-        roundNumberEvent(data.roundNumber)
-    }
+    data.roundNumber && callIfFn(roundNumberEvent, data.roundNumber)
     renderPartial(data.currentGamePage)
     Object.entries(data).forEach(([key, value]) => {
         if (Array.isArray(value) || typeof value === 'object') {
@@ -90,14 +82,15 @@ function submitAvatar() {
     if (character.trim().length < 2 || color.trim().length < 2) {
         alert('Invalid avatar information!')
     } else {
-        let avatar = emitSubmitAvatar(character, color)
+        let avatar = `${character.trim()}|${color.trim()}`
+        emitSubmitAvatar(avatar)
         sessionStorage.setItem('myAvatar', avatar)
     }
 }
 
-function thingSubmittedEvent(id) {
-    if (id) {
-        $(`#cover-image-${id}`).attr('src', selectedAssetBase64)
+function thingSubmittedEvent(data) {
+    if (data.id) {
+        $(`#cover-image-${data.id}`).attr('src', selectedAssetBase64)
     }
 }
 
@@ -111,7 +104,7 @@ function checkWaitStartText(data) {
     }
 }
 
-function avatarSuccessEvent(data) {
+function avatarSubmissionSuccessEvent(data) {
     submitted = true
     sessionStorage.setItem('cachedAvatar', 'set')
     $('#icon-picker').html('<h4 id="start-wait-text">Waiting for game to start...</h4>')
@@ -122,9 +115,7 @@ function avatarSuccessEvent(data) {
         </p>
     `)
     updateAvatarDisplay()
-    if (typeof avatarSuccessCallback === 'function') {
-        avatarSuccessCallback(data.numAvatarsChosen, data.totalPlayers)
-    }
+    callIfFn(avatarSuccessCallback, data.numAvatarsChosen, data.totalPlayers)
 }
 
 function newAvatarEvent(data) {
@@ -136,9 +127,7 @@ function newAvatarEvent(data) {
     sessionStorage.setItem('avatarData', JSON.stringify(data))
     updateAvatarDisplay()
     checkWaitStartText(data)
-    if (typeof newAvatarCallback === 'function') {
-        newAvatarCallback(data.numAvatarsChosen, data.totalPlayers)
-    }
+    callIfFn(newAvatarCallback, data.numAvatarsChosen, data.totalPlayers)
 }
 
 function updateAvatarDisplay() {
@@ -156,7 +145,7 @@ function updateAvatarDisplay() {
 function sendChatMessage(message) {
     let name = sessionStorage.getItem('myName')
     updateChatWindow(`${name} (me): ${message}`)
-    sendChat(message)
+    sendChat(message.trim())
 }
 
 function sendMessage(event) {
@@ -191,9 +180,7 @@ function newChatEvent(data) {
 function loadScript(scriptName, callback) {
     $.getScript(`./${scriptName.trim().toLowerCase()}.js`)
         .done(() => {
-            if (typeof callback === 'function') {
-                callback()
-            }
+            callIfFn(callback)
         })
         .fail(() => {
             alert(`Failed to load "${scriptName.trim()}" file!`)
@@ -248,23 +235,17 @@ $(document).ready(() => {
                     loadScript(room.gameType, () => {
                         $('.score-text').text('Score: ')
                         setTimeout(() => {
-                            if (room.readerOrder && typeof readerOrderEvent === 'function') {
-                                readerOrderEvent(room.readerOrder)
-                            }
-                            if (room.scoreMap && typeof scoreUpdateEvent === 'function') {
-                                scoreUpdateEvent(room.scoreMap)
-                            }
+                            room.readerOrder && callIfFn(readerOrderEvent, room.readerOrder)
+                            room.scoreMap && callIfFn(scoreUpdateEvent, room.scoreMap)
                             if (room.roundNumber && typeof roundNumberEvent === 'function') {
                                 roundNumberEvent(room.roundNumber)
                             } else if (room.gameType?.trim().toLowerCase() === 'things') {
                                 $('#things-number-header').toggleClass('hidden', false)
                             }
-                            if (room.videoIds && typeof loadTabs === 'function') {
-                                loadTabs(room.videoIds)
-                            }
+                            room.videoIds && callIfFn(loadTabs, room.videoIds)
                         }, 100)
                     })
-                    avatarSuccessEvent(room.avatarData)
+                    avatarSubmissionSuccessEvent(room.avatarData)
                     renderPartial(`${room.currentPage}_${room.gameType.trim().toLowerCase()}`)
                 } else {
                     $('#character-selection').toggleClass('hidden', false)
@@ -289,7 +270,7 @@ $(document).ready(() => {
                     localStorage.setItem('color', color)
                 
                     if (hasAvatar) {
-                        avatarSuccessEvent(room.avatarData)
+                        avatarSubmissionSuccessEvent(room.avatarData)
                     } else {
                         updateAvatarDisplay()
                     }
@@ -301,8 +282,6 @@ $(document).ready(() => {
             }
         })
     setTimeout(() => {
-        if (typeof revealEvent === 'function') {
-            revealEvent()
-        }
+        callIfFn(revealEvent)
     }, 500)
 })
