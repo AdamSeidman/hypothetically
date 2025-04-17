@@ -7,15 +7,14 @@ const { getDisplayName } = require('../../db/tables/users')
 
 function get(req) {
     let room = Games.getRoomByPlayerId(req?.user?.id)
-    if (!room) return {}
+    if (!room) return { avatars: [], guesses: [] }
     let guesserId = room.gameObj?.guesser
-    if (!guesserId) return {}
     let prompt = room.gameObj?.currentPrompt || '(missing?)'
-    return {
+    return  {
         prompt,
         avatars: room.gameObj?.getCurrentAvatars(guesserId),
         guesser: (req.user?.id == guesserId),
-        guesserName: getDisplayName(guesserId),
+        guesserName: getDisplayName(guesserId) || '(Unknown)',
         guesses: room.gameObj?.currentGuesses
     }
 }

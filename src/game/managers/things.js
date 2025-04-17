@@ -300,7 +300,15 @@ class Game {
             Sockets = require('../../web/sockets')
         }
         this.#readers = this.#readers.filter(x => x != id)
+        if (this.#reader >= this.#readers.length) {
+            this.#reader = 0
+        }
         const state = states[this.#stateKey || 0].toLowerCase()
+        if (this.#guesser >= this.#readers.length) {
+            this.#guesser = 0
+        } else if (this.guesser === id && !state.includes('guess')) {
+            this.nextGuesser()
+        }
         if (state.includes('start')) {
             if (this.#guessesLeft.includes(id)) {
                 this.#guessesLeft = this.#guessesLeft.filter(x => x != id)
