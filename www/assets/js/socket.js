@@ -92,7 +92,9 @@ const socketHandlers = {
 }
 
 function onSocketAny(data) {
-    if (!callIfFn(onAnyEventHandler) && Array.isArray(onAnyEventHandler)) {
+    if (typeof onAnyEventHandler === 'function') {
+        onAnyEventHandler()
+    } else if (Array.isArray(onAnyEventHandler)) {
         onAnyEventHandler.forEach(fn => fn(data))
     }
 }

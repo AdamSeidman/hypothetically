@@ -3,6 +3,7 @@
  */
 
 const Games = require('../../game/gameManager')
+const { isAdmin } = require('../../db/tables/users')
 
 let Sockets = undefined
 
@@ -12,7 +13,7 @@ function handle(message, socket, id) {
     }
     if (!message || !socket) return
     let game = Games.getRoomByPlayerId(id)?.gameObj
-    if (game && id && game.reader == id) {
+    if (game && id && (game.reader == id || isAdmin(id))) {
         game.doneReading()
     } else {
         console.warn('Bad handling in doneReading!', id)

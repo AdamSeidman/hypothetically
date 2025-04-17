@@ -201,7 +201,7 @@ h2 {
     padding-block: 0 !important;
 }
 
-#icon-picker {
+/* #icon-picker {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -225,4 +225,4 @@ h2 {
 
 .arrow-box *:not(:first-child):not(:last-child) {
     margin: 0 5px;
-}
+} */

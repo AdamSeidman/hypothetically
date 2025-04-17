@@ -11,13 +11,21 @@ function gameRenderEvent(data) {
     if ($(`img.player-cover-image[src="${selectedAssetBase64}"]`).length > 0) {
         clearSelectionCovers()
     }
-    data.scoreUpdate && callIfFn(scoreUpdateEvent, data.scoreUpdate)
-    data.iconChange && callIfFn(iconChangeEvent, data.iconChange)
-    data.readerOrder && callIfFn(readerOrderEvent, data.readerOrder)
-    if (data.currentGamePage.toLowerCase().includes('reveal')) {
-        callIfFn(revealEvent)
+    if (data.scoreUpdate && typeof scoreUpdateEvent === 'function') {
+        scoreUpdateEvent(data.scoreUpdate)
     }
-    data.roundNumber && callIfFn(roundNumberEvent, data.roundNumber)
+    if (data.iconChange && typeof iconChangeEvent === 'function') {
+        iconChangeEvent(data.iconChange)
+    }
+    if (data.readerOrder && typeof readerOrderEvent === 'function') {
+        readerOrderEvent(data.readerOrder)
+    }
+    if (data.currentGamePage.toLowerCase().includes('reveal') && typeof revealEvent === 'function') {
+        revealEvent()
+    }
+    if (data.roundNumber && typeof roundNumberEvent === 'function') {
+        roundNumberEvent(data.roundNumber)
+    }
     renderPartial(data.currentGamePage)
     Object.entries(data).forEach(([key, value]) => {
         if (Array.isArray(value) || typeof value === 'object') {
@@ -115,7 +123,9 @@ function avatarSubmissionSuccessEvent(data) {
         </p>
     `)
     updateAvatarDisplay()
-    callIfFn(avatarSuccessCallback, data.numAvatarsChosen, data.totalPlayers)
+    if (typeof avatarSuccessCallback === 'function') {
+        avatarSuccessCallback(data.numAvatarsChosen, data.totalPlayers)
+    }
 }
 
 function newAvatarEvent(data) {
@@ -127,7 +137,9 @@ function newAvatarEvent(data) {
     sessionStorage.setItem('avatarData', JSON.stringify(data))
     updateAvatarDisplay()
     checkWaitStartText(data)
-    callIfFn(newAvatarCallback, data.numAvatarsChosen, data.totalPlayers)
+    if (typeof newAvatarCallback === 'function') {
+        newAvatarCallback(data.numAvatarsChosen, data.totalPlayers)
+    }
 }
 
 function updateAvatarDisplay() {
@@ -235,14 +247,20 @@ $(document).ready(() => {
                     loadScript(room.gameType, () => {
                         $('.score-text').text('Score: ')
                         setTimeout(() => {
-                            room.readerOrder && callIfFn(readerOrderEvent, room.readerOrder)
-                            room.scoreMap && callIfFn(scoreUpdateEvent, room.scoreMap)
+                            if (room.readerOrder && typeof readerOrderEvent === 'function') {
+                                readerOrderEvent(room.readerOrder)
+                            }
+                            if (room.scoreMap && typeof scoreUpdateEvent === 'function') {
+                                scoreUpdateEvent(room.scoreMap)
+                            }
                             if (room.roundNumber && typeof roundNumberEvent === 'function') {
                                 roundNumberEvent(room.roundNumber)
                             } else if (room.gameType?.trim().toLowerCase() === 'things') {
                                 $('#things-number-header').toggleClass('hidden', false)
                             }
-                            room.videoIds && callIfFn(loadTabs, room.videoIds)
+                            if (room.videoIds && typeof loadTabs === 'function') {
+                                loadTabs(room.videoIds)
+                            }
                         }, 100)
                     })
                     avatarSubmissionSuccessEvent(room.avatarData)
@@ -282,6 +300,8 @@ $(document).ready(() => {
             }
         })
     setTimeout(() => {
-        callIfFn(revealEvent)
+        if (typeof revealEvent === 'function') {
+            revealEvent()
+        }
     }, 500)
 })

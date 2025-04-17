@@ -31,8 +31,8 @@ function makeGuess() {
     makeThingsGuess(characterId, answerText)
 }
 
-function leftMidGameEvent(id) {
-    let el = $('#score-avatar-' + id)
+function leftMidGameEvent(data) {
+    let el = $('#score-avatar-' + data.id)
     if (el.length < 1) return
     el.toggleClass('hidden', true)
     if ($('.player-avatar:not(.hidden)').length < 2) {
