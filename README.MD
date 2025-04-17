@@ -1,4 +1,4 @@
-# hypothetically
+# Game Portal
 
 Online games portal for friends!
 
