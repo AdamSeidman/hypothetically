@@ -4,6 +4,8 @@
  * Website users and data
  */
 
+const stats = require('../../monitor/stats')
+
 let users = []
 let client = undefined
 
@@ -19,6 +21,7 @@ async function create(supabase) {
     }
     else {
         users = data
+        stats.setUserCount(users.length)
     }
     setInterval(async () => {
         const { data, error } = await client.from(TABLE_NAME).select()
@@ -26,6 +29,7 @@ async function create(supabase) {
             console.error('Error refreshing users!', error)
         } else {
             users = data
+            stats.setUserCount(users.length)
         }
     }, (REFRESH_INTERVAL_MINS * 60 * 1000))
 }
@@ -66,6 +70,7 @@ async function login(googleData) {
         } else {
             user = data[0]
             users.push(user)
+            stats.incrementUserCount()
             return user
         }
     }
