@@ -6,6 +6,10 @@
     cursor: pointer;
 }
 
+body {
+    font-family: Arial, sans-serif;
+}
+
 /* Navbar Styling */
 .navbar {
     background-color: #4285F4;
