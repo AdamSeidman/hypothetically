@@ -4,11 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
     <link rel="stylesheet" href="/assets/css/site.css">
+    <link rel="stylesheet" href="/profile/profile.css">
+    <link rel="stylesheet" href="/avatars/avatars.css">
+    <script src="/assets/img/characters.js"></script>
     <script src="/assets/js/lib/jquery.min.js"></script>
     <script src="/assets/js/site.js" defer></script>
-    <script src="./profile.js" defer></script>
+    <script src="/avatars/avatars.js" defer></script>
+    <script src="/profile/profile.js" defer></script>
     <script src="https://kit.fontawesome.com/a843fa2d6a.js" crossorigin="anonymous" defer></script>
 </head>
 <body>
@@ -35,11 +43,51 @@
                 <p><strong>Email:</strong> <span id="email"></span></p>
                 <p>
                     <strong>Display Name:</strong> <span id="display-name"></span>&nbsp;
-                    <button class="pointable" onclick="editDisplayName()">
+                    <button onclick="editDisplayName()">
                         <i class="fa-solid fa-pencil"></i>
                     </button>
                 </p>
+                <p><strong>Default Avatar:</strong> <span id="default-avatar-text"></span></p>
+                <button id="set-avatar-btn" onclick="defaultAvatarModal()">
+                    Set Default Avatar
+                </button>
+                <span id="clear-avatar-btn" class="hidden">
+                    <br><br>
+                    <button onclick="clearDefaultAvatar()">
+                        Clear Default Avatar
+                    </button>
+                </span>
             </div>
+        </div>
+    </div>
+    
+    <!-- Default Avatar Modal -->
+    <div class="modal-overlay hidden" id="default-avatar-modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2>Set Default Avatar</h2>
+            <div class="image-container">
+                <img id="color-image" class="selection-image">
+                <img id="character-image" class="selection-image">
+                <img id="cover-image" class="selection-image">
+            </div>
+            <br>
+            <div id="icon-picker">
+                <div>
+                    <span class="arrow left" onclick="nextIcon(-1)">&larr;</span>
+                    <strong>Icon:</strong>
+                    <span id="character-text"></span>
+                    <span class="arrow right" onclick="nextIcon(1)">&rarr;</span>
+                </div>
+                <div>
+                    <span class="arrow left" onclick="nextColor(-1)">&larr;</span>
+                    <strong>Color:</strong>
+                    <span id="color-text"></span>
+                    <span class="arrow right" onclick="nextColor(1)">&rarr;</span>
+                </div>
+            </div>
+            <br>
+            <button onclick="submitDefaultAvatar()" id="avatar-submit-btn" disabled>Submit</button>
         </div>
     </div>
 </body>

@@ -4,7 +4,7 @@
 
 const Games = require('../../game/gameManager')
 
-const MAX_GUESS_LENGTH = 40
+const MAX_GUESS_LENGTH = 50
 
 function get(req) {
     let room = Games.getRoomByPlayerId(req.user?.id)

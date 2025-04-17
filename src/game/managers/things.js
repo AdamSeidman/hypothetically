@@ -80,6 +80,7 @@ class Game {
     }
 
     submitAnswer(id, answer, socket) {
+        if (!this.#readers.includes(id)) return
         this.answerMap[id] = answer.replaceAll('"', "'")
         if (!this.#guessesLeft.includes(id)) {
             this.#guessesLeft.push(id)
@@ -203,6 +204,11 @@ class Game {
                 Sockets = require('../../web/sockets')
             }
             Sockets.sendToRoomByCode(this.code, 'gameRender', payload)
+            setTimeout(() => {
+                if (states[this.#stateKey].includes('reveal')) {
+                    this.roundFinished(this.game?.players[0])
+                }
+            }, (30 * 1000))
         }, 100)
         return this.guessStash.correct
     }
@@ -261,12 +267,70 @@ class Game {
         return ret
     }
 
-    stallEvent(id) {
-
+    joinMidGame(id) {
+        const stateKey = this.#stateKey || 0
+        if (Sockets === undefined) {
+            Sockets = require('../../web/sockets')
+        }
+        const readers = this.#readers
+        const scoreMap = this.scoreMap
+        function addPlayer() {
+            readers.push(id)
+            scoreMap[id] ??= 0
+        }
+        if (states[stateKey].includes('start')) {
+            let timeoutCount = 0
+            let intervalId = setInterval(() => {
+                if (stateKey !== this.#stateKey || ++timeoutCount === 10000) {
+                    clearInterval(intervalId)
+                    addPlayer()
+                    Sockets.sendToId(id, 'gameRender', {
+                        currentGamePage: `${states[this.#stateKey]}_things`,
+                        currentGameCode: this.code
+                    })
+                }
+            }, 250)
+        } else {
+            addPlayer()
+        }
     }
 
-    inactiveEvent(id) {
-
+    leaveMidGame(id) {
+        if (Sockets === undefined) {
+            Sockets = require('../../web/sockets')
+        }
+        this.#readers = this.#readers.filter(x => x != id)
+        const state = states[this.#stateKey || 0].toLowerCase()
+        if (state.includes('start')) {
+            if (this.#guessesLeft.includes(id)) {
+                this.#guessesLeft = this.#guessesLeft.filter(x => x != id)
+            }
+            if (this.answerMap[id]) {
+                delete this.answerMap[id]
+            }
+            setTimeout(() => {
+                if (states[this.#stateKey || 0].toLowerCase() !== state) return
+                if (Object.keys(this.answerMap).length === this.#readers.length) {
+                    this.nextState()
+                    Sockets.sendToRoomByCode(this.code, 'gameRender', {
+                        currentGamePage: 'read_things',
+                        currentGameCode: this.code
+                    })
+                }
+            }, 2000)
+        } else if (state.includes('read')) {
+            if (this.#readers[this.#reader] === id) {
+                setTimeout(this.doneReading, 1000)
+            }
+        } else if (state.includes('guess')) {
+            if (this.guesser === id) {
+                this.nextGuesser()
+                Sockets.sendToRoomByCode(this.code, 'gameRender', {
+                    currentGamePage: 'guess_things',
+                    currentGameCode: this.code
+                })
+            }
+        }
     }
 }
 

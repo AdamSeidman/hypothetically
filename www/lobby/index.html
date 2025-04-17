@@ -4,34 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game Lobby</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
     <link rel="stylesheet" href="/assets/css/site.css">
-    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="/lobby/styles.css">
     <script src="/assets/js/lib/jquery.min.js"></script>
     <script src="/assets/js/site.js" defer></script>
     <script src="/assets/js/lib/socket.io.min.js"></script>
     <script src="/assets/js/socket.js" defer></script>
-    <script src="./lobby.js" defer></script>
+    <script src="/lobby/lobby.js" defer></script>
     <script src="https://kit.fontawesome.com/a843fa2d6a.js" crossorigin="anonymous" defer></script>
 </head>
 <body>
-    <!-- Navigation Bar -->
     <header class="navbar">
         <div class="navbar-container">
             <a href="/" class="navbar-logo">Games!</a>
-            <span id="room-code"></span>
+            <span id="room-code">
+                <span id="copy-code" class="hidden" data-tooltip="Copied!">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-copy pointable" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/>
+                    </svg>
+                </span>
+            </span>
             <nav class="navbar-links">
                 <button class="navbar-link logout" onclick="leaveLobby()">Leave Lobby</button>
             </nav>
         </div>
     </header>
-
-    <!-- Main Content -->
     <div class="lobby-page">
         <div class="lobby-container">
-            <!-- Top Half (Player List + Game Options) -->
             <div class="top-half">
-                <!-- Player List Section -->
                 <div class="player-list-container">
                     <table class="player-table">
                         <thead>
@@ -51,8 +56,9 @@
                     <label for="game-mode">Game Mode:</label>
                     <select class="game-option" id="game-mode" disabled>
                         <option id="game-mode-default" value="" selected></option>
-                        <!-- <option value="hypothetically">Hypothetically</option> -->
                         <option value="things">Things</option>
+                        <!-- <option value="hypothetically">Hypothetically</option> -->
+                        <!-- <option value="tenTabs">Ten Tabs</option> -->
                     </select><br>
                     <label for="num-rounds" id="num-rounds-label">Number of Rounds:</label>
                     <select class="game-option" id="num-rounds" disabled>
@@ -82,12 +88,10 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Bottom Half (Chat Window) -->
             <div class="chat-container">
                 <h3>Chat</h3>
                 <div class="chat-window" id="chat-window"></div>
-                <input type="text" id="chat-input" placeholder="Type a message..." onkeypress="sendMessage(event)">
+                <input type="text" id="chat-input" placeholder="Type a message..." onkeypress="sendMessage(event)" maxlength="128">
             </div>
         </div>
     </div>

@@ -83,12 +83,34 @@ async function setDisplayName(id, newName) {
     return error
 }
 
-function isAdmin(googleId) {
-    if (!googleId) return
-    let user = users.find(x => x.google_id == googleId)
-    if (user) {
-        return user.is_admin
+async function setDefaultAvatar(googleId, avatar) {
+    if (!googleId || typeof avatar !== 'string') return
+    if (avatar.trim().length < 1) {
+        avatar = null
+    } else {
+        avatar = avatar.trim()
     }
+    const { error } = await client
+        .from(TABLE_NAME)
+        .update({ default_avatar: avatar })
+        .eq('google_id', googleId)
+    if (!error) {
+        let user = users.find(x => x.google_id == googleId)
+        if (user) user.default_avatar = avatar
+    }
+    return error
+}
+
+function isAdmin(googleId) {
+    if (!googleId) return false
+    let user = users.find(x => x.google_id == googleId)
+    return user?.is_admin || false
+}
+
+function isOwner(googleId) {
+    if (!googleId) return false
+    let user = users.find(x => x.google_id == googleId)
+    return user?.is_owner || false
 }
 
 function getDisplayName(googleId) {
@@ -99,12 +121,33 @@ function getDisplayName(googleId) {
     }
 }
 
+function getDefaultAvatar(googleId) {
+    if (!googleId) return
+    let user = users.find(x => x.google_id == googleId)
+    if (user) {
+        if (user.default_avatar === null) {
+            return {
+                none: true
+            }
+        }
+        let parts = user.default_avatar.split('|') || []
+        return {
+            character: parts[0],
+            color: parts[1],
+            none: false
+        }
+    }
+}
+
 module.exports = {
     create,
     isAdmin,
+    isOwner,
     getDisplayName,
+    getDefaultAvatar,
     queries: {
         login,
-        setDisplayName
+        setDisplayName,
+        setDefaultAvatar
     }
 }

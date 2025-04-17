@@ -2,7 +2,6 @@
  * Handle submission of Things answers
  */
 
-const pingManager = require('../pingManager')
 const Games = require('../../game/gameManager')
 
 let Sockets = undefined
@@ -17,7 +16,6 @@ function handle(message, socket, id) {
         socket.emit('answerRejected', message)
         return
     }
-    pingManager.clearPings(id)
     room.gameObj.submitAnswer(id, message.answer, socket)
 }
 

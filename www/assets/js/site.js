@@ -59,6 +59,28 @@ function makeRoom(isPublic) {
     return standardPOST('room', { isPublic })
 }
 
+async function setDefaultAvatar(avatar) {
+    return new Promise((resolve) => {
+        standardPOST('defaultAvatar', { avatar })
+            .then(() => {
+                resolve(true)
+            })
+            .catch(() => {
+                resolve(false)
+            })
+    })
+}
+
+function postTab(id, title, type) {
+    let fail = [id, title, type].find(x => typeof x !== 'string')
+    if (fail) {
+        console.error('Could not submit new tab!')
+        console.group({ id, title, type })
+        return
+    }
+    return standardPOST('tab', { video_id: id, title, type })
+}
+
 function getPublicGames() {
     return standardGET('publicGames')
 }
@@ -69,6 +91,13 @@ function getCurrentRoom() {
 
 function getGameResults() {
     return standardGET('gameResults')
+}
+
+function getTabs(tabs) {
+    if (tabs && Array.isArray(tabs) && tabs.length === 10) {
+        return Promise.resolve({ ids: tabs })
+    }
+    return standardGET('tabs')
 }
 
 function joinGame(code) {

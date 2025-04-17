@@ -5,10 +5,10 @@ Get current game lobby
 */
 
 const Games = require('../../game/gameManager')
-const { getDisplayName } = require('../../db/tables/users')
+const { getDisplayName, getDefaultAvatar } = require('../../db/tables/users')
 
 module.exports = function (req, res) {
-    let code = Games.getGameCodeOf(req.user.id)
+    let code = Games.getGameCodeOf(req.user?.id)
     if (!code) {
         res.send({ none: true })
         return
@@ -25,6 +25,10 @@ module.exports = function (req, res) {
         numRounds: Games.getNumRounds(code),
         gameRunning: Games.isGameRunning(code)
     }
+    let defaultAvatar = getDefaultAvatar(req.user.id)
+    if (defaultAvatar && !defaultAvatar.none) {
+        ret.yourDefaultAvatar = defaultAvatar
+    }
     if (ret.gameRunning) {
         ret.avatarData = Games.getAvatarInfo(ret.code)
         let room = Games.getRoomByPlayerId(req.user.id)
@@ -33,6 +37,8 @@ module.exports = function (req, res) {
             ret.readerOrder = room.gameObj.readerMap
             ret.scoreMap = room.gameObj.scoreMap
             ret.roundNumber = room.gameObj.round
+            ret.videoIds = room.gameObj.videoIds
+            ret.startTimestamp = room.gameObj.timestamp
         }
     }
     ret.isHost = ret.host == req.user.id

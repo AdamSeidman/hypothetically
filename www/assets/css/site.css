@@ -1,3 +1,4 @@
+/* General Tools */
 .hidden {
     display: none !important;
 }
@@ -8,6 +9,49 @@
 
 body {
     font-family: Arial, sans-serif;
+}
+
+@media (hover: hover) {
+    .requires-touch {
+        display: none;
+    }
+}
+
+@media (hover: none) {
+    .requires-mouse {
+        display: none;
+    }
+}
+
+@media only screen and (orientation: landscape) {
+    .portrait-only {
+        display: none;
+    }
+}
+
+@media only screen and (orientation: portrait) {
+    .landscape-only {
+        display: none;
+    }
+}
+
+body.unknown-container {
+    background-color: #ddd;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    font-size: 2rem;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+}
+
+body.unknown-container a {
+    font-size: 1.5rem;
 }
 
 /* Navbar Styling */
@@ -82,6 +126,7 @@ body {
     margin-top: 80px; /* To avoid overlap with navbar */
 }
 
+.unknown-box,
 .dashboard-box {
     background: white;
     padding: 40px;

@@ -4,14 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
     <link rel="stylesheet" href="/assets/css/site.css">
-    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="/game/styles.css">
     <script src="/assets/js/lib/jquery.min.js"></script>
     <script src="/assets/js/site.js" defer></script>
     <script src="/assets/js/lib/socket.io.min.js"></script>
     <script src="/assets/js/socket.js" defer></script>
-    <script src="./game.js" defer></script>
+    <script src="/game/game.js" defer></script>
     <script src="/assets/img/characters.js"></script>
     <script src="https://kit.fontawesome.com/a843fa2d6a.js" crossorigin="anonymous" defer></script>
 </head>
@@ -20,6 +24,11 @@
         <h1 class="hidden" id="things-number-header">Round Number 
             <span id="things-round-number">1</span> of <span id="things-total-rounds">1</span>
         </h1>
+        <div class="hidden landscape-only" id="chat-pane">
+            <h2>Chat</h2>
+            <div class="chat-window" id="chat-window"></div>
+            <input type="text" id="chat-input" placeholder="Type a message..." onkeypress="sendMessage(event)" maxlength="128">
+        </div>
         <div class="card" id="partial-content">
             <div id="character-selection" class="hidden">
                 <h2>Choose Your Avatar</h2>

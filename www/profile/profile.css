@@ -1,0 +1,44 @@
+button {
+    cursor: pointer;
+}
+
+.modal-overlay {
+    position: fixed;
+    display: flex;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    pointer-events: all;
+}
+  
+.modal-content {
+    background: white;
+    padding: 20px;
+    width: 300px;
+    border-radius: 10px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    z-index: 500;
+}
+  
+.modal-close {
+    font-size: 24px;
+    cursor: pointer;
+    margin-left: auto;
+}
+
+.modal-content > h2 {
+    margin-top: 0;
+}
+
+div.image-container {
+    --img-size: 128px;
+    --img-margin: 20px;
+}

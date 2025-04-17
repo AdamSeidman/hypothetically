@@ -116,3 +116,20 @@ thead th {
 .game-option {
     margin-inline: 5px 15px;
 }
+
+#copy-code {
+    margin-inline: 5px;
+}
+
+.copied-tooltip {
+    position: relative;
+}
+  
+.copied-tooltip:hover::after {
+    position: absolute;
+    content: attr(data-tooltip);
+    bottom: -2em;
+    background-color: #555d;
+    color: white;
+    padding: .25em .5em;
+}

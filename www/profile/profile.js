@@ -13,6 +13,21 @@ getUserInfo().then((data) => {
             $('#photo').toggleClass('hidden', false)
         }
         $('#submit-link').toggleClass('hidden', !data.isAdmin)
+        $('.modal-close').click(() => {
+            $('.modal-overlay').toggleClass('hidden', true)
+        })
+        if (!data.defaultAvatar?.none && data.defaultAvatar.character && data.defaultAvatar.color) {
+            if (color && character) {
+                character = data.defaultAvatar.character
+                color = data.defaultAvatar.color
+                nextIcon(0)
+                nextColor(0)
+            }
+            $('#default-avatar-text').text(`${data.defaultAvatar.color} ${data.defaultAvatar.character}`)
+            $('#clear-avatar-btn').toggleClass('hidden', false)
+        } else {
+            $('#default-avatar-text').text('None Set!')
+        }
     })
 })
 
@@ -36,4 +51,31 @@ function editDisplayName() {
             alert('Invalid name!')
         }
     }
+}
+
+async function clearDefaultAvatar() {
+    if (confirm('Are you sure you want to clear your default avatar?')) {
+        const changed = await setDefaultAvatar(null)
+        if (changed) {
+            $('#clear-avatar-btn').toggleClass('hidden', true)
+            $('#default-avater-text').text('None Set!')
+        }
+        alert(changed? 'Avatar cleared!' : 'Error trying to clear avatar.')
+    }
+}
+
+function defaultAvatarModal() {
+    $('#avatar-submit-btn').attr('disabled', false)
+    $('#default-avatar-modal').toggleClass('hidden', false)
+}
+
+async function submitDefaultAvatar() {
+    $('#clear-avatar-btn').attr('disabled', true)
+    const changed = await setDefaultAvatar(`${$('#character-text').text()}|${$('#color-text').text()}`)
+    if (changed) {
+        $('#clear-avatar-btn').toggleClass('hidden', false)
+        $('#default-avatar-modal').toggleClass('hidden', true)
+        $('#default-avatar-text').text(`${$('#color-text').text()} ${$('#character-text').text()}`)
+    }
+    alert(changed? 'Default avatar changed successfully!' : 'Error changing default avatar.')
 }

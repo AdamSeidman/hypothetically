@@ -7,13 +7,19 @@ const Games = require('../../game/gameManager')
 const { getDisplayName } = require('../../db/tables/users')
 
 module.exports = async function (req, res) {
-    if (!req.body?.code) return 400
+    if (!req.body?.code || !req.user?.id) return 400
     let rooms = Games.getAllRooms()
     if (!Object.keys(rooms).includes(req.body.code)) {
         return 400
     }
     let ret = Games.addToRoom(req.user.id, req.body.code)
-    if (ret.failReason) {
+    if (ret.midGame) {
+        console.log(`User ${req.user.id} joined ${req.body.code} mid-game.`)
+        ret.id = req.user.id
+        ret.displayName = getDisplayName(req.user.id)
+        Sockets.sendToRoomByCode(req.body.code, 'midGameJoin', ret)
+        return 503
+    } else if (ret.failReason) {
         console.log(`User ${req.user.id} could not join ${req.body.code}`)
         return {
             code: 400,

@@ -85,6 +85,7 @@ button:hover:not(:disabled) {
 }
 
 .selection-image,
+.result-image-pane > img,
 .player-avatar > img {
     position: absolute;
     top: 0;
@@ -111,7 +112,8 @@ img {
     gap: 40px;
 }
 
-.player-avatar {
+.player-avatar,
+.result-image-pane {
     position: relative;
     width: 64px;
     height: 64px;
@@ -184,4 +186,68 @@ h4.things-result-text {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+div.tab-results {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    > div.player-avatar {
+        margin-right: 20px;
+    }
+    > div.result-image-pane {
+        margin-inline: 5px;
+    }
+}
+
+div.tab-number-line > div {
+    margin-top: 10px;
+}
+
+div.tab-results div.player-name {
+    margin-top: 88px;
+}
+
+#chat-window {
+    height: 75vh;
+    width: 20vw;
+    background: #f9f9f9;
+    padding: 10px;
+    border: 1px solid #ddd;
+    overflow-y: scroll;
+    margin-bottom: 30px;
+}
+
+input#chat-input {
+    width: 85%;
+}
+
+#chat-pane {
+    position: fixed;
+    left: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+div.card.moved {
+    margin-left: 15vw;
+    margin-block: 50px;
+}
+
+#ten-tabs-results {
+    overflow-y: scroll;
+}
+
+#chat-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+#chat-input:focus {
+    outline: none;
 }

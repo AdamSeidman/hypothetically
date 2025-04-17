@@ -67,7 +67,7 @@ body {
     left: 0;
 }
 
-img {
+img:not(.profile-pic) {
     width: 100%;
     height: 100%;
 }

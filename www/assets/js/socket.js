@@ -128,6 +128,12 @@ socket.on('answerAccepted', (data) => {
     }
 })
 
+socket.on('playTabs', (data) => {
+    if (typeof playTabsEvent === 'function') {
+        playTabsEvent(data)
+    }
+})
+
 socket.on('answerRejected', () => {
     alert('Error submitting answer!')
 })
@@ -136,6 +142,20 @@ socket.on('thingSubmitted', (data) => {
     if (!data?.id) return
     if (typeof thingSubmittedEvent === 'function') {
         thingSubmittedEvent(data.id)
+    }
+})
+
+socket.on('leftMidGame', (data) => {
+    if (!data?.id) return
+    if (typeof leftMidGameEvent === 'function') {
+        leftMidGameEvent(data.id)
+    }
+})
+
+socket.on('midGameJoin', (data) => {
+    if (!data?.id) return
+    if (typeof midGameJoinEvent === 'function') {
+        midGameJoinEvent(data)
     }
 })
 
@@ -203,8 +223,34 @@ function emitNextThings() {
     socket.emit('thingsNext', {})
 }
 
-setInterval(() => {
-    socket.emit('ping', {
-        page: window.location.href
-    })
-}, (1000 * 5))
+function emitTabsLoaded() {
+    socket.emit('tabsLoaded', {})
+}
+
+function disconnectRoutine() {
+    const overlay = document.createElement('div')
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: none;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        pointer-events: all;
+    `
+    document.body.appendChild(overlay)
+    setTimeout(() => {
+        alert('The sever has disconnected from this page!')
+    }, 100)
+}
+
+socket.on('disconnect', () => {
+    document.title = `Inactive | ${document.title}`
+    const favicon = document.querySelector("link[rel~='icon']")
+    if (favicon) {
+        favicon.href = '/staleFavicon.ico'
+    }
+    setTimeout(disconnectRoutine, 1000)
+})

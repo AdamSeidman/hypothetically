@@ -2,8 +2,8 @@
     <h2>THINGS...</h2>
     <p>{{ prompt | titlecase }}</p>
     <hr>
-    <h3 class="guess-text">Please read the responses!</h3>
     {% if reader %}
+        <h3 class="guess-text">Please read the responses!</h3>
         <div id="answers">
             {% for answer in answers %}
                 <div class="things-answer">"{{ answer }}"</div>
@@ -11,6 +11,7 @@
         </div>
         <button onclick="stopReading()" id="finished-reading-btn">Finished</button>
     {% else %}
+        <br>
         <p>Please wait for <strong>{{ readerName }}</strong> to read the responses!</p>
     {% endif %}
 </div>

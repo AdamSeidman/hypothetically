@@ -60,6 +60,19 @@ CREATE TABLE users (
     email VARCHAR NOT NULL UNIQUE,
     name VARCHAR,
     profile_picture VARCHAR,
-    display_name VARCHAR
+    display_name VARCHAR,
+    default_avatar TEXT
+);
+```
+
+### `tabs` table
+```sql
+CREATE TABLE tabs (
+    id BIGINT PRIMARY KEY NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    submitted_by VARCHAR NOT NULL,
+    video_id VARCHAR NOT NULL,
+    title VARCHAR NOT NULL,
+    type VARCHAR NOT NULL
 );
 ```
