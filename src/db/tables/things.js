@@ -5,6 +5,7 @@
  */
 
 const { randomArrayItem } = require('poop-sock')
+const stats = require('../../monitor/stats')
 
 let client = undefined
 
@@ -12,9 +13,11 @@ const TABLE_NAME = 'things'
 
 async function create(supabase) {
     client = supabase
-    const { error } = await client.from(TABLE_NAME).select()
+    const { error, data } = await client.from(TABLE_NAME).select()
     if (error) {
         throw new Error(error)
+    } else if (Array.isArray(data)) {
+        stats.setThingsCount(data.length)
     }
 }
 
@@ -31,7 +34,8 @@ async function add(thing, user) {
         console.error('Add thing error', error)
         return error
     } else {
-        console.log('Added', thing)
+        console.log('Added Thing:', thing)
+        stats.incrementThingsCount()
     }
 }
 

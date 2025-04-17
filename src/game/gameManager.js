@@ -2,9 +2,10 @@
  * Create and handle games
  */
 
+const stats = require('../monitor/stats')
+const Assets = require('../../www/assets/img/characters')
 const { generateRoomCode, shuffleArray } = require('./utils')
 const { getDisplayName, getDefaultAvatar } = require('../db/tables/users')
-const Assets = require('../../www/assets/img/characters')
 
 let rooms = {}
 let playerMap = {}
@@ -56,6 +57,7 @@ class GameRoom {
         this.avatarMap = {}
         rooms[code] = this
         playerMap[hostId] = code
+        stats.incrementOpenGamesCount()
     }
 
     addPlayer(id) {
@@ -103,6 +105,7 @@ class GameRoom {
     removePlayer(id) {
         if (this.players.length <= 1) {
             delete rooms[this.code]
+            stats.decrementOpenGamesCount()
             if (playerMap[id]) {
                 delete playerMap[id]
             }
@@ -135,6 +138,7 @@ class GameRoom {
         })
         console.log(`Deleting room ${this.code}.`)
         delete rooms[this.code]
+        stats.decrementOpenGamesCount()
         return this.code
     }
 

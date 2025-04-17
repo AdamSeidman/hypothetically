@@ -3,6 +3,7 @@
  */
 const fs = require('fs')
 const path = require('path')
+const stats = require('../monitor/stats')
 const Game = require('../game/gameManager')
 const { getDisplayName } = require('../db/tables/users')
 const { randomUUID } = require('crypto')
@@ -29,6 +30,8 @@ function openSocket(id, socket) {
         if (sockets[id].room) {
             sockets[id].leave(sockets[id].room)
         }
+    } else {
+        stats.incrementOpenSocketCount()
     }
     socket.uuid = randomUUID()
     sockets[id] = socket
@@ -56,6 +59,7 @@ function openSocket(id, socket) {
     socket.on('disconnect', () => {
         if (sockets[id] && sockets[id].uuid === socket.uuid) {
             delete sockets[id]
+            stats.decrementOpenSocketCount()
             let code = Game.getGameCodeOf(id)
             if (!code) return
             rejoinList[id] = code

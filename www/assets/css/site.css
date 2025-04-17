@@ -7,6 +7,10 @@
     cursor: pointer;
 }
 
+body {
+    font-family: Arial, sans-serif;
+}
+
 @media (hover: hover) {
     .requires-touch {
         display: none;
@@ -31,7 +35,6 @@
     }
 }
 
-/* 404 */
 body.unknown-container {
     background-color: #ddd;
     margin: 0;
@@ -196,4 +199,30 @@ h2 {
 
 .arrow {
     padding-block: 0 !important;
+}
+
+#icon-picker {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.arrow-box {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-width: 270px;
+}
+
+.arrow-box *:first-child {
+    margin-right: auto;
+}
+
+.arrow-box *:last-child {
+    margin-left: auto;
+}
+
+.arrow-box *:not(:first-child):not(:last-child) {
+    margin: 0 5px;
 }

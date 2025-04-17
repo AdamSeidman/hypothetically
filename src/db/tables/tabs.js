@@ -5,6 +5,7 @@
  */
 
 let client = undefined
+const stats = require('../../monitor/stats')
 
 const TABLE_NAME = 'tabs'
 let tags = []
@@ -16,6 +17,7 @@ async function create(supabase) {
         throw new Error(error)
     } else if (data) {
         tags = data.map(x => x.video_id)
+        stats.setTabCount(tags.length)
     }
 }
 
@@ -45,6 +47,7 @@ async function add(videoId, title, type, user) {
             tags.push(videoId)
         }
     }
+    stats.incrementTabCount()
 }
 
 async function getAll() {
