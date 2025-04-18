@@ -3,6 +3,7 @@
  */
 
 const utils = require('../utils')
+const logger = require('../../monitor/log')
 const database = require('../../db/database')
 const { getDisplayName } = require('../../db/tables/users')
 const Avatars = require('../../../www/assets/img/characters')
@@ -229,7 +230,7 @@ class Game {
             if (this.#guessesLeft.length > 0) {
                 this.scoreMap[this.#guessesLeft[0]] += 2
             }
-            console.log(`Game ${this.code} finished ${this.round} rounds. Sending to results...`)
+            logger.info(`Game ${this.code} finished ${this.round} rounds. Sending to results...`)
             this.#stateKey += 1
             this.game.inGame = false
             this.game.joinable = true

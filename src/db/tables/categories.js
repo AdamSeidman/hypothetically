@@ -6,6 +6,7 @@
 
 const { randomArrayItem } = require('poop-sock')
 const stats = require('../../monitor/stats')
+const logger = require('../../monitor/log')
 
 let client = undefined
 
@@ -46,7 +47,7 @@ async function add(things, user) {
 async function getRandom() {
     const { error, data } = await client.from(TABLE_NAME).select()
     if (error || !Array.isArray(data) || data.length < 1) {
-        console.error(error || '[bad data]')
+        logger.error('Could not get random category!', error || '[bad data]')
         return
     }
     return randomArrayItem(data)

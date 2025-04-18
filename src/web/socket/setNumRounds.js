@@ -2,6 +2,7 @@
  * Handle setting number of game rounds via WebSocket
  */
 
+const logger = require('../../monitor/log')
 const Games = require('../../game/gameManager')
 
 let Sockets = undefined
@@ -16,9 +17,9 @@ function handle(message, socket, id) {
             numRounds: message.numRounds,
             id
         })
-        console.log(`Number of rounds of room ${ret} set to ${message.numRounds}`)
+        logger.log(`Number of rounds of room ${ret} set to ${message.numRounds}`)
     } else {
-        console.warn(`Number of rounds set failure by (${id})`, message)
+        logger.warn(`Number of rounds set failure by (${id})`, message)
     }
 }
 

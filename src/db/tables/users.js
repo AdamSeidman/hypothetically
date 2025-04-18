@@ -4,6 +4,7 @@
  * Website users and data
  */
 
+const logger = require('../../monitor/log')
 const stats = require('../../monitor/stats')
 
 let users = []
@@ -26,7 +27,7 @@ async function create(supabase) {
     setInterval(async () => {
         const { data, error } = await client.from(TABLE_NAME).select()
         if (error) {
-            console.error('Error refreshing users!', error)
+            logger.error('Error refreshing users!', error)
         } else {
             users = data
             stats.setUserCount(users.length)
@@ -38,13 +39,13 @@ async function login(googleData) {
     if (!googleData) return
     let user = users.find(x => x.google_id == googleData.id)
     if (user) {
-        console.log(`Logging in ${user.email}`)
+        logger.log(`Logging in ${user.email}`)
         const { error } = await client
             .from(TABLE_NAME)
             .update({ last_login: 'NOW()' })
             .eq('google_id', googleData.id)
         if (error) {
-            console.error('Error logging in user!', error)
+            logger.error('Error logging in user!', error)
         } else {
             return user
         }
@@ -60,13 +61,13 @@ async function login(googleData) {
             name: googleData.displayName || googleData.email,
             display_name
         }
-        console.log(`Registering new user (${user.name}): ${user.email}`)
+        logger.info(`Registering new user (${user.name})`, user.email)
         const { data, error } = await client
             .from(TABLE_NAME)
             .insert(user)
             .select()
         if (error || data.length !== 1) {
-            console.error('Error registering user!', error || '[no return data]')
+            logger.error('Error registering user!', error || '[no return data]')
         } else {
             user = data[0]
             users.push(user)

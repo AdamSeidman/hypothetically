@@ -2,6 +2,7 @@
  * Handle chat functions from WebSocket
  */
 
+const logger = require('../../monitor/log')
 const Games = require('../../game/gameManager')
 const { getDisplayName } = require('../../db/tables/users')
 
@@ -17,7 +18,7 @@ function handle(message, socket, id) {
         if (!Sockets) {
             Sockets = require('../sockets')
         }
-        console.log(`Chat from ${ret.displayName} (${ret.id}): "${ret.message}"`)
+        logger.info(`Chat from ${ret.displayName} (${ret.id})`, `"${ret.message}"`)
         Sockets.sendToRoomById(id, 'newChat', {
             message: message.message,
             from: socket.user,
@@ -25,7 +26,7 @@ function handle(message, socket, id) {
             id
         })
     } else {
-        console.warn('Chat send failure.', id)
+        logger.warn('Chat send failure.', id)
         socket.emit('chatSendFailure', message)
     }
 }

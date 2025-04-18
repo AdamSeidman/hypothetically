@@ -6,6 +6,7 @@
 
 let client = undefined
 const stats = require('../../monitor/stats')
+const logger = require('../../monitor/log')
 
 const TABLE_NAME = 'tabs'
 let tags = []
@@ -53,7 +54,7 @@ async function add(videoId, title, type, user) {
 async function getAll() {
     const { error, data } = await client.from(TABLE_NAME).select()
     if (error || !Array.isArray(data) || data.length < 1) {
-        console.error(error || '[bad data]')
+        logger.error('Could not retrieve tabs!', error || '[bad data]')
         return
     }
     return data

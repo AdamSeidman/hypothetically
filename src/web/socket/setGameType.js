@@ -2,6 +2,7 @@
  * Handle setting of game type via WebSocket
  */
 
+const logger = require('../../monitor/log')
 const Games = require('../../game/gameManager')
 
 let Sockets = undefined
@@ -16,9 +17,9 @@ function handle(message, socket, id) {
             type: message.type,
             id
         })
-        console.log(`Game type of room ${ret} set to ${message.type}`)
+        logger.log(`Game type of room ${ret} set to ${message.type}`)
     } else {
-        console.warn(`Game type set failure by (${id})`, message)
+        logger.warn(`Game type set failure by (${id})`, message)
     }
 }
 

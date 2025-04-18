@@ -1,5 +1,6 @@
 const fs = require('fs')
 const path = require('path')
+const logger = require('../monitor/log')
 const { createClient } = require('@supabase/supabase-js')
 require('dotenv').config()
 
@@ -19,7 +20,7 @@ async function create() {
                 }
             }
         })
-        console.log('Database information loaded!')
+        logger.debug('Database information loaded!')
     }
 }
 
