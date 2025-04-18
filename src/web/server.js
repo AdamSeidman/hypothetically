@@ -6,6 +6,7 @@ const express = require('express')
 const nunjucks = require('nunjucks')
 const passport = require('passport')
 const { Server } = require('socket.io')
+const logger = require('../monitor/log')
 const bodyParser = require('body-parser')
 const session = require('express-session')
 const database = require('../db/database')
@@ -136,7 +137,7 @@ app.use(express.static(path.join(__dirname, '../../icons')))
 // Optional static share folder
 const shareDir = path.join(__dirname, '../../share')
 if (fs.existsSync(shareDir) && fs.lstatSync(shareDir).isDirectory()) {
-    console.log('Linking file share directory.')
+    logger.debug('Linking file share directory.')
     const serveIndex = require('serve-index')
     app.use('/share', express.static(shareDir), serveIndex(shareDir, { icons: true, hidden: false }))
 }
@@ -240,17 +241,12 @@ io.on('connection', (socket) => {
 
 // Not Found handling catch-all
 app.use((req, res) => {
-    const printExclusions = [
-        '/assets/js/lib/socket.io.min.js.map'
-    ]
-    if (!printExclusions.includes(req.url)) {
-        console.warn(`Incoming 404: ${req.method} ${req.url}`)
-    }
+    logger.warn('Incoming 404', `${req.method} ${req.url}`)
     res.status(404).sendFile(path.join(__dirname, '../../www/404.html'))
 })
 
 // Server setup
 const PORT = process.env.PORT || 80
 server.listen(PORT, () => {
-    console.log(`Express server listening on port ${PORT}`)
+    logger.debug(`Express server listening on port ${PORT}`)
 })

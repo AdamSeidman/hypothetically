@@ -2,6 +2,7 @@
  * Join a game with WebSockets
  */
 
+const logger = require('../../monitor/log')
 const Games = require('../../game/gameManager')
 
 let Sockets = undefined
@@ -15,7 +16,7 @@ function handle(message, socket, id) {
     if (game && id && game.reader == id) {
         game.doneReading()
     } else {
-        console.warn('Bad handling in doneReading!', id)
+        logger.warn('Bad handling in doneReading!', id)
     }
 }
 

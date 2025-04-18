@@ -6,6 +6,7 @@ const stats = require('../monitor/stats')
 const Assets = require('../../www/assets/img/characters')
 const { generateRoomCode, shuffleArray } = require('./utils')
 const { getDisplayName, getDefaultAvatar } = require('../db/tables/users')
+const logger = require('../monitor/log')
 
 let rooms = {}
 let playerMap = {}
@@ -65,7 +66,7 @@ class GameRoom {
         if (this.players.length >= ROOM_MAX_PLAYERS) return { failReason: 'This room is full!' }
         if (this.inGame && !GAMES[this.gameType.trim()].joinableMidGame) return { failReason: 'This game is in progress!' }
         if (playerMap[id]) {
-            console.warn(`Removed player ${id} from ${playerMap[id]} to add to ${this.code}!`)
+            logger.warn(`Removed player ${id} from ${playerMap[id]} to add to ${this.code}!`, this.gameType)
             rooms[playerMap[id]].removePlayer(id)
         }
         this.players.push(id)
@@ -135,7 +136,7 @@ class GameRoom {
                 delete playerMap[id]
             }
         })
-        console.log(`Deleting room ${this.code}.`)
+        logger.log(`Deleting room ${this.code}.`)
         delete rooms[this.code]
         stats.decrementOpenGamesCount()
         return this.code

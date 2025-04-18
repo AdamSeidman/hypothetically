@@ -6,6 +6,7 @@
 
 const { randomArrayItem } = require('poop-sock')
 const stats = require('../../monitor/stats')
+const logger = require('../../monitor/log')
 
 let client = undefined
 
@@ -31,10 +32,10 @@ async function add(thing, user) {
         .from(TABLE_NAME)
         .insert(item)
     if (error) {
-        console.error('Add thing error', error)
+        logger.error('Add thing error', error)
         return error
     } else {
-        console.log('Added Thing:', thing)
+        logger.info('Added Thing:', thing)
         stats.incrementThingsCount()
     }
 }
@@ -42,7 +43,7 @@ async function add(thing, user) {
 async function getRandom() {
     const { error, data } = await client.from(TABLE_NAME).select()
     if (error || !Array.isArray(data) || data.length < 1) {
-        console.error(error || '[bad data]')
+        logger.error('Could not get random thing!', error || '[bad data]')
         return
     }
     return randomArrayItem(data)
@@ -51,7 +52,7 @@ async function getRandom() {
 async function getAllThings() {
     const { error, data } = await client.from(TABLE_NAME).select()
     if (error || !Array.isArray(data) || data.length < 1) {
-        console.error(error || '[bad data]')
+        logger.error('Could not gett all things!', error || '[bad data]')
         return
     }
     return data.map(x => x.thing)

@@ -3,10 +3,11 @@
  */
 const fs = require('fs')
 const path = require('path')
+const { randomUUID } = require('crypto')
+const logger = require('../monitor/log')
 const stats = require('../monitor/stats')
 const Game = require('../game/gameManager')
 const { getDisplayName } = require('../db/tables/users')
-const { randomUUID } = require('crypto')
 
 const REJOIN_GRACE_TIME = 10 * 1000
 
@@ -44,10 +45,10 @@ function openSocket(id, socket) {
                     }
                     eventHandlers[event].handle(message, socket, id)
                 } else {
-                    console.warn(`Received '${event}' message on stale socket!`, id, message)
+                    logger.warn(`Received '${event}' message on stale socket! (${id})`, message)
                 }
             } else {
-                console.error(`Received '${event}' message with no socket user!`, message)
+                logger.error(`Received '${event}' message with no socket user!`, message)
             }
         })
     })
@@ -127,7 +128,7 @@ function sendToRoomByCode(code, message, payload) {
     if (!code) return
     let roomSockets = Object.values(sockets).filter(x => x.room === code)
     if ((roomSockets?.length || 0) < 1) {
-        console.warn(`Could not find socket(s) for code '${code}'`)
+        logger.warn(`Could not find socket(s) for code '${code}'`, message)
         return
     }
     roomSockets.forEach(socket => {
@@ -155,13 +156,13 @@ function kickFromRoom(id, code) {
             id,
             displayName: name
         })
-        console.log(`${name} (${id}) kicked from room ${code}.`)
+        logger.info(`${name} (${id}) kicked from room ${code}.`)
         socket.emit('kicked', {})
         socket.leave(code)
         socket.room = null
         return code
     } else {
-        console.error(`Could not find socket for ${id} (Room ${code})`)
+        logger.error(`Could not find socket for ${id}.`, `(Room ${code})`)
     }
 }
 
