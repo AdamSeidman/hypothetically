@@ -92,6 +92,7 @@ body.unknown-container a {
 
 .navbar-link {
     font-size: 1.1rem;
+    margin-top: 7px;
     color: white;
     text-decoration: none;
     text-transform: uppercase;
@@ -100,12 +101,13 @@ body.unknown-container a {
 }
 
 .navbar-link:hover {
-    color: #f1f1f1;
+    color: #e0e0e0;
     transform: translateY(-3px);
 }
 
 .logout {
     background-color: #db4437;
+    margin-top: 0;
     padding: 8px 16px;
     border-radius: 5px;
     font-weight: 600;
@@ -114,6 +116,7 @@ body.unknown-container a {
 
 .logout:hover {
     background-color: #c1351d;
+    transition: 0.3s;
 }
 
 /* Dashboard Styling */
@@ -175,7 +178,7 @@ h2 {
 }
 
 .btn:hover {
-    background-color: #357ae8;
+    background-color: #2769d3;
 }
 
 .logout-btn {
